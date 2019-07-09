@@ -1,0 +1,14 @@
+enum Role {
+  ADMIN
+  PATIENT
+  PHYSICIAN
+}
+
+type User {
+  id: ID! @id
+  firstName: String!
+  lastName: String!
+  email: String! @unique
+  role: Role @default(value: PATIENT)
+  auth0id: String
+}
