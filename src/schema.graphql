@@ -9,26 +9,25 @@ type SuccessMessage {
   message: String
 }
 
-type FoundIt {
-  message: Boolean
-}
-
 type Mutation {
-  authenticate(idToken: String!): User
+  login(email: String!, password: String!): User
+  register(email: String!, password: String!, firstName: String!, lastName: String!): Boolean!
+  logout: Boolean! 
+  invalidateTokens: Boolean!
 }
 
 type Query {
   me: User @isAuthenticated
   users: [User]!
-  userExists(email: String!): FoundIt
+  userExists(email: String!): Boolean!
   hello: SuccessMessage
 }
 
 type User {
   id: ID!
-  firstName: String
-  lastName: String
-  email: String
-  identity: String
+  firstName: String!
+  lastName: String!
+  email: String!
+  count: Int
   role: Role
 }

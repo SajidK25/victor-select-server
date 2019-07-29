@@ -8,6 +8,4 @@ const resolvers = {
   User
 }
 
-module.exports = {
-  resolvers
-}
+module.exports = { resolvers }

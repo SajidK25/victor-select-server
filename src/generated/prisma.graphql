@@ -1,5 +1,5 @@
 # source: https://victory-select-prod-450882f7ad.herokuapp.com/vs-prod/prod
-# timestamp: Mon Jul 08 2019 22:26:26 GMT-0700 (Pacific Daylight Time)
+# timestamp: Mon Jul 15 2019 22:00:40 GMT-0700 (Pacific Daylight Time)
 
 type AggregateUser {
   count: Int!
@@ -78,9 +78,11 @@ type User implements Node {
   id: ID!
   firstName: String!
   lastName: String!
+  password: String!
   email: String!
+  stripeId: String
   role: Role
-  auth0id: String
+  count: Int
 }
 
 """A connection to a list of items."""
@@ -97,9 +99,11 @@ input UserCreateInput {
   id: ID
   firstName: String!
   lastName: String!
+  password: String!
   email: String!
+  stripeId: String
   role: Role
-  auth0id: String
+  count: Int
 }
 
 """An edge in a connection."""
@@ -118,21 +122,27 @@ enum UserOrderByInput {
   firstName_DESC
   lastName_ASC
   lastName_DESC
+  password_ASC
+  password_DESC
   email_ASC
   email_DESC
+  stripeId_ASC
+  stripeId_DESC
   role_ASC
   role_DESC
-  auth0id_ASC
-  auth0id_DESC
+  count_ASC
+  count_DESC
 }
 
 type UserPreviousValues {
   id: ID!
   firstName: String!
   lastName: String!
+  password: String!
   email: String!
+  stripeId: String
   role: Role
-  auth0id: String
+  count: Int
 }
 
 type UserSubscriptionPayload {
@@ -177,17 +187,21 @@ input UserSubscriptionWhereInput {
 input UserUpdateInput {
   firstName: String
   lastName: String
+  password: String
   email: String
+  stripeId: String
   role: Role
-  auth0id: String
+  count: Int
 }
 
 input UserUpdateManyMutationInput {
   firstName: String
   lastName: String
+  password: String
   email: String
+  stripeId: String
   role: Role
-  auth0id: String
+  count: Int
 }
 
 input UserWhereInput {
@@ -319,6 +333,46 @@ input UserWhereInput {
 
   """All values not ending with the given string."""
   lastName_not_ends_with: String
+  password: String
+
+  """All values that are not equal to given value."""
+  password_not: String
+
+  """All values that are contained in given list."""
+  password_in: [String!]
+
+  """All values that are not contained in given list."""
+  password_not_in: [String!]
+
+  """All values less than the given value."""
+  password_lt: String
+
+  """All values less than or equal the given value."""
+  password_lte: String
+
+  """All values greater than the given value."""
+  password_gt: String
+
+  """All values greater than or equal the given value."""
+  password_gte: String
+
+  """All values containing the given string."""
+  password_contains: String
+
+  """All values not containing the given string."""
+  password_not_contains: String
+
+  """All values starting with the given string."""
+  password_starts_with: String
+
+  """All values not starting with the given string."""
+  password_not_starts_with: String
+
+  """All values ending with the given string."""
+  password_ends_with: String
+
+  """All values not ending with the given string."""
+  password_not_ends_with: String
   email: String
 
   """All values that are not equal to given value."""
@@ -359,6 +413,46 @@ input UserWhereInput {
 
   """All values not ending with the given string."""
   email_not_ends_with: String
+  stripeId: String
+
+  """All values that are not equal to given value."""
+  stripeId_not: String
+
+  """All values that are contained in given list."""
+  stripeId_in: [String!]
+
+  """All values that are not contained in given list."""
+  stripeId_not_in: [String!]
+
+  """All values less than the given value."""
+  stripeId_lt: String
+
+  """All values less than or equal the given value."""
+  stripeId_lte: String
+
+  """All values greater than the given value."""
+  stripeId_gt: String
+
+  """All values greater than or equal the given value."""
+  stripeId_gte: String
+
+  """All values containing the given string."""
+  stripeId_contains: String
+
+  """All values not containing the given string."""
+  stripeId_not_contains: String
+
+  """All values starting with the given string."""
+  stripeId_starts_with: String
+
+  """All values not starting with the given string."""
+  stripeId_not_starts_with: String
+
+  """All values ending with the given string."""
+  stripeId_ends_with: String
+
+  """All values not ending with the given string."""
+  stripeId_not_ends_with: String
   role: Role
 
   """All values that are not equal to given value."""
@@ -369,49 +463,32 @@ input UserWhereInput {
 
   """All values that are not contained in given list."""
   role_not_in: [Role!]
-  auth0id: String
+  count: Int
 
   """All values that are not equal to given value."""
-  auth0id_not: String
+  count_not: Int
 
   """All values that are contained in given list."""
-  auth0id_in: [String!]
+  count_in: [Int!]
 
   """All values that are not contained in given list."""
-  auth0id_not_in: [String!]
+  count_not_in: [Int!]
 
   """All values less than the given value."""
-  auth0id_lt: String
+  count_lt: Int
 
   """All values less than or equal the given value."""
-  auth0id_lte: String
+  count_lte: Int
 
   """All values greater than the given value."""
-  auth0id_gt: String
+  count_gt: Int
 
   """All values greater than or equal the given value."""
-  auth0id_gte: String
-
-  """All values containing the given string."""
-  auth0id_contains: String
-
-  """All values not containing the given string."""
-  auth0id_not_contains: String
-
-  """All values starting with the given string."""
-  auth0id_starts_with: String
-
-  """All values not starting with the given string."""
-  auth0id_not_starts_with: String
-
-  """All values ending with the given string."""
-  auth0id_ends_with: String
-
-  """All values not ending with the given string."""
-  auth0id_not_ends_with: String
+  count_gte: Int
 }
 
 input UserWhereUniqueInput {
   id: ID
   email: String
+  stripeId: String
 }

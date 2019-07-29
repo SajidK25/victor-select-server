@@ -1,5 +1,5 @@
-#endpoint: ${env:PRISMA_ENDPOINT}
-endpoint: https://victory-select-prod-450882f7ad.herokuapp.com/vs-prod/prod
+endpoint: ${env:PRISMA_ENDPOINT}
+#endpoint: https://victory-select-prod-450882f7ad.herokuapp.com/vs-prod/prod
 # endpoint: https://victory-select-prod-450882f7ad.herokuapp.com/vs-prod/dev
 datamodel: datamodel.graphql
 secret: ${env:PRISMA_SECRET}

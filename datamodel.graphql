@@ -8,7 +8,9 @@ type User {
   id: ID! @id
   firstName: String!
   lastName: String!
+  password: String!
   email: String! @unique
+  stripeId: String @unique
   role: Role @default(value: PATIENT)
-  auth0id: String
+  count: Int @default(value: "0")
 }

@@ -1,11 +1,9 @@
-const _get = require('lodash.get')
+const _get = require('lodash/get')
 
 const userLocationOnContext = 'request.user'
 
-const isLoggedIn = ctx => {
-  const user = ctxUser(ctx, userLocationOnContext)
-  if (!user) throw new Error(`Not logged in`)
-  return user
+const isLoggedIn = async ( {req} ) => {
+  return req.userId
 }
 const ctxUser = ctx => _get(ctx, userLocationOnContext)
 
