@@ -1,5 +1,5 @@
-const bcrypt = require("bcryptjs");
-const { sign } = require("jsonwebtoken")
+const bcrypt = require('bcryptjs')
+const { sign } = require('jsonwebtoken')
 const { createTokens } = require('../auth')
 
 async function createPrismaUser(ctx, idToken) {
@@ -10,72 +10,75 @@ async function createPrismaUser(ctx, idToken) {
       name: idToken.name,
       email: idToken.email
     }
-  });
-  return user;
+  })
+  return user
 }
 
-const ctxUser = ctx => ctx.request.user;
+const ctxUser = ctx => ctx.request.user
 
 const Mutation = {
   logout: async (_, __, { res, req }) => {
-     req.userId = null
-     res.clearCookie('access-token')
-     res.clearCookie('refresh-token')
-     return true;
+    req.userId = null
+    res.clearCookie('access-token')
+    res.clearCookie('refresh-token')
+    return true
   },
   register: async (_, args, { db }, info) => {
-    const hashedPassword = await bcrypt.hash(args.password, 10);
-    args.email = args.email.toLowerCase();
-    console.log(args.email);
+    args.email = args.email.toLowerCase()
+    const user = await db.query.user({ where: { email } })
+    if (user) {
+      return true
+    }
+
+    const hashedPassword = await bcrypt.hash(args.password, 10)
+    console.log(args.email)
     try {
       const user = await db.mutation.createUser({
         data: {
           ...args,
           password: hashedPassword
         }
-      });
+      })
     } catch (e) {
-      console.log(e);
+      console.log(e)
     }
 
-    return true;
+    return true
   },
-  login: async (_, { email, password }, {req, res, db}) => {
-            
-    email = email.toLowerCase();
-    const user = await db.query.user({ where: { email } });
+  login: async (_, { email, password }, { req, res, db }) => {
+    email = email.toLowerCase()
+    const user = await db.query.user({ where: { email } })
     if (!user) {
-      return null;
+      return null
     }
-    const valid = await bcrypt.compare(password, user.password);
+    const valid = await bcrypt.compare(password, user.password)
     if (!valid) {
-      return null;
+      return null
     }
 
     const tokens = createTokens(user)
 
-    res.cookie("refresh-token", tokens.refreshToken);
-    res.cookie("access-token", tokens.accessToken);
+    res.cookie('refresh-token', tokens.refreshToken)
+    res.cookie('access-token', tokens.accessToken)
 
-    return user;
+    return user
   },
   invalidateTokens: async (_, __, { req, db }) => {
-
-    console.log("Invalidate:", req)
+    console.log('Invalidate:', req)
     if (!req.userId) {
-      return false;
+      return false
     }
 
     const user = await db.query.user({ where: { id: req.userId } })
     if (!user) {
-      return false;
+      return false
     }
-    const count = user.count + 1;
-    await db.mutation.updateUser({data: { count }, where: {id: req.userId}})    
+    const count = user.count + 1
+    await db.mutation.updateUser({ data: { count }, where: { id: req.userId } })
     res.clearCookie('access-token')
 
-    return true;
+    return true
   }
-};
+}
 
-module.exports = { Mutation };
+module.exports = { Mutation }
