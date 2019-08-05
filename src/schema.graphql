@@ -11,8 +11,13 @@ type SuccessMessage {
 
 type Mutation {
   login(email: String!, password: String!): User
-  register(email: String!, password: String!, firstName: String!, lastName: String!): Boolean!
-  logout: Boolean! 
+  register(
+    email: String!
+    password: String!
+    firstName: String!
+    lastName: String!
+  ): Boolean!
+  logout: Boolean!
   invalidateTokens: Boolean!
 }
 

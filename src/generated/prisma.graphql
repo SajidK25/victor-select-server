@@ -1,5 +1,5 @@
-# source: https://victory-select-prod-450882f7ad.herokuapp.com/vs-prod/prod
-# timestamp: Mon Jul 15 2019 22:00:40 GMT-0700 (Pacific Daylight Time)
+# source: https://victory-select-prod-9a02d5995d.herokuapp.com
+# timestamp: Thu Aug 01 2019 12:05:45 GMT-0700 (Pacific Daylight Time)
 
 type AggregateUser {
   count: Int!
@@ -68,6 +68,7 @@ enum Role {
   ADMIN
   PATIENT
   PHYSICIAN
+  VISITOR
 }
 
 type Subscription {

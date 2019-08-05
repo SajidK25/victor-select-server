@@ -25,7 +25,7 @@ const Mutation = {
   },
   register: async (_, args, { db }, info) => {
     args.email = args.email.toLowerCase()
-    const user = await db.query.user({ where: { email } })
+    const user = await db.query.user({ where: { email: args.email } })
     if (user) {
       return true
     }
@@ -48,6 +48,7 @@ const Mutation = {
   login: async (_, { email, password }, { req, res, db }) => {
     email = email.toLowerCase()
     const user = await db.query.user({ where: { email } })
+    console.log('Login User:', user)
     if (!user) {
       return null
     }
@@ -57,6 +58,7 @@ const Mutation = {
     }
 
     const tokens = createTokens(user)
+    console.log('Tokens:', tokens)
 
     res.cookie('refresh-token', tokens.refreshToken)
     res.cookie('access-token', tokens.accessToken)

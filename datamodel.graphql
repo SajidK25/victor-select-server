@@ -2,6 +2,7 @@ enum Role {
   ADMIN
   PATIENT
   PHYSICIAN
+  VISITOR
 }
 
 type User {
@@ -11,6 +12,6 @@ type User {
   password: String!
   email: String! @unique
   stripeId: String @unique
-  role: Role @default(value: PATIENT)
-  count: Int @default(value: "0")
+  role: Role @default(value: VISITOR)
+  count: Int @default(value: 0)
 }
