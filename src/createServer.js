@@ -1,6 +1,8 @@
-const { ApolloServer, makeExecutableSchema } = require('apollo-server-express')
+const { ApolloServer } = require('apollo-server-express')
+const { makeExecutableSchema } = require('graphql-tools')
 const express = require('express')
 const cookieParser = require('cookie-parser')
+const cors = require('cors')
 const { verify } = require('jsonwebtoken')
 const { createTokens } = require('./auth')
 const { importSchema } = require('graphql-import')
@@ -16,27 +18,30 @@ const schema = makeExecutableSchema({
 
 const startServer = async () => {
   const server = new ApolloServer({
-    // These will be defined for both new or existing servers
     schema,
-    context: ({ req, res }) => ({ req, res, db })
+    context: req => ({ ...req, db })
   })
 
   const app = express()
 
+  var corsOptions = {
+    origin: process.env.FRONTEND_URL,
+    credentials: true // <-- REQUIRED backend setting
+  }
+
+  app.use(cors(corsOptions))
   app.use(cookieParser())
 
   app.use(async (req, res, next) => {
     const refreshToken = req.cookies['refresh-token']
     const accessToken = req.cookies['access-token']
-    console.log('Tokens', req.cookies)
     if (!refreshToken && !accessToken) {
       return next()
     }
 
     try {
-      const data = verify(accessToken, process.env.ACCESS_TOKEN_SECRET)
-      console.log('Data:', data)
-      req.userId = data.userId
+      const { userId } = verify(accessToken, process.env.ACCESS_TOKEN_SECRET)
+      req.userId = userId
       return next()
     } catch {}
 
@@ -45,36 +50,29 @@ const startServer = async () => {
     }
 
     let data
-
     try {
-      data = verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
+      data = verify(refreshToken, accessToken, process.env.REFRESH_TOKEN_SECRET)
     } catch {
-      console.log('In Catch from verifying')
       return next()
     }
 
-    console.log('DATA', data)
-    const user = await db.query.user({ where: { id: data.userId } })
-    // token has been invalidated
+    const user = await db.query.user(
+      { where: { id: data.userId } },
+      '{id, role, email, count, firstName, lastName}'
+    )
     if (!user || user.count !== data.count) {
       return next()
     }
-
     const tokens = createTokens(user)
 
-    res.cookie('refresh-token', tokens.refreshToken)
-    res.cookie('access-token', tokens.accessToken)
+    res.cookie('refresh-token', tokens.refreshToken, { httpOnly: true })
+    res.cookie('access-token', tokens.accessToken, { httpOnly: true })
     req.userId = user.id
-
+    req.user = user
     next()
   })
 
-  const corsOptions = {
-    origin: 'http://localhost:3000',
-    credentials: true
-  }
-
-  server.applyMiddleware({ app, cors: corsOptions }) // app is from an existing express app
+  server.applyMiddleware({ app, path: '/', cors: false }) // app is from an existing express app
 
   app.listen({ port: 4444 }, () =>
     console.log(`🚀 Server ready at http://localhost:4444${server.graphqlPath}`)

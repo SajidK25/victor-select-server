@@ -45,23 +45,23 @@ const Mutation = {
 
     return true
   },
-  login: async (_, { email, password }, { req, res, db }) => {
+  login: async (_, { email, password }, ctx) => {
+    // 1. Check for a user with that email address
     email = email.toLowerCase()
-    const user = await db.query.user({ where: { email } })
-    console.log('Login User:', user)
+    const user = await ctx.db.query.user({ where: { email } })
     if (!user) {
-      return null
+      throw new Error('Invalid email or password.')
     }
+    // 2. Check if password is correct
     const valid = await bcrypt.compare(password, user.password)
     if (!valid) {
-      return null
+      throw new Error('Invalid email or password')
     }
 
+    // Set the cookies with the token...
     const tokens = createTokens(user)
-    console.log('Tokens:', tokens)
-
-    res.cookie('refresh-token', tokens.refreshToken)
-    res.cookie('access-token', tokens.accessToken)
+    ctx.res.cookie('refresh-token', tokens.refreshToken, { httpOnly: true })
+    ctx.res.cookie('access-token', tokens.accessToken, { httpOnly: true })
 
     return user
   },

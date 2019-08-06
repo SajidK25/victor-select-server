@@ -5,11 +5,9 @@ const ctxUser = ctx => ctx.request.user
 
 const Query = {
   me(_, __, { req, db }, info) {
-    console.log('Me', req.userId)
     if (!req.userId) {
       return null
     }
-    console.log('Me', req.user)
     return db.query.user({ where: { id: req.userId } })
   },
   users: forwardTo('db'),
