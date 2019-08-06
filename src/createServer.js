@@ -74,7 +74,7 @@ const startServer = async () => {
 
   server.applyMiddleware({ app, path: '/', cors: false }) // app is from an existing express app
 
-  app.listen({ port: 4444 }, () =>
+  app.listen(process.env.PORT, () =>
     console.log(`🚀 Server ready at http://localhost:4444${server.graphqlPath}`)
   )
 }
