@@ -48,6 +48,7 @@ const startServer = async () => {
       }
     })
   );
+  app.use(helmet.referrerPolicy({ policy: "no-referrer" }));
   app.use(cors(corsOptions));
   app.use(cookieParser());
 
