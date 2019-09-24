@@ -5,6 +5,12 @@ enum Role {
   VISITOR
 }
 
+enum PlanType {
+  ED
+  HAIR
+  SLEEP
+}
+
 type User {
   id: ID! @id
   firstName: String!
@@ -14,4 +20,31 @@ type User {
   stripeId: String @unique
   role: Role @default(value: VISITOR)
   count: Int @default(value: 0)
+  plans: [Plan]!
+}
+
+type Plan {
+  id: ID! @id
+  user: User!
+  type: PlanType!
+  startDate: DateTime!
+  expireDate: DateTime!
+  nextDelivery: DateTime
+  refillsRemaining: Int!
+  totalRefills: Int!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  ccToken: String!
+  shippingAddress: ShippingAddress!
+}
+
+type ShippingAddress {
+  id: ID @id
+  user: User!
+}
+
+type Questionnaire {
+  id: ID! @id
+  user: User!
+  details: Json!
 }

@@ -1,5 +1,9 @@
 # source: https://victory-select-prod-9a02d5995d.herokuapp.com
-# timestamp: Thu Aug 01 2019 12:05:45 GMT-0700 (Pacific Daylight Time)
+# timestamp: Thu Aug 15 2019 00:52:38 GMT-0700 (Pacific Daylight Time)
+
+type AggregateQuestionnaire {
+  count: Int!
+}
 
 type AggregateUser {
   count: Int!
@@ -10,6 +14,9 @@ type BatchPayload {
   count: Long!
 }
 
+"""Raw JSON value"""
+scalar Json
+
 """
 The `Long` scalar type represents non-fractional signed whole numeric values.
 Long can represent values between -(2^63) and 2^63 - 1.
@@ -17,11 +24,17 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
+  createQuestionnaire(data: QuestionnaireCreateInput!): Questionnaire!
   createUser(data: UserCreateInput!): User!
+  updateQuestionnaire(data: QuestionnaireUpdateInput!, where: QuestionnaireWhereUniqueInput!): Questionnaire
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  deleteQuestionnaire(where: QuestionnaireWhereUniqueInput!): Questionnaire
   deleteUser(where: UserWhereUniqueInput!): User
+  upsertQuestionnaire(where: QuestionnaireWhereUniqueInput!, create: QuestionnaireCreateInput!, update: QuestionnaireUpdateInput!): Questionnaire!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  updateManyQuestionnaires(data: QuestionnaireUpdateManyMutationInput!, where: QuestionnaireWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
+  deleteManyQuestionnaires(where: QuestionnaireWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
 }
 
@@ -53,8 +66,11 @@ type PageInfo {
 }
 
 type Query {
+  questionnaires(where: QuestionnaireWhereInput, orderBy: QuestionnaireOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Questionnaire]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  questionnaire(where: QuestionnaireWhereUniqueInput!): Questionnaire
   user(where: UserWhereUniqueInput!): User
+  questionnairesConnection(where: QuestionnaireWhereInput, orderBy: QuestionnaireOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionnaireConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
 
   """Fetches an object given its ID"""
@@ -62,6 +78,151 @@ type Query {
     """The ID of an object"""
     id: ID!
   ): Node
+}
+
+type Questionnaire implements Node {
+  id: ID!
+  user: User!
+  details: Json!
+}
+
+"""A connection to a list of items."""
+type QuestionnaireConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [QuestionnaireEdge]!
+  aggregate: AggregateQuestionnaire!
+}
+
+input QuestionnaireCreateInput {
+  id: ID
+  details: Json!
+  user: UserCreateOneInput!
+}
+
+"""An edge in a connection."""
+type QuestionnaireEdge {
+  """The item at the end of the edge."""
+  node: Questionnaire!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum QuestionnaireOrderByInput {
+  id_ASC
+  id_DESC
+  details_ASC
+  details_DESC
+}
+
+type QuestionnairePreviousValues {
+  id: ID!
+  details: Json!
+}
+
+type QuestionnaireSubscriptionPayload {
+  mutation: MutationType!
+  node: Questionnaire
+  updatedFields: [String!]
+  previousValues: QuestionnairePreviousValues
+}
+
+input QuestionnaireSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [QuestionnaireSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [QuestionnaireSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [QuestionnaireSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: QuestionnaireWhereInput
+}
+
+input QuestionnaireUpdateInput {
+  details: Json
+  user: UserUpdateOneRequiredInput
+}
+
+input QuestionnaireUpdateManyMutationInput {
+  details: Json
+}
+
+input QuestionnaireWhereInput {
+  """Logical AND on all given filters."""
+  AND: [QuestionnaireWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [QuestionnaireWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [QuestionnaireWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  user: UserWhereInput
+}
+
+input QuestionnaireWhereUniqueInput {
+  id: ID
 }
 
 enum Role {
@@ -72,6 +233,7 @@ enum Role {
 }
 
 type Subscription {
+  questionnaire(where: QuestionnaireSubscriptionWhereInput): QuestionnaireSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
@@ -105,6 +267,11 @@ input UserCreateInput {
   stripeId: String
   role: Role
   count: Int
+}
+
+input UserCreateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
 }
 
 """An edge in a connection."""
@@ -163,9 +330,7 @@ input UserSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [UserSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -183,6 +348,16 @@ input UserSubscriptionWhereInput {
   """
   updatedFields_contains_some: [String!]
   node: UserWhereInput
+}
+
+input UserUpdateDataInput {
+  firstName: String
+  lastName: String
+  password: String
+  email: String
+  stripeId: String
+  role: Role
+  count: Int
 }
 
 input UserUpdateInput {
@@ -203,6 +378,18 @@ input UserUpdateManyMutationInput {
   stripeId: String
   role: Role
   count: Int
+}
+
+input UserUpdateOneRequiredInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateDataInput
+  upsert: UserUpsertNestedInput
+}
+
+input UserUpsertNestedInput {
+  update: UserUpdateDataInput!
+  create: UserCreateInput!
 }
 
 input UserWhereInput {

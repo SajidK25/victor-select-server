@@ -19,6 +19,7 @@ type Mutation {
   ): Boolean!
   logout: Boolean!
   invalidateTokens: Boolean!
+  createQuestionnaire(details: Json!): Questionnaire
 }
 
 type Query {
@@ -26,6 +27,7 @@ type Query {
   users: [User]!
   userExists(email: String!): Boolean!
   hello: SuccessMessage
+  questionnaires: [Questionnaire]!
 }
 
 type User {
@@ -35,4 +37,10 @@ type User {
   email: String!
   count: Int
   role: Role
+}
+
+type Questionnaire {
+  id: ID!
+  user: User!
+  details: Json!
 }
