@@ -32,7 +32,22 @@ const startServer = async () => {
   };
 
   app.use(morgan("common"));
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'"],
+          scriptSrc: ["'self'"],
+          reportUri: "/report-violation",
+          objectSrc: ["'self'"],
+          upgradeInsecureRequests: true
+        },
+        referrerPolicy: { policy: "same-origin" },
+        featurePolicy: {}
+      }
+    })
+  );
   app.use(cors(corsOptions));
   app.use(cookieParser());
 
