@@ -31,7 +31,7 @@ const startServer = async () => {
     credentials: true // <-- REQUIRED backend setting
   };
 
-  app.use(morgan("common"));
+  // app.use(morgan("common"));
   app.use(
     helmet({
       contentSecurityPolicy: {

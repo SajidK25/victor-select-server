@@ -16,7 +16,7 @@ type Mutation {
     password: String!
     firstName: String!
     lastName: String!
-  ): Boolean!
+  ): String!
   logout: Boolean!
   invalidateTokens: Boolean!
   createQuestionnaire(details: Json!): Questionnaire

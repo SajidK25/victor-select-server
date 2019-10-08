@@ -17,7 +17,6 @@ type User {
   lastName: String!
   password: String!
   email: String! @unique
-  stripeId: String @unique
   role: Role @default(value: VISITOR)
   count: Int @default(value: 0)
   plans: [Plan]!
@@ -32,14 +31,14 @@ type Plan {
   nextDelivery: DateTime
   refillsRemaining: Int!
   totalRefills: Int!
-  updatedAt: DateTime!
-  createdAt: DateTime!
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
   ccToken: String!
   shippingAddress: ShippingAddress!
 }
 
 type ShippingAddress {
-  id: ID @id
+  id: ID! @id
   user: User!
 }
 

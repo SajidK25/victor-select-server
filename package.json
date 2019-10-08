@@ -11,28 +11,26 @@
   },
   "dependencies": {
     "@sendgrid/mail": "^6.4.0",
-    "apollo-server-express": "^2.7.0",
-    "babel-preset-env": "^1.7.0",
+    "apollo-server-express": "^2.9.5",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
-    "dotenv": "8.0.0",
+    "dotenv": "8.1.0",
     "express": "^4.17.1",
     "express-jwt": "^5.3.1",
     "express-session": "^1.16.2",
-    "graphql": "^14.3.0",
+    "graphql": "^14.5.8",
     "graphql-import": "^0.7.1",
     "helmet": "^3.21.1",
     "jsonwebtoken": "^8.5.1",
     "lodash.get": "^4.4.2",
     "morgan": "^1.9.1",
-    "nodemailer": "^6.2.1",
-    "nodemon": "^1.18.7",
+    "nodemailer": "^6.3.0",
+    "nodemon": "^1.19.3",
     "npm-run-all": "^4.1.5",
     "prisma": "^3.1.0",
-    "prisma-binding": "^2.3.10",
-    "reflect-metadata": "^0.1.13",
-    "stripe": "^7.4.0"
+    "prisma-binding": "^2.3.16",
+    "reflect-metadata": "^0.1.13"
   },
   "license": "MIT",
   "repository": {
@@ -40,11 +38,16 @@
   },
   "babel": {
     "presets": [
-      "env"
+      [
+        "env",
+        {
+          "modules": false
+        }
+      ]
     ]
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1"
+    "babel-preset-env": "^1.7.0"
   }
 }

@@ -27,8 +27,12 @@ const Mutation = {
     args.email = args.email.toLowerCase();
     const user = await db.query.user({ where: { email: args.email } });
     console.log("Register User:", user);
-    if (user) {
-      return true;
+    if (user.role === "VISITOR") {
+      return "OK";
+    }
+
+    if (user.role === "PATIENT") {
+      return "EXISTS";
     }
 
     const hashedPassword = await bcrypt.hash(args.password, 10);
@@ -44,12 +48,12 @@ const Mutation = {
       console.log(e);
     }
 
-    return true;
+    return "OK";
   },
   login: async (_, { email, password }, ctx) => {
     // 1. Check for a user with that email address
     email = email.toLowerCase();
-    const user = await ctx.db.query.user({ where: { email } });
+    const user = await ctx.db.query.user({ where: { email, role: "PATIENT" } });
     if (!user) {
       throw new Error("Invalid email or password.");
     }
