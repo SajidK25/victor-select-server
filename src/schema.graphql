@@ -16,7 +16,13 @@ type Mutation {
     password: String!
     firstName: String!
     lastName: String!
-  ): String!
+  ): SuccessMessage!
+  requestReset(email: String!): SuccessMessage!
+  resetPassword(
+    resetToken: String!
+    password: String!
+    confirmPassword: String!
+  ): User!
   logout: Boolean!
   invalidateTokens: Boolean!
   createQuestionnaire(details: Json!): Questionnaire
@@ -37,6 +43,8 @@ type User {
   email: String!
   count: Int
   role: Role
+  resetToken: String
+  resetTokenExpiry: Float
 }
 
 type Questionnaire {

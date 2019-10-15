@@ -32,13 +32,26 @@ const startServer = async () => {
   };
 
   // app.use(morgan("common"));
+
   app.use(
     helmet({
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: ["'self'"],
-          scriptSrc: ["'self'"],
+          defaultSrc: [
+            "'self'",
+            "data:",
+            "https://fonts.googleapis.com",
+            "https://cdn.jsdelivr.net",
+            "http://cdn.jsdelivr.net",
+            "https://fonts.gstatic.com"
+          ],
+          styleSrc: [
+            "'self'",
+            `'unsafe-inline'`,
+            "https://cdn.jsdelivr.net",
+            "https://fonts.googleapis.com"
+          ],
+          scriptSrc: ["'self'", `'unsafe-inline'`, "https://cdn.jsdelivr.net"],
           reportUri: "/report-violation",
           objectSrc: ["'self'"],
           upgradeInsecureRequests: true

@@ -665,11 +665,15 @@ type Subscription {
 
 type User {
   id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
   firstName: String!
   lastName: String!
   password: String!
   email: String!
   role: Role
+  resetToken: String
+  resetTokenExpiry: Float
   count: Int
   plans(where: PlanWhereInput, orderBy: PlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Plan!]
 }
@@ -687,6 +691,8 @@ input UserCreateInput {
   password: String!
   email: String!
   role: Role
+  resetToken: String
+  resetTokenExpiry: Float
   count: Int
   plans: PlanCreateManyWithoutUserInput
 }
@@ -708,6 +714,8 @@ input UserCreateWithoutPlansInput {
   password: String!
   email: String!
   role: Role
+  resetToken: String
+  resetTokenExpiry: Float
   count: Int
 }
 
@@ -719,6 +727,10 @@ type UserEdge {
 enum UserOrderByInput {
   id_ASC
   id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
   firstName_ASC
   firstName_DESC
   lastName_ASC
@@ -729,17 +741,25 @@ enum UserOrderByInput {
   email_DESC
   role_ASC
   role_DESC
+  resetToken_ASC
+  resetToken_DESC
+  resetTokenExpiry_ASC
+  resetTokenExpiry_DESC
   count_ASC
   count_DESC
 }
 
 type UserPreviousValues {
   id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
   firstName: String!
   lastName: String!
   password: String!
   email: String!
   role: Role
+  resetToken: String
+  resetTokenExpiry: Float
   count: Int
 }
 
@@ -767,6 +787,8 @@ input UserUpdateDataInput {
   password: String
   email: String
   role: Role
+  resetToken: String
+  resetTokenExpiry: Float
   count: Int
   plans: PlanUpdateManyWithoutUserInput
 }
@@ -777,6 +799,8 @@ input UserUpdateInput {
   password: String
   email: String
   role: Role
+  resetToken: String
+  resetTokenExpiry: Float
   count: Int
   plans: PlanUpdateManyWithoutUserInput
 }
@@ -787,6 +811,8 @@ input UserUpdateManyMutationInput {
   password: String
   email: String
   role: Role
+  resetToken: String
+  resetTokenExpiry: Float
   count: Int
 }
 
@@ -810,6 +836,8 @@ input UserUpdateWithoutPlansDataInput {
   password: String
   email: String
   role: Role
+  resetToken: String
+  resetTokenExpiry: Float
   count: Int
 }
 
@@ -838,6 +866,22 @@ input UserWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
   firstName: String
   firstName_not: String
   firstName_in: [String!]
@@ -898,6 +942,28 @@ input UserWhereInput {
   role_not: Role
   role_in: [Role!]
   role_not_in: [Role!]
+  resetToken: String
+  resetToken_not: String
+  resetToken_in: [String!]
+  resetToken_not_in: [String!]
+  resetToken_lt: String
+  resetToken_lte: String
+  resetToken_gt: String
+  resetToken_gte: String
+  resetToken_contains: String
+  resetToken_not_contains: String
+  resetToken_starts_with: String
+  resetToken_not_starts_with: String
+  resetToken_ends_with: String
+  resetToken_not_ends_with: String
+  resetTokenExpiry: Float
+  resetTokenExpiry_not: Float
+  resetTokenExpiry_in: [Float!]
+  resetTokenExpiry_not_in: [Float!]
+  resetTokenExpiry_lt: Float
+  resetTokenExpiry_lte: Float
+  resetTokenExpiry_gt: Float
+  resetTokenExpiry_gte: Float
   count: Int
   count_not: Int
   count_in: [Int!]

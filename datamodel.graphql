@@ -13,11 +13,15 @@ enum PlanType {
 
 type User {
   id: ID! @id
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
   firstName: String!
   lastName: String!
   password: String!
   email: String! @unique
   role: Role @default(value: VISITOR)
+  resetToken: String
+  resetTokenExpiry: Float
   count: Int @default(value: 0)
   plans: [Plan]!
 }

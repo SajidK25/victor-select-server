@@ -1,4 +1,4 @@
-const sgMail = require('@sendgrid/mail')
+const sgMail = require("@sendgrid/mail");
 
 // const transport = nodemailer.createTransport({
 //   host: process.env.MAIL_HOST,
@@ -9,17 +9,51 @@ const sgMail = require('@sendgrid/mail')
 //   }
 // })
 
-const sendAnEmail = ({ email, html, text }) => {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+const sendAnEmail = async ({ email, html, text }) => {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
   const msg = {
     to: { email },
-    from: 'info@victoryselect.com',
-    subject: 'Sending with Twilio SendGrid is Fun',
-    text: 'and easy to do anywhere, even with Node.js',
-    html: '<strong>and easy to do anywhere, even with Node.js</strong>'
-  }
-  sgMail.send(msg)
-}
+    from: "info@victoryselect.com",
+    subject: "Sending with Twilio SendGrid is Fun",
+    text: "and easy to do anywhere, even with Node.js",
+    html: "<strong>and easy to do anywhere, even with Node.js</strong>"
+  };
+  sgMail.send(msg);
+};
+
+const sendMail = async msg => {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  res = await sgMail.send(msg);
+};
+
+const sendResetMail = ({ email, name, url }) => {
+  const msg = {
+    from: {
+      email: "brian@bbaker.net",
+      name: "Victory Select"
+    },
+    reply_to: {
+      email: "info@victoryselect.com",
+      name: "Victory Select"
+    },
+    personalizations: [
+      {
+        to: [
+          {
+            email: email
+          }
+        ],
+        dynamic_template_data: {
+          name: name,
+          url: url
+        },
+        subject: "Reset your password"
+      }
+    ],
+    template_id: "d-025df4ee89e4452889bfea7f1f2a173a"
+  };
+  sendMail(msg);
+};
 
 const makeANiceEmail = text => `
   <div className="email" style="
@@ -33,7 +67,7 @@ const makeANiceEmail = text => `
     <p>${text}</p>
     <p>😘, Brian Baker</p>
   </div>
-`
+`;
 
 // exports.transport = transport
-exports.makeANiceEmail = makeANiceEmail
+module.exports = { sendResetMail };
