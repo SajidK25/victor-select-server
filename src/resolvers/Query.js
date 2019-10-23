@@ -1,5 +1,6 @@
 const { forwardTo } = require("prisma-binding");
 const { hasPermission } = require("../utils");
+const { getCustomerProfile } = require("../authorizenet/Customer");
 
 const ctxUser = ctx => ctx.request.user;
 
@@ -14,6 +15,17 @@ const Query = {
       },
       info
     );
+  },
+  async getAuthnetCustomer(_, args, { req, db }, info) {
+    const user = await db.query.user({ where: { id: args.id } }, info);
+    if (user) {
+      const cust = getCustomerProfile({
+        customerId: user.authCustomerId,
+        paymentId: userargs.id
+      });
+      return cust;
+    }
+    return null;
   },
   users: forwardTo("db"),
   questionnaires: forwardTo("db"),

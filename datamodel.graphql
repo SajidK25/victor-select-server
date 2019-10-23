@@ -22,6 +22,8 @@ type User {
   role: Role @default(value: VISITOR)
   resetToken: String
   resetTokenExpiry: Float
+  authnetCustomerId: String
+  authnetPaymentId: String
   count: Int @default(value: 0)
   plans: [Plan]!
 }

@@ -674,6 +674,8 @@ type User {
   role: Role
   resetToken: String
   resetTokenExpiry: Float
+  authnetCustomerId: String
+  authnetPaymentId: String
   count: Int
   plans(where: PlanWhereInput, orderBy: PlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Plan!]
 }
@@ -693,6 +695,8 @@ input UserCreateInput {
   role: Role
   resetToken: String
   resetTokenExpiry: Float
+  authnetCustomerId: String
+  authnetPaymentId: String
   count: Int
   plans: PlanCreateManyWithoutUserInput
 }
@@ -716,6 +720,8 @@ input UserCreateWithoutPlansInput {
   role: Role
   resetToken: String
   resetTokenExpiry: Float
+  authnetCustomerId: String
+  authnetPaymentId: String
   count: Int
 }
 
@@ -745,6 +751,10 @@ enum UserOrderByInput {
   resetToken_DESC
   resetTokenExpiry_ASC
   resetTokenExpiry_DESC
+  authnetCustomerId_ASC
+  authnetCustomerId_DESC
+  authnetPaymentId_ASC
+  authnetPaymentId_DESC
   count_ASC
   count_DESC
 }
@@ -760,6 +770,8 @@ type UserPreviousValues {
   role: Role
   resetToken: String
   resetTokenExpiry: Float
+  authnetCustomerId: String
+  authnetPaymentId: String
   count: Int
 }
 
@@ -789,6 +801,8 @@ input UserUpdateDataInput {
   role: Role
   resetToken: String
   resetTokenExpiry: Float
+  authnetCustomerId: String
+  authnetPaymentId: String
   count: Int
   plans: PlanUpdateManyWithoutUserInput
 }
@@ -801,6 +815,8 @@ input UserUpdateInput {
   role: Role
   resetToken: String
   resetTokenExpiry: Float
+  authnetCustomerId: String
+  authnetPaymentId: String
   count: Int
   plans: PlanUpdateManyWithoutUserInput
 }
@@ -813,6 +829,8 @@ input UserUpdateManyMutationInput {
   role: Role
   resetToken: String
   resetTokenExpiry: Float
+  authnetCustomerId: String
+  authnetPaymentId: String
   count: Int
 }
 
@@ -838,6 +856,8 @@ input UserUpdateWithoutPlansDataInput {
   role: Role
   resetToken: String
   resetTokenExpiry: Float
+  authnetCustomerId: String
+  authnetPaymentId: String
   count: Int
 }
 
@@ -964,6 +984,34 @@ input UserWhereInput {
   resetTokenExpiry_lte: Float
   resetTokenExpiry_gt: Float
   resetTokenExpiry_gte: Float
+  authnetCustomerId: String
+  authnetCustomerId_not: String
+  authnetCustomerId_in: [String!]
+  authnetCustomerId_not_in: [String!]
+  authnetCustomerId_lt: String
+  authnetCustomerId_lte: String
+  authnetCustomerId_gt: String
+  authnetCustomerId_gte: String
+  authnetCustomerId_contains: String
+  authnetCustomerId_not_contains: String
+  authnetCustomerId_starts_with: String
+  authnetCustomerId_not_starts_with: String
+  authnetCustomerId_ends_with: String
+  authnetCustomerId_not_ends_with: String
+  authnetPaymentId: String
+  authnetPaymentId_not: String
+  authnetPaymentId_in: [String!]
+  authnetPaymentId_not_in: [String!]
+  authnetPaymentId_lt: String
+  authnetPaymentId_lte: String
+  authnetPaymentId_gt: String
+  authnetPaymentId_gte: String
+  authnetPaymentId_contains: String
+  authnetPaymentId_not_contains: String
+  authnetPaymentId_starts_with: String
+  authnetPaymentId_not_starts_with: String
+  authnetPaymentId_ends_with: String
+  authnetPaymentId_not_ends_with: String
   count: Int
   count_not: Int
   count_in: [Int!]

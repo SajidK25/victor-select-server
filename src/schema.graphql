@@ -26,12 +26,20 @@ type Mutation {
   logout: Boolean!
   invalidateTokens: Boolean!
   createQuestionnaire(details: Json!): Questionnaire
+  createAuthnetCustomer(
+    address: String!
+    city: String!
+    state: String!
+    zipCode: String!
+    telephone: String!
+  ): Boolean!
 }
 
 type Query {
   me: User @isAuthenticated
   users: [User]!
   userExists(email: String!): Boolean!
+  getAuthnetCustomer(id: String!): AuthnetCustomer
   hello: SuccessMessage
   questionnaires: [Questionnaire]!
 }
@@ -43,6 +51,7 @@ type User {
   email: String!
   count: Int
   role: Role
+  authnetCustomerId: String
   resetToken: String
   resetTokenExpiry: Float
 }
@@ -51,4 +60,9 @@ type Questionnaire {
   id: ID!
   user: User!
   details: Json!
+}
+
+type AuthnetCustomer {
+  id: String!
+  firstName: String!
 }

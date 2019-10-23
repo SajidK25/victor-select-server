@@ -1,9 +1,9 @@
 const bcrypt = require("bcryptjs");
-const { sign } = require("jsonwebtoken");
 const { randomBytes } = require("crypto");
 const { promisify } = require("util");
 const { sendResetMail } = require("../mail");
 const { createTokens } = require("../auth");
+const { createCustomerProfile } = require("../authorizenet/Customer");
 
 async function createPrismaUser(ctx, idToken) {
   const user = await ctx.db.mutation.createUser({
@@ -171,6 +171,30 @@ const Mutation = {
     );
     console.log(item);
     return item;
+  },
+  async createAuthnetCustomer(_, args, { req, db }, info) {
+    console.log("ARGS:", args);
+    if (!req.userId) {
+      throw new Error("You must be logged in to do this");
+    }
+    const user = await db.query.user({ where: { id: req.userId } });
+    if (!user) {
+      throw new Error(`Can't find user ID: ${req.userId}`);
+    }
+    var authnetId;
+    try {
+      authnetCustomerId = await createCustomerProfile({ ...args, ...user });
+    } catch (err) {
+      console.log("Error:", err);
+      return false;
+    }
+    // update user
+    await db.mutation.updateUser({
+      data: { authnetCustomerId },
+      where: { id: req.userId }
+    });
+
+    return true;
   }
 };
 
