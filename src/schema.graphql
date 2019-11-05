@@ -41,6 +41,7 @@ type Query {
   userExists(email: String!): Boolean!
   getAuthnetCustomer(id: String!): AuthnetCustomer
   hello: SuccessMessage
+  validZipCode(zipcode: String!): Boolean!
   questionnaires: [Questionnaire]!
 }
 

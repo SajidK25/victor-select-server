@@ -1,11 +1,13 @@
 const { forwardTo } = require("prisma-binding");
 const { hasPermission } = require("../utils");
+const { validateZipcode } = require("../helpers/validateZipcode");
 const { getCustomerProfile } = require("../authorizenet/Customer");
 
 const ctxUser = ctx => ctx.request.user;
 
 const Query = {
   me(_, __, { req, db }, info) {
+    console.log("Info", info);
     if (!req.userId) {
       return null;
     }
@@ -26,6 +28,9 @@ const Query = {
       return cust;
     }
     return null;
+  },
+  async validZipCode(_, args) {
+    return validateZipcode(args.zipcode);
   },
   users: forwardTo("db"),
   questionnaires: forwardTo("db"),

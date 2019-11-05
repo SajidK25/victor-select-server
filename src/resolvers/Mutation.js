@@ -5,6 +5,12 @@ const { sendResetMail } = require("../mail");
 const { createTokens } = require("../auth");
 const { createCustomerProfile } = require("../authorizenet/Customer");
 
+const setUser = (user, ctx) => {
+  const tokens = createTokens(user);
+  ctx.res.cookie("refresh-token", tokens.refreshToken, { httpOnly: true });
+  ctx.res.cookie("access-token", tokens.accessToken, { httpOnly: true });
+};
+
 async function createPrismaUser(ctx, idToken) {
   const user = await ctx.db.mutation.createUser({
     data: {
@@ -26,12 +32,13 @@ const Mutation = {
     res.clearCookie("refresh-token");
     return true;
   },
-  register: async (_, args, { db }, info) => {
+  register: async (_, args, ctx, info) => {
     args.email = args.email.toLowerCase();
-    const user = await db.query.user({ where: { email: args.email } });
+    const user = await ctx.db.query.user({ where: { email: args.email } });
     console.log("Register User:", user);
     if (user) {
       if (user.role === "VISITOR") {
+        setUser(user, ctx);
         return { message: "OK" };
       }
 
@@ -43,7 +50,7 @@ const Mutation = {
     const hashedPassword = await bcrypt.hash(args.password, 10);
     console.log(args.email);
     try {
-      const user = await db.mutation.createUser({
+      const user = await ctx.db.mutation.createUser({
         data: {
           ...args,
           password: hashedPassword
@@ -52,6 +59,8 @@ const Mutation = {
     } catch (e) {
       console.log(e);
     }
+
+    setUser(user, ctx);
 
     return { message: "OK" };
   },
@@ -69,9 +78,10 @@ const Mutation = {
     }
 
     // Set the cookies with the token...
-    const tokens = createTokens(user);
-    ctx.res.cookie("refresh-token", tokens.refreshToken, { httpOnly: true });
-    ctx.res.cookie("access-token", tokens.accessToken, { httpOnly: true });
+    setUser(user, ctx);
+    //    const tokens = createTokens(user);
+    //    ctx.res.cookie("refresh-token", tokens.refreshToken, { httpOnly: true });
+    //    ctx.res.cookie("access-token", tokens.accessToken, { httpOnly: true });
 
     return user;
   },
@@ -126,9 +136,10 @@ const Mutation = {
     });
     // 6. Generate JWT
     // Set the cookies with the token...
-    const tokens = createTokens(updatedUser);
-    ctx.res.cookie("refresh-token", tokens.refreshToken, { httpOnly: true });
-    ctx.res.cookie("access-token", tokens.accessToken, { httpOnly: true });
+    setUser(updatedUser, ctx);
+    //    const tokens = createTokens(updatedUser);
+    //    ctx.res.cookie("refresh-token", tokens.refreshToken, { httpOnly: true });
+    //    ctx.res.cookie("access-token", tokens.accessToken, { httpOnly: true });
 
     // 8. return the new user
     return updatedUser;
