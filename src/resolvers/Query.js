@@ -7,7 +7,6 @@ const ctxUser = ctx => ctx.request.user;
 
 const Query = {
   me(_, __, { req, db }, info) {
-    console.log("Info", info);
     if (!req.userId) {
       return null;
     }

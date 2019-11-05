@@ -38,7 +38,7 @@ const Mutation = {
     console.log("Register User:", user);
     if (user) {
       if (user.role === "VISITOR") {
-        setUser(user, ctx);
+        //     setUser(user, ctx);
         return { message: "OK" };
       }
 
@@ -60,7 +60,7 @@ const Mutation = {
       console.log(e);
     }
 
-    setUser(user, ctx);
+    //  setUser(user, ctx);
 
     return { message: "OK" };
   },
