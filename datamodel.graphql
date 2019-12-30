@@ -5,51 +5,102 @@ enum Role {
   VISITOR
 }
 
+enum VisitStatus {
+  PENDING
+  APPROVED
+  DENIED
+  TEMPORARY
+}
+
+enum PlanStatus {
+  PENDING
+  ACTIVE
+  ONDEMAND
+  CLOSED
+  DENIED
+}
+
 enum PlanType {
   ED
   HAIR
   SLEEP
+  JOY
+  ALLERGY
+  WEIGHT
 }
 
 type User {
   id: ID! @id
-  updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  role: Role @default(value: VISITOR)
   firstName: String!
   lastName: String!
   password: String!
   email: String! @unique
-  role: Role @default(value: VISITOR)
+  currentAddress: String
+  addresses: [Address]!
+  currentCard: String
+  creditcards: [CreditCard]!
+  photoId: String
+  plans: [Plan]!
+  visits: [Visit]!
   resetToken: String
   resetTokenExpiry: Float
-  authnetCustomerId: String
-  authnetPaymentId: String
   count: Int @default(value: 0)
-  plans: [Plan]!
+}
+
+type Visit {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  user: User!
+  type: PlanType!
+  questionnaire: Json!
+  status: VisitStatus!
+}
+
+type Address {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  user: User!
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  telephone: String
 }
 
 type Plan {
   id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  status: PlanStatus! @default(value: PENDING)
   user: User!
+  visit: Visit!
   type: PlanType!
+  drugName: String!
+  strength: String
+  timesPerMonth: Int!
+  addonName: String
   startDate: DateTime!
   expireDate: DateTime!
-  nextDelivery: DateTime
-  refillsRemaining: Int!
   totalRefills: Int!
-  updatedAt: DateTime! @updatedAt
+  refillsRemaining: Int!
+  nextDelivery: DateTime
+  shippingInterval: Int!
+  amountDue: Int!
+}
+
+type CreditCard {
+  id: ID! @id
   createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  user: User!
   ccToken: String!
-  shippingAddress: ShippingAddress!
-}
-
-type ShippingAddress {
-  id: ID! @id
-  user: User!
-}
-
-type Questionnaire {
-  id: ID! @id
-  user: User!
-  details: Json!
+  ccType: String!
+  ccNumber: String!
+  ccExpire: String!
 }

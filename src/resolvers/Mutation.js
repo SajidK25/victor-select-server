@@ -3,6 +3,7 @@ const { randomBytes } = require("crypto");
 const { promisify } = require("util");
 const { sendResetMail } = require("../mail");
 const { createTokens } = require("../auth");
+const { saveCreditCard } = require("../usaepay/usaepay");
 const { createCustomerProfile } = require("../authorizenet/Customer");
 
 const setUser = (user, ctx) => {
@@ -23,6 +24,18 @@ async function createPrismaUser(ctx, idToken) {
   return user;
 }
 
+const validateUser = async (userId, db) => {
+  if (!userId) {
+    throw new Error("You must be logged in to do this");
+  }
+  const user = await db.query.user({ where: { id: userId } });
+  if (!user) {
+    throw new Error(`Can't find user ID: ${userId}`);
+  }
+
+  return user;
+};
+
 const ctxUser = ctx => ctx.request.user;
 
 const Mutation = {
@@ -36,31 +49,32 @@ const Mutation = {
     args.email = args.email.toLowerCase();
     const user = await ctx.db.query.user({ where: { email: args.email } });
     console.log("Register User:", user);
+    const hashedPassword = await bcrypt.hash(args.password, 10);
     if (user) {
-      if (user.role === "VISITOR") {
-        //     setUser(user, ctx);
-        return { message: "OK" };
-      }
-
       if (user.role === "PATIENT") {
         return { message: "EXISTS" };
       }
+      if (user.role === "VISITOR") {
+        // Update information
+        // copy the updates
+        const updateUser = await ctx.db.mutation.updateUser({
+          where: { email: args.email },
+          data: { ...args, password: hashedPassword }
+        });
+        console.log("UpdateUser:", updateUser);
+        setUser(updateUser, ctx);
+        return { message: "OK" };
+      }
     }
 
-    const hashedPassword = await bcrypt.hash(args.password, 10);
     console.log(args.email);
-    try {
-      const user = await ctx.db.mutation.createUser({
-        data: {
-          ...args,
-          password: hashedPassword
-        }
-      });
-    } catch (e) {
-      console.log(e);
-    }
-
-    //  setUser(user, ctx);
+    const newUser = await ctx.db.mutation.createUser({
+      data: {
+        ...args,
+        password: hashedPassword
+      }
+    });
+    setUser(newUser, ctx);
 
     return { message: "OK" };
   },
@@ -163,50 +177,65 @@ const Mutation = {
 
     return true;
   },
-  async createQuestionnaire(_, args, { req, db }, info) {
-    if (!req.userId) {
-      throw new Error("You must be logged in to do this");
-    }
-    const item = await db.mutation.createQuestionnaire(
-      {
+  async saveCard(_, args, { req, db }) {
+    await validateUser(req.userId, db);
+    const { input } = args;
+    const savedCard = await saveCreditCard(input);
+    if (savedCard) {
+      const newCC = await db.mutation.createCreditCard({
         data: {
+          ccType: savedCard.type,
+          ccToken: savedCard.key,
+          ccNumber: savedCard.cardnumber,
+          ccExpire: cardInput.expiration,
           user: {
             connect: {
               id: req.userId
             }
-          },
-          ...args
+          }
         }
-      },
-      info
-    );
-    console.log(item);
-    return item;
+      });
+      await db.mutation.updateUser({
+        where: { id: req.userId },
+        data: {
+          currentCard: newCC.id
+        }
+      });
+      console.log("NewCC", newCC);
+      return newCC;
+    }
   },
-  async createAuthnetCustomer(_, args, { req, db }, info) {
-    console.log("ARGS:", args);
-    if (!req.userId) {
-      throw new Error("You must be logged in to do this");
-    }
-    const user = await db.query.user({ where: { id: req.userId } });
-    if (!user) {
-      throw new Error(`Can't find user ID: ${req.userId}`);
-    }
-    var authnetId;
-    try {
-      authnetCustomerId = await createCustomerProfile({ ...args, ...user });
-    } catch (err) {
-      console.log("Error:", err);
-      return false;
-    }
-    // update user
-    await db.mutation.updateUser({
-      data: { authnetCustomerId },
-      where: { id: req.userId }
+  async saveAddress(_, args, { req, db }) {
+    await validateUser(req.userId, db);
+    const { input } = args;
+    console.log("SaveAddress:", input);
+    const newAddress = await db.mutation.createAddress({
+      data: {
+        ...input,
+        user: {
+          connect: {
+            id: req.userId
+          }
+        }
+      }
     });
-
-    return true;
+    await db.mutation.updateUser({
+      where: { id: req.userId },
+      data: {
+        currentAddress: newAddress.id
+      }
+    });
+    return newAddress;
   }
 };
 
 module.exports = { Mutation };
+
+//  createVisit(
+//    questionaire: Json!
+//    addressOne: String!
+//    addressTwo: String
+//    city: String!
+//    state: String!
+//    zipcode: String!
+//    telephone: String!

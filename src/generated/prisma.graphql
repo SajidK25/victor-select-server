@@ -1,12 +1,423 @@
+type Address {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  user: User!
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  telephone: String
+}
+
+type AddressConnection {
+  pageInfo: PageInfo!
+  edges: [AddressEdge]!
+  aggregate: AggregateAddress!
+}
+
+input AddressCreateInput {
+  id: ID
+  user: UserCreateOneWithoutAddressesInput!
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  telephone: String
+}
+
+input AddressCreateManyWithoutUserInput {
+  create: [AddressCreateWithoutUserInput!]
+  connect: [AddressWhereUniqueInput!]
+}
+
+input AddressCreateWithoutUserInput {
+  id: ID
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  telephone: String
+}
+
+type AddressEdge {
+  node: Address!
+  cursor: String!
+}
+
+enum AddressOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  addressOne_ASC
+  addressOne_DESC
+  addressTwo_ASC
+  addressTwo_DESC
+  city_ASC
+  city_DESC
+  state_ASC
+  state_DESC
+  zipcode_ASC
+  zipcode_DESC
+  telephone_ASC
+  telephone_DESC
+}
+
+type AddressPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  telephone: String
+}
+
+input AddressScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  addressOne: String
+  addressOne_not: String
+  addressOne_in: [String!]
+  addressOne_not_in: [String!]
+  addressOne_lt: String
+  addressOne_lte: String
+  addressOne_gt: String
+  addressOne_gte: String
+  addressOne_contains: String
+  addressOne_not_contains: String
+  addressOne_starts_with: String
+  addressOne_not_starts_with: String
+  addressOne_ends_with: String
+  addressOne_not_ends_with: String
+  addressTwo: String
+  addressTwo_not: String
+  addressTwo_in: [String!]
+  addressTwo_not_in: [String!]
+  addressTwo_lt: String
+  addressTwo_lte: String
+  addressTwo_gt: String
+  addressTwo_gte: String
+  addressTwo_contains: String
+  addressTwo_not_contains: String
+  addressTwo_starts_with: String
+  addressTwo_not_starts_with: String
+  addressTwo_ends_with: String
+  addressTwo_not_ends_with: String
+  city: String
+  city_not: String
+  city_in: [String!]
+  city_not_in: [String!]
+  city_lt: String
+  city_lte: String
+  city_gt: String
+  city_gte: String
+  city_contains: String
+  city_not_contains: String
+  city_starts_with: String
+  city_not_starts_with: String
+  city_ends_with: String
+  city_not_ends_with: String
+  state: String
+  state_not: String
+  state_in: [String!]
+  state_not_in: [String!]
+  state_lt: String
+  state_lte: String
+  state_gt: String
+  state_gte: String
+  state_contains: String
+  state_not_contains: String
+  state_starts_with: String
+  state_not_starts_with: String
+  state_ends_with: String
+  state_not_ends_with: String
+  zipcode: String
+  zipcode_not: String
+  zipcode_in: [String!]
+  zipcode_not_in: [String!]
+  zipcode_lt: String
+  zipcode_lte: String
+  zipcode_gt: String
+  zipcode_gte: String
+  zipcode_contains: String
+  zipcode_not_contains: String
+  zipcode_starts_with: String
+  zipcode_not_starts_with: String
+  zipcode_ends_with: String
+  zipcode_not_ends_with: String
+  telephone: String
+  telephone_not: String
+  telephone_in: [String!]
+  telephone_not_in: [String!]
+  telephone_lt: String
+  telephone_lte: String
+  telephone_gt: String
+  telephone_gte: String
+  telephone_contains: String
+  telephone_not_contains: String
+  telephone_starts_with: String
+  telephone_not_starts_with: String
+  telephone_ends_with: String
+  telephone_not_ends_with: String
+  AND: [AddressScalarWhereInput!]
+  OR: [AddressScalarWhereInput!]
+  NOT: [AddressScalarWhereInput!]
+}
+
+type AddressSubscriptionPayload {
+  mutation: MutationType!
+  node: Address
+  updatedFields: [String!]
+  previousValues: AddressPreviousValues
+}
+
+input AddressSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: AddressWhereInput
+  AND: [AddressSubscriptionWhereInput!]
+  OR: [AddressSubscriptionWhereInput!]
+  NOT: [AddressSubscriptionWhereInput!]
+}
+
+input AddressUpdateInput {
+  user: UserUpdateOneRequiredWithoutAddressesInput
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  telephone: String
+}
+
+input AddressUpdateManyDataInput {
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  telephone: String
+}
+
+input AddressUpdateManyMutationInput {
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  telephone: String
+}
+
+input AddressUpdateManyWithoutUserInput {
+  create: [AddressCreateWithoutUserInput!]
+  delete: [AddressWhereUniqueInput!]
+  connect: [AddressWhereUniqueInput!]
+  set: [AddressWhereUniqueInput!]
+  disconnect: [AddressWhereUniqueInput!]
+  update: [AddressUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [AddressUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [AddressScalarWhereInput!]
+  updateMany: [AddressUpdateManyWithWhereNestedInput!]
+}
+
+input AddressUpdateManyWithWhereNestedInput {
+  where: AddressScalarWhereInput!
+  data: AddressUpdateManyDataInput!
+}
+
+input AddressUpdateWithoutUserDataInput {
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  telephone: String
+}
+
+input AddressUpdateWithWhereUniqueWithoutUserInput {
+  where: AddressWhereUniqueInput!
+  data: AddressUpdateWithoutUserDataInput!
+}
+
+input AddressUpsertWithWhereUniqueWithoutUserInput {
+  where: AddressWhereUniqueInput!
+  update: AddressUpdateWithoutUserDataInput!
+  create: AddressCreateWithoutUserInput!
+}
+
+input AddressWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  user: UserWhereInput
+  addressOne: String
+  addressOne_not: String
+  addressOne_in: [String!]
+  addressOne_not_in: [String!]
+  addressOne_lt: String
+  addressOne_lte: String
+  addressOne_gt: String
+  addressOne_gte: String
+  addressOne_contains: String
+  addressOne_not_contains: String
+  addressOne_starts_with: String
+  addressOne_not_starts_with: String
+  addressOne_ends_with: String
+  addressOne_not_ends_with: String
+  addressTwo: String
+  addressTwo_not: String
+  addressTwo_in: [String!]
+  addressTwo_not_in: [String!]
+  addressTwo_lt: String
+  addressTwo_lte: String
+  addressTwo_gt: String
+  addressTwo_gte: String
+  addressTwo_contains: String
+  addressTwo_not_contains: String
+  addressTwo_starts_with: String
+  addressTwo_not_starts_with: String
+  addressTwo_ends_with: String
+  addressTwo_not_ends_with: String
+  city: String
+  city_not: String
+  city_in: [String!]
+  city_not_in: [String!]
+  city_lt: String
+  city_lte: String
+  city_gt: String
+  city_gte: String
+  city_contains: String
+  city_not_contains: String
+  city_starts_with: String
+  city_not_starts_with: String
+  city_ends_with: String
+  city_not_ends_with: String
+  state: String
+  state_not: String
+  state_in: [String!]
+  state_not_in: [String!]
+  state_lt: String
+  state_lte: String
+  state_gt: String
+  state_gte: String
+  state_contains: String
+  state_not_contains: String
+  state_starts_with: String
+  state_not_starts_with: String
+  state_ends_with: String
+  state_not_ends_with: String
+  zipcode: String
+  zipcode_not: String
+  zipcode_in: [String!]
+  zipcode_not_in: [String!]
+  zipcode_lt: String
+  zipcode_lte: String
+  zipcode_gt: String
+  zipcode_gte: String
+  zipcode_contains: String
+  zipcode_not_contains: String
+  zipcode_starts_with: String
+  zipcode_not_starts_with: String
+  zipcode_ends_with: String
+  zipcode_not_ends_with: String
+  telephone: String
+  telephone_not: String
+  telephone_in: [String!]
+  telephone_not_in: [String!]
+  telephone_lt: String
+  telephone_lte: String
+  telephone_gt: String
+  telephone_gte: String
+  telephone_contains: String
+  telephone_not_contains: String
+  telephone_starts_with: String
+  telephone_not_starts_with: String
+  telephone_ends_with: String
+  telephone_not_ends_with: String
+  AND: [AddressWhereInput!]
+  OR: [AddressWhereInput!]
+  NOT: [AddressWhereInput!]
+}
+
+input AddressWhereUniqueInput {
+  id: ID
+}
+
+type AggregateAddress {
+  count: Int!
+}
+
+type AggregateCreditCard {
+  count: Int!
+}
+
 type AggregatePlan {
-  count: Int!
-}
-
-type AggregateQuestionnaire {
-  count: Int!
-}
-
-type AggregateShippingAddress {
   count: Int!
 }
 
@@ -14,8 +425,347 @@ type AggregateUser {
   count: Int!
 }
 
+type AggregateVisit {
+  count: Int!
+}
+
 type BatchPayload {
   count: Long!
+}
+
+type CreditCard {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  user: User!
+  ccToken: String!
+  ccType: String!
+  ccNumber: String!
+  ccExpire: String!
+}
+
+type CreditCardConnection {
+  pageInfo: PageInfo!
+  edges: [CreditCardEdge]!
+  aggregate: AggregateCreditCard!
+}
+
+input CreditCardCreateInput {
+  id: ID
+  user: UserCreateOneWithoutCreditcardsInput!
+  ccToken: String!
+  ccType: String!
+  ccNumber: String!
+  ccExpire: String!
+}
+
+input CreditCardCreateManyWithoutUserInput {
+  create: [CreditCardCreateWithoutUserInput!]
+  connect: [CreditCardWhereUniqueInput!]
+}
+
+input CreditCardCreateWithoutUserInput {
+  id: ID
+  ccToken: String!
+  ccType: String!
+  ccNumber: String!
+  ccExpire: String!
+}
+
+type CreditCardEdge {
+  node: CreditCard!
+  cursor: String!
+}
+
+enum CreditCardOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  ccToken_ASC
+  ccToken_DESC
+  ccType_ASC
+  ccType_DESC
+  ccNumber_ASC
+  ccNumber_DESC
+  ccExpire_ASC
+  ccExpire_DESC
+}
+
+type CreditCardPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  ccToken: String!
+  ccType: String!
+  ccNumber: String!
+  ccExpire: String!
+}
+
+input CreditCardScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  ccToken: String
+  ccToken_not: String
+  ccToken_in: [String!]
+  ccToken_not_in: [String!]
+  ccToken_lt: String
+  ccToken_lte: String
+  ccToken_gt: String
+  ccToken_gte: String
+  ccToken_contains: String
+  ccToken_not_contains: String
+  ccToken_starts_with: String
+  ccToken_not_starts_with: String
+  ccToken_ends_with: String
+  ccToken_not_ends_with: String
+  ccType: String
+  ccType_not: String
+  ccType_in: [String!]
+  ccType_not_in: [String!]
+  ccType_lt: String
+  ccType_lte: String
+  ccType_gt: String
+  ccType_gte: String
+  ccType_contains: String
+  ccType_not_contains: String
+  ccType_starts_with: String
+  ccType_not_starts_with: String
+  ccType_ends_with: String
+  ccType_not_ends_with: String
+  ccNumber: String
+  ccNumber_not: String
+  ccNumber_in: [String!]
+  ccNumber_not_in: [String!]
+  ccNumber_lt: String
+  ccNumber_lte: String
+  ccNumber_gt: String
+  ccNumber_gte: String
+  ccNumber_contains: String
+  ccNumber_not_contains: String
+  ccNumber_starts_with: String
+  ccNumber_not_starts_with: String
+  ccNumber_ends_with: String
+  ccNumber_not_ends_with: String
+  ccExpire: String
+  ccExpire_not: String
+  ccExpire_in: [String!]
+  ccExpire_not_in: [String!]
+  ccExpire_lt: String
+  ccExpire_lte: String
+  ccExpire_gt: String
+  ccExpire_gte: String
+  ccExpire_contains: String
+  ccExpire_not_contains: String
+  ccExpire_starts_with: String
+  ccExpire_not_starts_with: String
+  ccExpire_ends_with: String
+  ccExpire_not_ends_with: String
+  AND: [CreditCardScalarWhereInput!]
+  OR: [CreditCardScalarWhereInput!]
+  NOT: [CreditCardScalarWhereInput!]
+}
+
+type CreditCardSubscriptionPayload {
+  mutation: MutationType!
+  node: CreditCard
+  updatedFields: [String!]
+  previousValues: CreditCardPreviousValues
+}
+
+input CreditCardSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: CreditCardWhereInput
+  AND: [CreditCardSubscriptionWhereInput!]
+  OR: [CreditCardSubscriptionWhereInput!]
+  NOT: [CreditCardSubscriptionWhereInput!]
+}
+
+input CreditCardUpdateInput {
+  user: UserUpdateOneRequiredWithoutCreditcardsInput
+  ccToken: String
+  ccType: String
+  ccNumber: String
+  ccExpire: String
+}
+
+input CreditCardUpdateManyDataInput {
+  ccToken: String
+  ccType: String
+  ccNumber: String
+  ccExpire: String
+}
+
+input CreditCardUpdateManyMutationInput {
+  ccToken: String
+  ccType: String
+  ccNumber: String
+  ccExpire: String
+}
+
+input CreditCardUpdateManyWithoutUserInput {
+  create: [CreditCardCreateWithoutUserInput!]
+  delete: [CreditCardWhereUniqueInput!]
+  connect: [CreditCardWhereUniqueInput!]
+  set: [CreditCardWhereUniqueInput!]
+  disconnect: [CreditCardWhereUniqueInput!]
+  update: [CreditCardUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [CreditCardUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [CreditCardScalarWhereInput!]
+  updateMany: [CreditCardUpdateManyWithWhereNestedInput!]
+}
+
+input CreditCardUpdateManyWithWhereNestedInput {
+  where: CreditCardScalarWhereInput!
+  data: CreditCardUpdateManyDataInput!
+}
+
+input CreditCardUpdateWithoutUserDataInput {
+  ccToken: String
+  ccType: String
+  ccNumber: String
+  ccExpire: String
+}
+
+input CreditCardUpdateWithWhereUniqueWithoutUserInput {
+  where: CreditCardWhereUniqueInput!
+  data: CreditCardUpdateWithoutUserDataInput!
+}
+
+input CreditCardUpsertWithWhereUniqueWithoutUserInput {
+  where: CreditCardWhereUniqueInput!
+  update: CreditCardUpdateWithoutUserDataInput!
+  create: CreditCardCreateWithoutUserInput!
+}
+
+input CreditCardWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  user: UserWhereInput
+  ccToken: String
+  ccToken_not: String
+  ccToken_in: [String!]
+  ccToken_not_in: [String!]
+  ccToken_lt: String
+  ccToken_lte: String
+  ccToken_gt: String
+  ccToken_gte: String
+  ccToken_contains: String
+  ccToken_not_contains: String
+  ccToken_starts_with: String
+  ccToken_not_starts_with: String
+  ccToken_ends_with: String
+  ccToken_not_ends_with: String
+  ccType: String
+  ccType_not: String
+  ccType_in: [String!]
+  ccType_not_in: [String!]
+  ccType_lt: String
+  ccType_lte: String
+  ccType_gt: String
+  ccType_gte: String
+  ccType_contains: String
+  ccType_not_contains: String
+  ccType_starts_with: String
+  ccType_not_starts_with: String
+  ccType_ends_with: String
+  ccType_not_ends_with: String
+  ccNumber: String
+  ccNumber_not: String
+  ccNumber_in: [String!]
+  ccNumber_not_in: [String!]
+  ccNumber_lt: String
+  ccNumber_lte: String
+  ccNumber_gt: String
+  ccNumber_gte: String
+  ccNumber_contains: String
+  ccNumber_not_contains: String
+  ccNumber_starts_with: String
+  ccNumber_not_starts_with: String
+  ccNumber_ends_with: String
+  ccNumber_not_ends_with: String
+  ccExpire: String
+  ccExpire_not: String
+  ccExpire_in: [String!]
+  ccExpire_not_in: [String!]
+  ccExpire_lt: String
+  ccExpire_lte: String
+  ccExpire_gt: String
+  ccExpire_gte: String
+  ccExpire_contains: String
+  ccExpire_not_contains: String
+  ccExpire_starts_with: String
+  ccExpire_not_starts_with: String
+  ccExpire_ends_with: String
+  ccExpire_not_ends_with: String
+  AND: [CreditCardWhereInput!]
+  OR: [CreditCardWhereInput!]
+  NOT: [CreditCardWhereInput!]
+}
+
+input CreditCardWhereUniqueInput {
+  id: ID
 }
 
 scalar DateTime
@@ -25,29 +775,36 @@ scalar Json
 scalar Long
 
 type Mutation {
+  createAddress(data: AddressCreateInput!): Address!
+  updateAddress(data: AddressUpdateInput!, where: AddressWhereUniqueInput!): Address
+  updateManyAddresses(data: AddressUpdateManyMutationInput!, where: AddressWhereInput): BatchPayload!
+  upsertAddress(where: AddressWhereUniqueInput!, create: AddressCreateInput!, update: AddressUpdateInput!): Address!
+  deleteAddress(where: AddressWhereUniqueInput!): Address
+  deleteManyAddresses(where: AddressWhereInput): BatchPayload!
+  createCreditCard(data: CreditCardCreateInput!): CreditCard!
+  updateCreditCard(data: CreditCardUpdateInput!, where: CreditCardWhereUniqueInput!): CreditCard
+  updateManyCreditCards(data: CreditCardUpdateManyMutationInput!, where: CreditCardWhereInput): BatchPayload!
+  upsertCreditCard(where: CreditCardWhereUniqueInput!, create: CreditCardCreateInput!, update: CreditCardUpdateInput!): CreditCard!
+  deleteCreditCard(where: CreditCardWhereUniqueInput!): CreditCard
+  deleteManyCreditCards(where: CreditCardWhereInput): BatchPayload!
   createPlan(data: PlanCreateInput!): Plan!
   updatePlan(data: PlanUpdateInput!, where: PlanWhereUniqueInput!): Plan
   updateManyPlans(data: PlanUpdateManyMutationInput!, where: PlanWhereInput): BatchPayload!
   upsertPlan(where: PlanWhereUniqueInput!, create: PlanCreateInput!, update: PlanUpdateInput!): Plan!
   deletePlan(where: PlanWhereUniqueInput!): Plan
   deleteManyPlans(where: PlanWhereInput): BatchPayload!
-  createQuestionnaire(data: QuestionnaireCreateInput!): Questionnaire!
-  updateQuestionnaire(data: QuestionnaireUpdateInput!, where: QuestionnaireWhereUniqueInput!): Questionnaire
-  updateManyQuestionnaires(data: QuestionnaireUpdateManyMutationInput!, where: QuestionnaireWhereInput): BatchPayload!
-  upsertQuestionnaire(where: QuestionnaireWhereUniqueInput!, create: QuestionnaireCreateInput!, update: QuestionnaireUpdateInput!): Questionnaire!
-  deleteQuestionnaire(where: QuestionnaireWhereUniqueInput!): Questionnaire
-  deleteManyQuestionnaires(where: QuestionnaireWhereInput): BatchPayload!
-  createShippingAddress(data: ShippingAddressCreateInput!): ShippingAddress!
-  updateShippingAddress(data: ShippingAddressUpdateInput!, where: ShippingAddressWhereUniqueInput!): ShippingAddress
-  upsertShippingAddress(where: ShippingAddressWhereUniqueInput!, create: ShippingAddressCreateInput!, update: ShippingAddressUpdateInput!): ShippingAddress!
-  deleteShippingAddress(where: ShippingAddressWhereUniqueInput!): ShippingAddress
-  deleteManyShippingAddresses(where: ShippingAddressWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   deleteUser(where: UserWhereUniqueInput!): User
   deleteManyUsers(where: UserWhereInput): BatchPayload!
+  createVisit(data: VisitCreateInput!): Visit!
+  updateVisit(data: VisitUpdateInput!, where: VisitWhereUniqueInput!): Visit
+  updateManyVisits(data: VisitUpdateManyMutationInput!, where: VisitWhereInput): BatchPayload!
+  upsertVisit(where: VisitWhereUniqueInput!, create: VisitCreateInput!, update: VisitUpdateInput!): Visit!
+  deleteVisit(where: VisitWhereUniqueInput!): Visit
+  deleteManyVisits(where: VisitWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -69,17 +826,23 @@ type PageInfo {
 
 type Plan {
   id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  status: PlanStatus!
   user: User!
+  visit: Visit!
   type: PlanType!
+  drugName: String!
+  strength: String
+  timesPerMonth: Int!
+  addonName: String
   startDate: DateTime!
   expireDate: DateTime!
-  nextDelivery: DateTime
-  refillsRemaining: Int!
   totalRefills: Int!
-  updatedAt: DateTime!
-  createdAt: DateTime!
-  ccToken: String!
-  shippingAddress: ShippingAddress!
+  refillsRemaining: Int!
+  nextDelivery: DateTime
+  shippingInterval: Int!
+  amountDue: Int!
 }
 
 type PlanConnection {
@@ -90,15 +853,21 @@ type PlanConnection {
 
 input PlanCreateInput {
   id: ID
+  status: PlanStatus
   user: UserCreateOneWithoutPlansInput!
+  visit: VisitCreateOneInput!
   type: PlanType!
+  drugName: String!
+  strength: String
+  timesPerMonth: Int!
+  addonName: String
   startDate: DateTime!
   expireDate: DateTime!
-  nextDelivery: DateTime
-  refillsRemaining: Int!
   totalRefills: Int!
-  ccToken: String!
-  shippingAddress: ShippingAddressCreateOneInput!
+  refillsRemaining: Int!
+  nextDelivery: DateTime
+  shippingInterval: Int!
+  amountDue: Int!
 }
 
 input PlanCreateManyWithoutUserInput {
@@ -108,14 +877,20 @@ input PlanCreateManyWithoutUserInput {
 
 input PlanCreateWithoutUserInput {
   id: ID
+  status: PlanStatus
+  visit: VisitCreateOneInput!
   type: PlanType!
+  drugName: String!
+  strength: String
+  timesPerMonth: Int!
+  addonName: String
   startDate: DateTime!
   expireDate: DateTime!
-  nextDelivery: DateTime
-  refillsRemaining: Int!
   totalRefills: Int!
-  ccToken: String!
-  shippingAddress: ShippingAddressCreateOneInput!
+  refillsRemaining: Int!
+  nextDelivery: DateTime
+  shippingInterval: Int!
+  amountDue: Int!
 }
 
 type PlanEdge {
@@ -126,37 +901,55 @@ type PlanEdge {
 enum PlanOrderByInput {
   id_ASC
   id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  status_ASC
+  status_DESC
   type_ASC
   type_DESC
+  drugName_ASC
+  drugName_DESC
+  strength_ASC
+  strength_DESC
+  timesPerMonth_ASC
+  timesPerMonth_DESC
+  addonName_ASC
+  addonName_DESC
   startDate_ASC
   startDate_DESC
   expireDate_ASC
   expireDate_DESC
-  nextDelivery_ASC
-  nextDelivery_DESC
-  refillsRemaining_ASC
-  refillsRemaining_DESC
   totalRefills_ASC
   totalRefills_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-  createdAt_ASC
-  createdAt_DESC
-  ccToken_ASC
-  ccToken_DESC
+  refillsRemaining_ASC
+  refillsRemaining_DESC
+  nextDelivery_ASC
+  nextDelivery_DESC
+  shippingInterval_ASC
+  shippingInterval_DESC
+  amountDue_ASC
+  amountDue_DESC
 }
 
 type PlanPreviousValues {
   id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  status: PlanStatus!
   type: PlanType!
+  drugName: String!
+  strength: String
+  timesPerMonth: Int!
+  addonName: String
   startDate: DateTime!
   expireDate: DateTime!
-  nextDelivery: DateTime
-  refillsRemaining: Int!
   totalRefills: Int!
-  updatedAt: DateTime!
-  createdAt: DateTime!
-  ccToken: String!
+  refillsRemaining: Int!
+  nextDelivery: DateTime
+  shippingInterval: Int!
+  amountDue: Int!
 }
 
 input PlanScalarWhereInput {
@@ -174,10 +967,80 @@ input PlanScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  status: PlanStatus
+  status_not: PlanStatus
+  status_in: [PlanStatus!]
+  status_not_in: [PlanStatus!]
   type: PlanType
   type_not: PlanType
   type_in: [PlanType!]
   type_not_in: [PlanType!]
+  drugName: String
+  drugName_not: String
+  drugName_in: [String!]
+  drugName_not_in: [String!]
+  drugName_lt: String
+  drugName_lte: String
+  drugName_gt: String
+  drugName_gte: String
+  drugName_contains: String
+  drugName_not_contains: String
+  drugName_starts_with: String
+  drugName_not_starts_with: String
+  drugName_ends_with: String
+  drugName_not_ends_with: String
+  strength: String
+  strength_not: String
+  strength_in: [String!]
+  strength_not_in: [String!]
+  strength_lt: String
+  strength_lte: String
+  strength_gt: String
+  strength_gte: String
+  strength_contains: String
+  strength_not_contains: String
+  strength_starts_with: String
+  strength_not_starts_with: String
+  strength_ends_with: String
+  strength_not_ends_with: String
+  timesPerMonth: Int
+  timesPerMonth_not: Int
+  timesPerMonth_in: [Int!]
+  timesPerMonth_not_in: [Int!]
+  timesPerMonth_lt: Int
+  timesPerMonth_lte: Int
+  timesPerMonth_gt: Int
+  timesPerMonth_gte: Int
+  addonName: String
+  addonName_not: String
+  addonName_in: [String!]
+  addonName_not_in: [String!]
+  addonName_lt: String
+  addonName_lte: String
+  addonName_gt: String
+  addonName_gte: String
+  addonName_contains: String
+  addonName_not_contains: String
+  addonName_starts_with: String
+  addonName_not_starts_with: String
+  addonName_ends_with: String
+  addonName_not_ends_with: String
   startDate: DateTime
   startDate_not: DateTime
   startDate_in: [DateTime!]
@@ -194,22 +1057,6 @@ input PlanScalarWhereInput {
   expireDate_lte: DateTime
   expireDate_gt: DateTime
   expireDate_gte: DateTime
-  nextDelivery: DateTime
-  nextDelivery_not: DateTime
-  nextDelivery_in: [DateTime!]
-  nextDelivery_not_in: [DateTime!]
-  nextDelivery_lt: DateTime
-  nextDelivery_lte: DateTime
-  nextDelivery_gt: DateTime
-  nextDelivery_gte: DateTime
-  refillsRemaining: Int
-  refillsRemaining_not: Int
-  refillsRemaining_in: [Int!]
-  refillsRemaining_not_in: [Int!]
-  refillsRemaining_lt: Int
-  refillsRemaining_lte: Int
-  refillsRemaining_gt: Int
-  refillsRemaining_gte: Int
   totalRefills: Int
   totalRefills_not: Int
   totalRefills_in: [Int!]
@@ -218,39 +1065,49 @@ input PlanScalarWhereInput {
   totalRefills_lte: Int
   totalRefills_gt: Int
   totalRefills_gte: Int
-  updatedAt: DateTime
-  updatedAt_not: DateTime
-  updatedAt_in: [DateTime!]
-  updatedAt_not_in: [DateTime!]
-  updatedAt_lt: DateTime
-  updatedAt_lte: DateTime
-  updatedAt_gt: DateTime
-  updatedAt_gte: DateTime
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
-  ccToken: String
-  ccToken_not: String
-  ccToken_in: [String!]
-  ccToken_not_in: [String!]
-  ccToken_lt: String
-  ccToken_lte: String
-  ccToken_gt: String
-  ccToken_gte: String
-  ccToken_contains: String
-  ccToken_not_contains: String
-  ccToken_starts_with: String
-  ccToken_not_starts_with: String
-  ccToken_ends_with: String
-  ccToken_not_ends_with: String
+  refillsRemaining: Int
+  refillsRemaining_not: Int
+  refillsRemaining_in: [Int!]
+  refillsRemaining_not_in: [Int!]
+  refillsRemaining_lt: Int
+  refillsRemaining_lte: Int
+  refillsRemaining_gt: Int
+  refillsRemaining_gte: Int
+  nextDelivery: DateTime
+  nextDelivery_not: DateTime
+  nextDelivery_in: [DateTime!]
+  nextDelivery_not_in: [DateTime!]
+  nextDelivery_lt: DateTime
+  nextDelivery_lte: DateTime
+  nextDelivery_gt: DateTime
+  nextDelivery_gte: DateTime
+  shippingInterval: Int
+  shippingInterval_not: Int
+  shippingInterval_in: [Int!]
+  shippingInterval_not_in: [Int!]
+  shippingInterval_lt: Int
+  shippingInterval_lte: Int
+  shippingInterval_gt: Int
+  shippingInterval_gte: Int
+  amountDue: Int
+  amountDue_not: Int
+  amountDue_in: [Int!]
+  amountDue_not_in: [Int!]
+  amountDue_lt: Int
+  amountDue_lte: Int
+  amountDue_gt: Int
+  amountDue_gte: Int
   AND: [PlanScalarWhereInput!]
   OR: [PlanScalarWhereInput!]
   NOT: [PlanScalarWhereInput!]
+}
+
+enum PlanStatus {
+  PENDING
+  ACTIVE
+  ONDEMAND
+  CLOSED
+  DENIED
 }
 
 type PlanSubscriptionPayload {
@@ -275,38 +1132,59 @@ enum PlanType {
   ED
   HAIR
   SLEEP
+  JOY
+  ALLERGY
+  WEIGHT
 }
 
 input PlanUpdateInput {
+  status: PlanStatus
   user: UserUpdateOneRequiredWithoutPlansInput
+  visit: VisitUpdateOneRequiredInput
   type: PlanType
+  drugName: String
+  strength: String
+  timesPerMonth: Int
+  addonName: String
   startDate: DateTime
   expireDate: DateTime
-  nextDelivery: DateTime
-  refillsRemaining: Int
   totalRefills: Int
-  ccToken: String
-  shippingAddress: ShippingAddressUpdateOneRequiredInput
+  refillsRemaining: Int
+  nextDelivery: DateTime
+  shippingInterval: Int
+  amountDue: Int
 }
 
 input PlanUpdateManyDataInput {
+  status: PlanStatus
   type: PlanType
+  drugName: String
+  strength: String
+  timesPerMonth: Int
+  addonName: String
   startDate: DateTime
   expireDate: DateTime
-  nextDelivery: DateTime
-  refillsRemaining: Int
   totalRefills: Int
-  ccToken: String
+  refillsRemaining: Int
+  nextDelivery: DateTime
+  shippingInterval: Int
+  amountDue: Int
 }
 
 input PlanUpdateManyMutationInput {
+  status: PlanStatus
   type: PlanType
+  drugName: String
+  strength: String
+  timesPerMonth: Int
+  addonName: String
   startDate: DateTime
   expireDate: DateTime
-  nextDelivery: DateTime
-  refillsRemaining: Int
   totalRefills: Int
-  ccToken: String
+  refillsRemaining: Int
+  nextDelivery: DateTime
+  shippingInterval: Int
+  amountDue: Int
 }
 
 input PlanUpdateManyWithoutUserInput {
@@ -327,14 +1205,20 @@ input PlanUpdateManyWithWhereNestedInput {
 }
 
 input PlanUpdateWithoutUserDataInput {
+  status: PlanStatus
+  visit: VisitUpdateOneRequiredInput
   type: PlanType
+  drugName: String
+  strength: String
+  timesPerMonth: Int
+  addonName: String
   startDate: DateTime
   expireDate: DateTime
-  nextDelivery: DateTime
-  refillsRemaining: Int
   totalRefills: Int
-  ccToken: String
-  shippingAddress: ShippingAddressUpdateOneRequiredInput
+  refillsRemaining: Int
+  nextDelivery: DateTime
+  shippingInterval: Int
+  amountDue: Int
 }
 
 input PlanUpdateWithWhereUniqueWithoutUserInput {
@@ -363,11 +1247,82 @@ input PlanWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  status: PlanStatus
+  status_not: PlanStatus
+  status_in: [PlanStatus!]
+  status_not_in: [PlanStatus!]
   user: UserWhereInput
+  visit: VisitWhereInput
   type: PlanType
   type_not: PlanType
   type_in: [PlanType!]
   type_not_in: [PlanType!]
+  drugName: String
+  drugName_not: String
+  drugName_in: [String!]
+  drugName_not_in: [String!]
+  drugName_lt: String
+  drugName_lte: String
+  drugName_gt: String
+  drugName_gte: String
+  drugName_contains: String
+  drugName_not_contains: String
+  drugName_starts_with: String
+  drugName_not_starts_with: String
+  drugName_ends_with: String
+  drugName_not_ends_with: String
+  strength: String
+  strength_not: String
+  strength_in: [String!]
+  strength_not_in: [String!]
+  strength_lt: String
+  strength_lte: String
+  strength_gt: String
+  strength_gte: String
+  strength_contains: String
+  strength_not_contains: String
+  strength_starts_with: String
+  strength_not_starts_with: String
+  strength_ends_with: String
+  strength_not_ends_with: String
+  timesPerMonth: Int
+  timesPerMonth_not: Int
+  timesPerMonth_in: [Int!]
+  timesPerMonth_not_in: [Int!]
+  timesPerMonth_lt: Int
+  timesPerMonth_lte: Int
+  timesPerMonth_gt: Int
+  timesPerMonth_gte: Int
+  addonName: String
+  addonName_not: String
+  addonName_in: [String!]
+  addonName_not_in: [String!]
+  addonName_lt: String
+  addonName_lte: String
+  addonName_gt: String
+  addonName_gte: String
+  addonName_contains: String
+  addonName_not_contains: String
+  addonName_starts_with: String
+  addonName_not_starts_with: String
+  addonName_ends_with: String
+  addonName_not_ends_with: String
   startDate: DateTime
   startDate_not: DateTime
   startDate_in: [DateTime!]
@@ -384,22 +1339,6 @@ input PlanWhereInput {
   expireDate_lte: DateTime
   expireDate_gt: DateTime
   expireDate_gte: DateTime
-  nextDelivery: DateTime
-  nextDelivery_not: DateTime
-  nextDelivery_in: [DateTime!]
-  nextDelivery_not_in: [DateTime!]
-  nextDelivery_lt: DateTime
-  nextDelivery_lte: DateTime
-  nextDelivery_gt: DateTime
-  nextDelivery_gte: DateTime
-  refillsRemaining: Int
-  refillsRemaining_not: Int
-  refillsRemaining_in: [Int!]
-  refillsRemaining_not_in: [Int!]
-  refillsRemaining_lt: Int
-  refillsRemaining_lte: Int
-  refillsRemaining_gt: Int
-  refillsRemaining_gte: Int
   totalRefills: Int
   totalRefills_not: Int
   totalRefills_in: [Int!]
@@ -408,37 +1347,38 @@ input PlanWhereInput {
   totalRefills_lte: Int
   totalRefills_gt: Int
   totalRefills_gte: Int
-  updatedAt: DateTime
-  updatedAt_not: DateTime
-  updatedAt_in: [DateTime!]
-  updatedAt_not_in: [DateTime!]
-  updatedAt_lt: DateTime
-  updatedAt_lte: DateTime
-  updatedAt_gt: DateTime
-  updatedAt_gte: DateTime
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
-  ccToken: String
-  ccToken_not: String
-  ccToken_in: [String!]
-  ccToken_not_in: [String!]
-  ccToken_lt: String
-  ccToken_lte: String
-  ccToken_gt: String
-  ccToken_gte: String
-  ccToken_contains: String
-  ccToken_not_contains: String
-  ccToken_starts_with: String
-  ccToken_not_starts_with: String
-  ccToken_ends_with: String
-  ccToken_not_ends_with: String
-  shippingAddress: ShippingAddressWhereInput
+  refillsRemaining: Int
+  refillsRemaining_not: Int
+  refillsRemaining_in: [Int!]
+  refillsRemaining_not_in: [Int!]
+  refillsRemaining_lt: Int
+  refillsRemaining_lte: Int
+  refillsRemaining_gt: Int
+  refillsRemaining_gte: Int
+  nextDelivery: DateTime
+  nextDelivery_not: DateTime
+  nextDelivery_in: [DateTime!]
+  nextDelivery_not_in: [DateTime!]
+  nextDelivery_lt: DateTime
+  nextDelivery_lte: DateTime
+  nextDelivery_gt: DateTime
+  nextDelivery_gte: DateTime
+  shippingInterval: Int
+  shippingInterval_not: Int
+  shippingInterval_in: [Int!]
+  shippingInterval_not_in: [Int!]
+  shippingInterval_lt: Int
+  shippingInterval_lte: Int
+  shippingInterval_gt: Int
+  shippingInterval_gte: Int
+  amountDue: Int
+  amountDue_not: Int
+  amountDue_in: [Int!]
+  amountDue_not_in: [Int!]
+  amountDue_lt: Int
+  amountDue_lte: Int
+  amountDue_gt: Int
+  amountDue_gte: Int
   AND: [PlanWhereInput!]
   OR: [PlanWhereInput!]
   NOT: [PlanWhereInput!]
@@ -449,106 +1389,22 @@ input PlanWhereUniqueInput {
 }
 
 type Query {
+  address(where: AddressWhereUniqueInput!): Address
+  addresses(where: AddressWhereInput, orderBy: AddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Address]!
+  addressesConnection(where: AddressWhereInput, orderBy: AddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AddressConnection!
+  creditCard(where: CreditCardWhereUniqueInput!): CreditCard
+  creditCards(where: CreditCardWhereInput, orderBy: CreditCardOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CreditCard]!
+  creditCardsConnection(where: CreditCardWhereInput, orderBy: CreditCardOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CreditCardConnection!
   plan(where: PlanWhereUniqueInput!): Plan
   plans(where: PlanWhereInput, orderBy: PlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Plan]!
   plansConnection(where: PlanWhereInput, orderBy: PlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PlanConnection!
-  questionnaire(where: QuestionnaireWhereUniqueInput!): Questionnaire
-  questionnaires(where: QuestionnaireWhereInput, orderBy: QuestionnaireOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Questionnaire]!
-  questionnairesConnection(where: QuestionnaireWhereInput, orderBy: QuestionnaireOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionnaireConnection!
-  shippingAddress(where: ShippingAddressWhereUniqueInput!): ShippingAddress
-  shippingAddresses(where: ShippingAddressWhereInput, orderBy: ShippingAddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShippingAddress]!
-  shippingAddressesConnection(where: ShippingAddressWhereInput, orderBy: ShippingAddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShippingAddressConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  visit(where: VisitWhereUniqueInput!): Visit
+  visits(where: VisitWhereInput, orderBy: VisitOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Visit]!
+  visitsConnection(where: VisitWhereInput, orderBy: VisitOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): VisitConnection!
   node(id: ID!): Node
-}
-
-type Questionnaire {
-  id: ID!
-  user: User!
-  details: Json!
-}
-
-type QuestionnaireConnection {
-  pageInfo: PageInfo!
-  edges: [QuestionnaireEdge]!
-  aggregate: AggregateQuestionnaire!
-}
-
-input QuestionnaireCreateInput {
-  id: ID
-  user: UserCreateOneInput!
-  details: Json!
-}
-
-type QuestionnaireEdge {
-  node: Questionnaire!
-  cursor: String!
-}
-
-enum QuestionnaireOrderByInput {
-  id_ASC
-  id_DESC
-  details_ASC
-  details_DESC
-}
-
-type QuestionnairePreviousValues {
-  id: ID!
-  details: Json!
-}
-
-type QuestionnaireSubscriptionPayload {
-  mutation: MutationType!
-  node: Questionnaire
-  updatedFields: [String!]
-  previousValues: QuestionnairePreviousValues
-}
-
-input QuestionnaireSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: QuestionnaireWhereInput
-  AND: [QuestionnaireSubscriptionWhereInput!]
-  OR: [QuestionnaireSubscriptionWhereInput!]
-  NOT: [QuestionnaireSubscriptionWhereInput!]
-}
-
-input QuestionnaireUpdateInput {
-  user: UserUpdateOneRequiredInput
-  details: Json
-}
-
-input QuestionnaireUpdateManyMutationInput {
-  details: Json
-}
-
-input QuestionnaireWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  user: UserWhereInput
-  AND: [QuestionnaireWhereInput!]
-  OR: [QuestionnaireWhereInput!]
-  NOT: [QuestionnaireWhereInput!]
-}
-
-input QuestionnaireWhereUniqueInput {
-  id: ID
 }
 
 enum Role {
@@ -558,126 +1414,33 @@ enum Role {
   VISITOR
 }
 
-type ShippingAddress {
-  id: ID!
-  user: User!
-}
-
-type ShippingAddressConnection {
-  pageInfo: PageInfo!
-  edges: [ShippingAddressEdge]!
-  aggregate: AggregateShippingAddress!
-}
-
-input ShippingAddressCreateInput {
-  id: ID
-  user: UserCreateOneInput!
-}
-
-input ShippingAddressCreateOneInput {
-  create: ShippingAddressCreateInput
-  connect: ShippingAddressWhereUniqueInput
-}
-
-type ShippingAddressEdge {
-  node: ShippingAddress!
-  cursor: String!
-}
-
-enum ShippingAddressOrderByInput {
-  id_ASC
-  id_DESC
-}
-
-type ShippingAddressPreviousValues {
-  id: ID!
-}
-
-type ShippingAddressSubscriptionPayload {
-  mutation: MutationType!
-  node: ShippingAddress
-  updatedFields: [String!]
-  previousValues: ShippingAddressPreviousValues
-}
-
-input ShippingAddressSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: ShippingAddressWhereInput
-  AND: [ShippingAddressSubscriptionWhereInput!]
-  OR: [ShippingAddressSubscriptionWhereInput!]
-  NOT: [ShippingAddressSubscriptionWhereInput!]
-}
-
-input ShippingAddressUpdateDataInput {
-  user: UserUpdateOneRequiredInput
-}
-
-input ShippingAddressUpdateInput {
-  user: UserUpdateOneRequiredInput
-}
-
-input ShippingAddressUpdateOneRequiredInput {
-  create: ShippingAddressCreateInput
-  update: ShippingAddressUpdateDataInput
-  upsert: ShippingAddressUpsertNestedInput
-  connect: ShippingAddressWhereUniqueInput
-}
-
-input ShippingAddressUpsertNestedInput {
-  update: ShippingAddressUpdateDataInput!
-  create: ShippingAddressCreateInput!
-}
-
-input ShippingAddressWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  user: UserWhereInput
-  AND: [ShippingAddressWhereInput!]
-  OR: [ShippingAddressWhereInput!]
-  NOT: [ShippingAddressWhereInput!]
-}
-
-input ShippingAddressWhereUniqueInput {
-  id: ID
-}
-
 type Subscription {
+  address(where: AddressSubscriptionWhereInput): AddressSubscriptionPayload
+  creditCard(where: CreditCardSubscriptionWhereInput): CreditCardSubscriptionPayload
   plan(where: PlanSubscriptionWhereInput): PlanSubscriptionPayload
-  questionnaire(where: QuestionnaireSubscriptionWhereInput): QuestionnaireSubscriptionPayload
-  shippingAddress(where: ShippingAddressSubscriptionWhereInput): ShippingAddressSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  visit(where: VisitSubscriptionWhereInput): VisitSubscriptionPayload
 }
 
 type User {
   id: ID!
-  updatedAt: DateTime!
   createdAt: DateTime!
+  updatedAt: DateTime!
+  role: Role
   firstName: String!
   lastName: String!
   password: String!
   email: String!
-  role: Role
+  currentAddress: String
+  addresses(where: AddressWhereInput, orderBy: AddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Address!]
+  currentCard: String
+  creditcards(where: CreditCardWhereInput, orderBy: CreditCardOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CreditCard!]
+  photoId: String
+  plans(where: PlanWhereInput, orderBy: PlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Plan!]
+  visits(where: VisitWhereInput, orderBy: VisitOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Visit!]
   resetToken: String
   resetTokenExpiry: Float
-  authnetCustomerId: String
-  authnetPaymentId: String
   count: Int
-  plans(where: PlanWhereInput, orderBy: PlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Plan!]
 }
 
 type UserConnection {
@@ -688,21 +1451,30 @@ type UserConnection {
 
 input UserCreateInput {
   id: ID
+  role: Role
   firstName: String!
   lastName: String!
   password: String!
   email: String!
-  role: Role
+  currentAddress: String
+  addresses: AddressCreateManyWithoutUserInput
+  currentCard: String
+  creditcards: CreditCardCreateManyWithoutUserInput
+  photoId: String
+  plans: PlanCreateManyWithoutUserInput
+  visits: VisitCreateManyWithoutUserInput
   resetToken: String
   resetTokenExpiry: Float
-  authnetCustomerId: String
-  authnetPaymentId: String
   count: Int
-  plans: PlanCreateManyWithoutUserInput
 }
 
-input UserCreateOneInput {
-  create: UserCreateInput
+input UserCreateOneWithoutAddressesInput {
+  create: UserCreateWithoutAddressesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutCreditcardsInput {
+  create: UserCreateWithoutCreditcardsInput
   connect: UserWhereUniqueInput
 }
 
@@ -711,17 +1483,80 @@ input UserCreateOneWithoutPlansInput {
   connect: UserWhereUniqueInput
 }
 
-input UserCreateWithoutPlansInput {
+input UserCreateOneWithoutVisitsInput {
+  create: UserCreateWithoutVisitsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutAddressesInput {
   id: ID
+  role: Role
   firstName: String!
   lastName: String!
   password: String!
   email: String!
-  role: Role
+  currentAddress: String
+  currentCard: String
+  creditcards: CreditCardCreateManyWithoutUserInput
+  photoId: String
+  plans: PlanCreateManyWithoutUserInput
+  visits: VisitCreateManyWithoutUserInput
   resetToken: String
   resetTokenExpiry: Float
-  authnetCustomerId: String
-  authnetPaymentId: String
+  count: Int
+}
+
+input UserCreateWithoutCreditcardsInput {
+  id: ID
+  role: Role
+  firstName: String!
+  lastName: String!
+  password: String!
+  email: String!
+  currentAddress: String
+  addresses: AddressCreateManyWithoutUserInput
+  currentCard: String
+  photoId: String
+  plans: PlanCreateManyWithoutUserInput
+  visits: VisitCreateManyWithoutUserInput
+  resetToken: String
+  resetTokenExpiry: Float
+  count: Int
+}
+
+input UserCreateWithoutPlansInput {
+  id: ID
+  role: Role
+  firstName: String!
+  lastName: String!
+  password: String!
+  email: String!
+  currentAddress: String
+  addresses: AddressCreateManyWithoutUserInput
+  currentCard: String
+  creditcards: CreditCardCreateManyWithoutUserInput
+  photoId: String
+  visits: VisitCreateManyWithoutUserInput
+  resetToken: String
+  resetTokenExpiry: Float
+  count: Int
+}
+
+input UserCreateWithoutVisitsInput {
+  id: ID
+  role: Role
+  firstName: String!
+  lastName: String!
+  password: String!
+  email: String!
+  currentAddress: String
+  addresses: AddressCreateManyWithoutUserInput
+  currentCard: String
+  creditcards: CreditCardCreateManyWithoutUserInput
+  photoId: String
+  plans: PlanCreateManyWithoutUserInput
+  resetToken: String
+  resetTokenExpiry: Float
   count: Int
 }
 
@@ -733,10 +1568,12 @@ type UserEdge {
 enum UserOrderByInput {
   id_ASC
   id_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  role_ASC
+  role_DESC
   firstName_ASC
   firstName_DESC
   lastName_ASC
@@ -745,33 +1582,34 @@ enum UserOrderByInput {
   password_DESC
   email_ASC
   email_DESC
-  role_ASC
-  role_DESC
+  currentAddress_ASC
+  currentAddress_DESC
+  currentCard_ASC
+  currentCard_DESC
+  photoId_ASC
+  photoId_DESC
   resetToken_ASC
   resetToken_DESC
   resetTokenExpiry_ASC
   resetTokenExpiry_DESC
-  authnetCustomerId_ASC
-  authnetCustomerId_DESC
-  authnetPaymentId_ASC
-  authnetPaymentId_DESC
   count_ASC
   count_DESC
 }
 
 type UserPreviousValues {
   id: ID!
-  updatedAt: DateTime!
   createdAt: DateTime!
+  updatedAt: DateTime!
+  role: Role
   firstName: String!
   lastName: String!
   password: String!
   email: String!
-  role: Role
+  currentAddress: String
+  currentCard: String
+  photoId: String
   resetToken: String
   resetTokenExpiry: Float
-  authnetCustomerId: String
-  authnetPaymentId: String
   count: Int
 }
 
@@ -793,51 +1631,49 @@ input UserSubscriptionWhereInput {
   NOT: [UserSubscriptionWhereInput!]
 }
 
-input UserUpdateDataInput {
-  firstName: String
-  lastName: String
-  password: String
-  email: String
-  role: Role
-  resetToken: String
-  resetTokenExpiry: Float
-  authnetCustomerId: String
-  authnetPaymentId: String
-  count: Int
-  plans: PlanUpdateManyWithoutUserInput
-}
-
 input UserUpdateInput {
+  role: Role
   firstName: String
   lastName: String
   password: String
   email: String
-  role: Role
+  currentAddress: String
+  addresses: AddressUpdateManyWithoutUserInput
+  currentCard: String
+  creditcards: CreditCardUpdateManyWithoutUserInput
+  photoId: String
+  plans: PlanUpdateManyWithoutUserInput
+  visits: VisitUpdateManyWithoutUserInput
   resetToken: String
   resetTokenExpiry: Float
-  authnetCustomerId: String
-  authnetPaymentId: String
   count: Int
-  plans: PlanUpdateManyWithoutUserInput
 }
 
 input UserUpdateManyMutationInput {
+  role: Role
   firstName: String
   lastName: String
   password: String
   email: String
-  role: Role
+  currentAddress: String
+  currentCard: String
+  photoId: String
   resetToken: String
   resetTokenExpiry: Float
-  authnetCustomerId: String
-  authnetPaymentId: String
   count: Int
 }
 
-input UserUpdateOneRequiredInput {
-  create: UserCreateInput
-  update: UserUpdateDataInput
-  upsert: UserUpsertNestedInput
+input UserUpdateOneRequiredWithoutAddressesInput {
+  create: UserCreateWithoutAddressesInput
+  update: UserUpdateWithoutAddressesDataInput
+  upsert: UserUpsertWithoutAddressesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateOneRequiredWithoutCreditcardsInput {
+  create: UserCreateWithoutCreditcardsInput
+  update: UserUpdateWithoutCreditcardsDataInput
+  upsert: UserUpsertWithoutCreditcardsInput
   connect: UserWhereUniqueInput
 }
 
@@ -848,27 +1684,99 @@ input UserUpdateOneRequiredWithoutPlansInput {
   connect: UserWhereUniqueInput
 }
 
-input UserUpdateWithoutPlansDataInput {
+input UserUpdateOneRequiredWithoutVisitsInput {
+  create: UserCreateWithoutVisitsInput
+  update: UserUpdateWithoutVisitsDataInput
+  upsert: UserUpsertWithoutVisitsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateWithoutAddressesDataInput {
+  role: Role
   firstName: String
   lastName: String
   password: String
   email: String
-  role: Role
+  currentAddress: String
+  currentCard: String
+  creditcards: CreditCardUpdateManyWithoutUserInput
+  photoId: String
+  plans: PlanUpdateManyWithoutUserInput
+  visits: VisitUpdateManyWithoutUserInput
   resetToken: String
   resetTokenExpiry: Float
-  authnetCustomerId: String
-  authnetPaymentId: String
   count: Int
 }
 
-input UserUpsertNestedInput {
-  update: UserUpdateDataInput!
-  create: UserCreateInput!
+input UserUpdateWithoutCreditcardsDataInput {
+  role: Role
+  firstName: String
+  lastName: String
+  password: String
+  email: String
+  currentAddress: String
+  addresses: AddressUpdateManyWithoutUserInput
+  currentCard: String
+  photoId: String
+  plans: PlanUpdateManyWithoutUserInput
+  visits: VisitUpdateManyWithoutUserInput
+  resetToken: String
+  resetTokenExpiry: Float
+  count: Int
+}
+
+input UserUpdateWithoutPlansDataInput {
+  role: Role
+  firstName: String
+  lastName: String
+  password: String
+  email: String
+  currentAddress: String
+  addresses: AddressUpdateManyWithoutUserInput
+  currentCard: String
+  creditcards: CreditCardUpdateManyWithoutUserInput
+  photoId: String
+  visits: VisitUpdateManyWithoutUserInput
+  resetToken: String
+  resetTokenExpiry: Float
+  count: Int
+}
+
+input UserUpdateWithoutVisitsDataInput {
+  role: Role
+  firstName: String
+  lastName: String
+  password: String
+  email: String
+  currentAddress: String
+  addresses: AddressUpdateManyWithoutUserInput
+  currentCard: String
+  creditcards: CreditCardUpdateManyWithoutUserInput
+  photoId: String
+  plans: PlanUpdateManyWithoutUserInput
+  resetToken: String
+  resetTokenExpiry: Float
+  count: Int
+}
+
+input UserUpsertWithoutAddressesInput {
+  update: UserUpdateWithoutAddressesDataInput!
+  create: UserCreateWithoutAddressesInput!
+}
+
+input UserUpsertWithoutCreditcardsInput {
+  update: UserUpdateWithoutCreditcardsDataInput!
+  create: UserCreateWithoutCreditcardsInput!
 }
 
 input UserUpsertWithoutPlansInput {
   update: UserUpdateWithoutPlansDataInput!
   create: UserCreateWithoutPlansInput!
+}
+
+input UserUpsertWithoutVisitsInput {
+  update: UserUpdateWithoutVisitsDataInput!
+  create: UserCreateWithoutVisitsInput!
 }
 
 input UserWhereInput {
@@ -886,14 +1794,6 @@ input UserWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  updatedAt: DateTime
-  updatedAt_not: DateTime
-  updatedAt_in: [DateTime!]
-  updatedAt_not_in: [DateTime!]
-  updatedAt_lt: DateTime
-  updatedAt_lte: DateTime
-  updatedAt_gt: DateTime
-  updatedAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -902,6 +1802,18 @@ input UserWhereInput {
   createdAt_lte: DateTime
   createdAt_gt: DateTime
   createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  role: Role
+  role_not: Role
+  role_in: [Role!]
+  role_not_in: [Role!]
   firstName: String
   firstName_not: String
   firstName_in: [String!]
@@ -958,10 +1870,60 @@ input UserWhereInput {
   email_not_starts_with: String
   email_ends_with: String
   email_not_ends_with: String
-  role: Role
-  role_not: Role
-  role_in: [Role!]
-  role_not_in: [Role!]
+  currentAddress: String
+  currentAddress_not: String
+  currentAddress_in: [String!]
+  currentAddress_not_in: [String!]
+  currentAddress_lt: String
+  currentAddress_lte: String
+  currentAddress_gt: String
+  currentAddress_gte: String
+  currentAddress_contains: String
+  currentAddress_not_contains: String
+  currentAddress_starts_with: String
+  currentAddress_not_starts_with: String
+  currentAddress_ends_with: String
+  currentAddress_not_ends_with: String
+  addresses_every: AddressWhereInput
+  addresses_some: AddressWhereInput
+  addresses_none: AddressWhereInput
+  currentCard: String
+  currentCard_not: String
+  currentCard_in: [String!]
+  currentCard_not_in: [String!]
+  currentCard_lt: String
+  currentCard_lte: String
+  currentCard_gt: String
+  currentCard_gte: String
+  currentCard_contains: String
+  currentCard_not_contains: String
+  currentCard_starts_with: String
+  currentCard_not_starts_with: String
+  currentCard_ends_with: String
+  currentCard_not_ends_with: String
+  creditcards_every: CreditCardWhereInput
+  creditcards_some: CreditCardWhereInput
+  creditcards_none: CreditCardWhereInput
+  photoId: String
+  photoId_not: String
+  photoId_in: [String!]
+  photoId_not_in: [String!]
+  photoId_lt: String
+  photoId_lte: String
+  photoId_gt: String
+  photoId_gte: String
+  photoId_contains: String
+  photoId_not_contains: String
+  photoId_starts_with: String
+  photoId_not_starts_with: String
+  photoId_ends_with: String
+  photoId_not_ends_with: String
+  plans_every: PlanWhereInput
+  plans_some: PlanWhereInput
+  plans_none: PlanWhereInput
+  visits_every: VisitWhereInput
+  visits_some: VisitWhereInput
+  visits_none: VisitWhereInput
   resetToken: String
   resetToken_not: String
   resetToken_in: [String!]
@@ -984,34 +1946,6 @@ input UserWhereInput {
   resetTokenExpiry_lte: Float
   resetTokenExpiry_gt: Float
   resetTokenExpiry_gte: Float
-  authnetCustomerId: String
-  authnetCustomerId_not: String
-  authnetCustomerId_in: [String!]
-  authnetCustomerId_not_in: [String!]
-  authnetCustomerId_lt: String
-  authnetCustomerId_lte: String
-  authnetCustomerId_gt: String
-  authnetCustomerId_gte: String
-  authnetCustomerId_contains: String
-  authnetCustomerId_not_contains: String
-  authnetCustomerId_starts_with: String
-  authnetCustomerId_not_starts_with: String
-  authnetCustomerId_ends_with: String
-  authnetCustomerId_not_ends_with: String
-  authnetPaymentId: String
-  authnetPaymentId_not: String
-  authnetPaymentId_in: [String!]
-  authnetPaymentId_not_in: [String!]
-  authnetPaymentId_lt: String
-  authnetPaymentId_lte: String
-  authnetPaymentId_gt: String
-  authnetPaymentId_gte: String
-  authnetPaymentId_contains: String
-  authnetPaymentId_not_contains: String
-  authnetPaymentId_starts_with: String
-  authnetPaymentId_not_starts_with: String
-  authnetPaymentId_ends_with: String
-  authnetPaymentId_not_ends_with: String
   count: Int
   count_not: Int
   count_in: [Int!]
@@ -1020,9 +1954,6 @@ input UserWhereInput {
   count_lte: Int
   count_gt: Int
   count_gte: Int
-  plans_every: PlanWhereInput
-  plans_some: PlanWhereInput
-  plans_none: PlanWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]
@@ -1031,4 +1962,264 @@ input UserWhereInput {
 input UserWhereUniqueInput {
   id: ID
   email: String
+}
+
+type Visit {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  user: User!
+  type: PlanType!
+  questionnaire: Json!
+  status: VisitStatus!
+}
+
+type VisitConnection {
+  pageInfo: PageInfo!
+  edges: [VisitEdge]!
+  aggregate: AggregateVisit!
+}
+
+input VisitCreateInput {
+  id: ID
+  user: UserCreateOneWithoutVisitsInput!
+  type: PlanType!
+  questionnaire: Json!
+  status: VisitStatus!
+}
+
+input VisitCreateManyWithoutUserInput {
+  create: [VisitCreateWithoutUserInput!]
+  connect: [VisitWhereUniqueInput!]
+}
+
+input VisitCreateOneInput {
+  create: VisitCreateInput
+  connect: VisitWhereUniqueInput
+}
+
+input VisitCreateWithoutUserInput {
+  id: ID
+  type: PlanType!
+  questionnaire: Json!
+  status: VisitStatus!
+}
+
+type VisitEdge {
+  node: Visit!
+  cursor: String!
+}
+
+enum VisitOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  type_ASC
+  type_DESC
+  questionnaire_ASC
+  questionnaire_DESC
+  status_ASC
+  status_DESC
+}
+
+type VisitPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  type: PlanType!
+  questionnaire: Json!
+  status: VisitStatus!
+}
+
+input VisitScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  type: PlanType
+  type_not: PlanType
+  type_in: [PlanType!]
+  type_not_in: [PlanType!]
+  status: VisitStatus
+  status_not: VisitStatus
+  status_in: [VisitStatus!]
+  status_not_in: [VisitStatus!]
+  AND: [VisitScalarWhereInput!]
+  OR: [VisitScalarWhereInput!]
+  NOT: [VisitScalarWhereInput!]
+}
+
+enum VisitStatus {
+  PENDING
+  APPROVED
+  DENIED
+  TEMPORARY
+}
+
+type VisitSubscriptionPayload {
+  mutation: MutationType!
+  node: Visit
+  updatedFields: [String!]
+  previousValues: VisitPreviousValues
+}
+
+input VisitSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: VisitWhereInput
+  AND: [VisitSubscriptionWhereInput!]
+  OR: [VisitSubscriptionWhereInput!]
+  NOT: [VisitSubscriptionWhereInput!]
+}
+
+input VisitUpdateDataInput {
+  user: UserUpdateOneRequiredWithoutVisitsInput
+  type: PlanType
+  questionnaire: Json
+  status: VisitStatus
+}
+
+input VisitUpdateInput {
+  user: UserUpdateOneRequiredWithoutVisitsInput
+  type: PlanType
+  questionnaire: Json
+  status: VisitStatus
+}
+
+input VisitUpdateManyDataInput {
+  type: PlanType
+  questionnaire: Json
+  status: VisitStatus
+}
+
+input VisitUpdateManyMutationInput {
+  type: PlanType
+  questionnaire: Json
+  status: VisitStatus
+}
+
+input VisitUpdateManyWithoutUserInput {
+  create: [VisitCreateWithoutUserInput!]
+  delete: [VisitWhereUniqueInput!]
+  connect: [VisitWhereUniqueInput!]
+  set: [VisitWhereUniqueInput!]
+  disconnect: [VisitWhereUniqueInput!]
+  update: [VisitUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [VisitUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [VisitScalarWhereInput!]
+  updateMany: [VisitUpdateManyWithWhereNestedInput!]
+}
+
+input VisitUpdateManyWithWhereNestedInput {
+  where: VisitScalarWhereInput!
+  data: VisitUpdateManyDataInput!
+}
+
+input VisitUpdateOneRequiredInput {
+  create: VisitCreateInput
+  update: VisitUpdateDataInput
+  upsert: VisitUpsertNestedInput
+  connect: VisitWhereUniqueInput
+}
+
+input VisitUpdateWithoutUserDataInput {
+  type: PlanType
+  questionnaire: Json
+  status: VisitStatus
+}
+
+input VisitUpdateWithWhereUniqueWithoutUserInput {
+  where: VisitWhereUniqueInput!
+  data: VisitUpdateWithoutUserDataInput!
+}
+
+input VisitUpsertNestedInput {
+  update: VisitUpdateDataInput!
+  create: VisitCreateInput!
+}
+
+input VisitUpsertWithWhereUniqueWithoutUserInput {
+  where: VisitWhereUniqueInput!
+  update: VisitUpdateWithoutUserDataInput!
+  create: VisitCreateWithoutUserInput!
+}
+
+input VisitWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  user: UserWhereInput
+  type: PlanType
+  type_not: PlanType
+  type_in: [PlanType!]
+  type_not_in: [PlanType!]
+  status: VisitStatus
+  status_not: VisitStatus
+  status_in: [VisitStatus!]
+  status_not_in: [VisitStatus!]
+  AND: [VisitWhereInput!]
+  OR: [VisitWhereInput!]
+  NOT: [VisitWhereInput!]
+}
+
+input VisitWhereUniqueInput {
+  id: ID
 }

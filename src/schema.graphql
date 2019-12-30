@@ -5,8 +5,35 @@ directive @hasRole(roles: [String]) on QUERY | FIELD_DEFINITION | MUTATION
 directive @isOwner(type: String) on QUERY | FIELD_DEFINITION | MUTATION
 directive @isOwnerOrHasRole(type: String, roles: [String]) on QUERY | MUTATION
 
+input SaveCardInput {
+  cardNumber: String!
+  expiration: String!
+  cvv: String!
+  firstName: String
+  lastName: String
+  address: String
+  zipcode: String
+}
+
+input SaveAddressInput {
+  addressOne: String!
+  addressTwo: String
+  city: String!
+  state: String!
+  zipcode: String!
+  telephone: String
+}
+
 type SuccessMessage {
   message: String
+}
+
+type SavedCard {
+  id: ID!
+  ccToken: String!
+  ccType: String!
+  ccNumber: String!
+  ccExpire: String!
 }
 
 type Mutation {
@@ -25,24 +52,17 @@ type Mutation {
   ): User!
   logout: Boolean!
   invalidateTokens: Boolean!
-  createQuestionnaire(details: Json!): Questionnaire
-  createAuthnetCustomer(
-    address: String!
-    city: String!
-    state: String!
-    zipCode: String!
-    telephone: String!
-  ): Boolean!
+  saveCard(input: SaveCardInput!): SavedCard!
+  saveAddress(input: SaveAddressInput): Address!
 }
 
 type Query {
   me: User @isAuthenticated
   users: [User]!
+  creditCards: [CreditCard]!
   userExists(email: String!): Boolean!
-  getAuthnetCustomer(id: String!): AuthnetCustomer
   hello: SuccessMessage
   validZipCode(zipcode: String!): Boolean!
-  questionnaires: [Questionnaire]!
 }
 
 type User {
@@ -52,18 +72,40 @@ type User {
   email: String!
   count: Int
   role: Role
-  authnetCustomerId: String
+  currentAddress: String
+  addresses: [Address]!
+  currentCard: String
+  creditcards: [CreditCard]!
   resetToken: String
   resetTokenExpiry: Float
 }
 
-type Questionnaire {
-  id: ID!
-  user: User!
-  details: Json!
-}
+# type CreditCard {
+#   id: ID!
+#   user: User!
+#   ccToken: String!
+#   ccType: String!
+#   ccNumber: String!
+#   ccExpire: String!
+# }
 
-type AuthnetCustomer {
-  id: String!
-  firstName: String!
-}
+# type Address {
+#   id: ID!
+#   user: User!
+#   addressOne: String!
+#   addressTwo: String
+#   city: String!
+#   state: String!
+#   zipcode: String!
+#   telephone: String
+#   updatedAt: DateTime! @updatedAt
+#   createdAt: DateTime! @createdAt
+# }
+
+# type Visit {
+#   id: ID!
+#   user: User!
+#   type: PlanType!
+#   questionnaire: Json!
+#   status: VisitStatus!
+# }

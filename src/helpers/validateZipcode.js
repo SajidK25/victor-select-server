@@ -1,4 +1,8 @@
 const validZips = [
+  // New York
+  { min: 10001, max: 14975 },
+  { min: 6390, max: 6390 },
+  // Texas
   { min: 73301, max: 73301 },
   { min: 75001, max: 75501 },
   { min: 75503, max: 79999 },
