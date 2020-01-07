@@ -6,26 +6,36 @@ const { getCustomerProfile } = require("../authorizenet/Customer");
 const ctxUser = ctx => ctx.request.user;
 
 const Query = {
-  me(_, __, { req, db }, info) {
+  me: (_, __, { req, prisma }) => {
     if (!req.userId) {
       return null;
     }
-    return db.query.user(
-      {
-        where: { id: req.userId }
-      },
-      info
-    );
+    return prisma.user({ id: req.userId });
   },
-  async validZipCode(_, args) {
+
+  validZipCode: async (_, args) => {
     return validateZipcode(args.zipcode);
   },
-  users: forwardTo("db"),
-  creditCards: forwardTo("db"),
-  async userExists(_, args, ctx) {
+
+  users: async (_, __, { prisma }) => {
+    return await prisma.users();
+  },
+
+  user: async (_, args, { prisma }) => {
+    return await prisma.user({ id: args.id });
+  },
+
+  visits: (_, __, { prisma }, info) => {
+    return prisma.visits({}, info);
+  },
+
+  creditCards: (_, __, { prisma }) => {
+    return prisma.creditCards();
+  },
+  userExists: async (_, args, { prisma }) => {
     args.email = args.email.toLowerCase();
     // if it's a visitor account we won't enforce the duplicate
-    const user = await ctx.db.query.users({
+    const user = await prisma.users({
       where: { email: args.email, role_not: "VISITOR" }
     });
     console.log("User=", user);
@@ -33,4 +43,10 @@ const Query = {
   }
 };
 
-module.exports = { Query };
+const Visit = {
+  user: (parent, _, { prisma }) => {
+    return prisma.visit({ id: parent.id }).user();
+  }
+};
+
+module.exports = { Query, Visit };

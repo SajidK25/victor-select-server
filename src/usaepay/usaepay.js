@@ -36,7 +36,7 @@ const saveCreditCard = async input => {
   };
 
   if (input.firstName && input.lastName) {
-    data.creditcard.cardholder = cardInput.firstName + " " + input.lastName;
+    data.creditcard.cardholder = input.firstName + " " + input.lastName;
   }
   if (input.address) {
     data.creditcard.avs_street = input.address;

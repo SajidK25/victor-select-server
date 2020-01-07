@@ -24,26 +24,25 @@ input SaveAddressInput {
   telephone: String
 }
 
+input SaveVisitInput {
+  type: PlanType
+  questionnaire: Json!
+}
+
+input RegisterInput {
+  email: String!
+  password: String!
+  firstName: String!
+  lastName: String!
+}
+
 type SuccessMessage {
   message: String
 }
 
-type SavedCard {
-  id: ID!
-  ccToken: String!
-  ccType: String!
-  ccNumber: String!
-  ccExpire: String!
-}
-
 type Mutation {
   login(email: String!, password: String!): User
-  register(
-    email: String!
-    password: String!
-    firstName: String!
-    lastName: String!
-  ): SuccessMessage!
+  register(input: RegisterInput!): SuccessMessage!
   requestReset(email: String!): SuccessMessage!
   resetPassword(
     resetToken: String!
@@ -52,17 +51,21 @@ type Mutation {
   ): User!
   logout: Boolean!
   invalidateTokens: Boolean!
-  saveCard(input: SaveCardInput!): SavedCard!
-  saveAddress(input: SaveAddressInput): Address!
+  saveCard(input: SaveCardInput!): CreditCard!
+  saveAddress(input: SaveAddressInput!): Address!
+  saveTmpVisit(input: SaveVisitInput!): Visit!
 }
 
 type Query {
   me: User @isAuthenticated
+  user(id: String!): User
   users: [User]!
   creditCards: [CreditCard]!
   userExists(email: String!): Boolean!
   hello: SuccessMessage
   validZipCode(zipcode: String!): Boolean!
+  Visit(id: String!): Visit
+  visits: [Visit]!
 }
 
 type User {
@@ -72,10 +75,9 @@ type User {
   email: String!
   count: Int
   role: Role
-  currentAddress: String
   addresses: [Address]!
-  currentCard: String
-  creditcards: [CreditCard]!
+  creditCards: [CreditCard]!
+  visits: [Visit]!
   resetToken: String
   resetTokenExpiry: Float
 }

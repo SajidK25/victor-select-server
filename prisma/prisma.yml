@@ -3,6 +3,11 @@ endpoint: ${env:PRISMA_ENDPOINT}
 # endpoint: https://victory-select-prod-450882f7ad.herokuapp.com/vs-prod/dev
 datamodel: datamodel.graphql
 generate:
+  - generator: javascript-client
+    output: ../src/generated/prisma-client/
   - generator: graphql-schema
-    output: ./src/generated/prisma.graphql
+    output: ../src/generated/prisma.graphql
 secret: ${env:PRISMA_SECRET}
+hooks:
+  post-deploy:
+    - prisma generate

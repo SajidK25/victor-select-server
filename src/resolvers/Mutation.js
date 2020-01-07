@@ -12,27 +12,14 @@ const setUser = (user, ctx) => {
   ctx.res.cookie("access-token", tokens.accessToken, { httpOnly: true });
 };
 
-async function createPrismaUser(ctx, idToken) {
-  const user = await ctx.db.mutation.createUser({
-    data: {
-      identity: idToken.sub.split(`|`)[0],
-      auth0id: idToken.sub.split(`|`)[1],
-      name: idToken.name,
-      email: idToken.email
-    }
-  });
-  return user;
-}
-
-const validateUser = async (userId, db) => {
+const validateUser = async (userId, prisma) => {
   if (!userId) {
     throw new Error("You must be logged in to do this");
   }
-  const user = await db.query.user({ where: { id: userId } });
+  const user = await prisma.user({ id: userId });
   if (!user) {
     throw new Error(`Can't find user ID: ${userId}`);
   }
-
   return user;
 };
 
@@ -45,11 +32,13 @@ const Mutation = {
     res.clearCookie("refresh-token");
     return true;
   },
-  register: async (_, args, ctx, info) => {
-    args.email = args.email.toLowerCase();
-    const user = await ctx.db.query.user({ where: { email: args.email } });
+  register: async (_, args, ctx) => {
+    const { prisma } = ctx;
+    const { input } = args;
+    input.email = input.email.toLowerCase();
+    const user = await prisma.user({ email: input.email });
     console.log("Register User:", user);
-    const hashedPassword = await bcrypt.hash(args.password, 10);
+    input.password = await bcrypt.hash(input.password, 10);
     if (user) {
       if (user.role === "PATIENT") {
         return { message: "EXISTS" };
@@ -57,9 +46,9 @@ const Mutation = {
       if (user.role === "VISITOR") {
         // Update information
         // copy the updates
-        const updateUser = await ctx.db.mutation.updateUser({
-          where: { email: args.email },
-          data: { ...args, password: hashedPassword }
+        const updateUser = await prisma.updateUser({
+          where: { email: input.email },
+          data: { ...input }
         });
         console.log("UpdateUser:", updateUser);
         setUser(updateUser, ctx);
@@ -68,20 +57,16 @@ const Mutation = {
     }
 
     console.log(args.email);
-    const newUser = await ctx.db.mutation.createUser({
-      data: {
-        ...args,
-        password: hashedPassword
-      }
-    });
+    const newUser = await prisma.createUser({ ...input });
     setUser(newUser, ctx);
 
     return { message: "OK" };
   },
   login: async (_, { email, password }, ctx) => {
+    const { prisma } = ctx;
     // 1. Check for a user with that email address
     email = email.toLowerCase();
-    const user = await ctx.db.query.user({ where: { email } });
+    const user = await prisma.user({ email });
     if (!user) {
       throw new Error("Invalid email or password.");
     }
@@ -93,15 +78,13 @@ const Mutation = {
 
     // Set the cookies with the token...
     setUser(user, ctx);
-    //    const tokens = createTokens(user);
-    //    ctx.res.cookie("refresh-token", tokens.refreshToken, { httpOnly: true });
-    //    ctx.res.cookie("access-token", tokens.accessToken, { httpOnly: true });
 
     return user;
   },
-  async requestReset(_, args, ctx) {
+
+  requestReset: async (_, args, { prisma }) => {
     // 1. Check if this is a real user
-    const user = await ctx.db.query.user({ where: { email: args.email } });
+    const user = await prisma.user({ email: args.email });
     if (!user) {
       throw new Error(`No such user found for email ${args.email}`);
     }
@@ -109,7 +92,7 @@ const Mutation = {
     const randomBytesPromiseified = promisify(randomBytes);
     const resetToken = (await randomBytesPromiseified(20)).toString("hex");
     const resetTokenExpiry = Date.now() + 3600000; // 1 hour from now
-    const updateUser = await ctx.db.mutation.updateUser({
+    const updateUser = await prisma.updateUser({
       where: { email: args.email },
       data: { resetToken, resetTokenExpiry }
     });
@@ -121,17 +104,21 @@ const Mutation = {
     // 4. Return the message
     return { message: "Thanks!" };
   },
-  async resetPassword(_, args, ctx) {
+
+  resetPassword: async (_, args, ctx) => {
+    const { prisma } = ctx;
     // 1. check if the passwords match
     if (args.password !== args.confirmPassword) {
       throw new Error("Yo Passwords don't match!");
     }
     // 2. check if its a legit reset token
     // 3. Check if its expired
-    const [user] = await ctx.db.query.users({
+    const [user] = await prisma.users({
       where: {
-        resetToken: args.resetToken,
-        resetTokenExpiry_gte: Date.now() - 3600000
+        AND: [
+          { resetToken: args.resetToken },
+          { resetTokenExpiry_gte: Date.now() - 3600000 }
+        ]
       }
     });
     if (!user) {
@@ -140,7 +127,7 @@ const Mutation = {
     // 4. Hash their new password
     const password = await bcrypt.hash(args.password, 10);
     // 5. Save the new password to the user and remove old resetToken fields
-    const updatedUser = await ctx.db.mutation.updateUser({
+    const updatedUser = await prisma.updateUser({
       where: { email: user.email },
       data: {
         password,
@@ -151,25 +138,22 @@ const Mutation = {
     // 6. Generate JWT
     // Set the cookies with the token...
     setUser(updatedUser, ctx);
-    //    const tokens = createTokens(updatedUser);
-    //    ctx.res.cookie("refresh-token", tokens.refreshToken, { httpOnly: true });
-    //    ctx.res.cookie("access-token", tokens.accessToken, { httpOnly: true });
-
     // 8. return the new user
     return updatedUser;
   },
-  invalidateTokens: async (_, __, { req, db }) => {
+
+  invalidateTokens: async (_, __, { req, prisma }) => {
     console.log("Invalidate:", req);
     if (!req.userId) {
       return false;
     }
 
-    const user = await db.query.user({ where: { id: req.userId } });
+    const user = await prisma.user({ id: req.userId });
     if (!user) {
       return false;
     }
     const count = user.count + 1;
-    await db.mutation.updateUser({
+    await prisma.updateUser({
       data: { count },
       where: { id: req.userId }
     });
@@ -177,40 +161,107 @@ const Mutation = {
 
     return true;
   },
-  async saveCard(_, args, { req, db }) {
-    await validateUser(req.userId, db);
+
+  saveCard: async (_, args, { req, prisma }) => {
+    await validateUser(req.userId, prisma);
     const { input } = args;
+
     const savedCard = await saveCreditCard(input);
     if (savedCard) {
-      const newCC = await db.mutation.createCreditCard({
-        data: {
-          ccType: savedCard.type,
-          ccToken: savedCard.key,
-          ccNumber: savedCard.cardnumber,
-          ccExpire: cardInput.expiration,
-          user: {
-            connect: {
-              id: req.userId
-            }
+      // Update all current user credit cards to inactive
+      await prisma.updateManyCreditCards({
+        where: { user: { id: req.userId }, active: true },
+        data: { active: false }
+      });
+      // Save new active card
+      const newCC = await prisma.createCreditCard({
+        ccType: savedCard.type,
+        ccToken: savedCard.key,
+        ccNumber: savedCard.cardnumber,
+        ccExpire: input.expiration,
+        active: true,
+        user: {
+          connect: {
+            id: req.userId
           }
         }
       });
-      await db.mutation.updateUser({
-        where: { id: req.userId },
-        data: {
-          currentCard: newCC.id
-        }
-      });
+
       console.log("NewCC", newCC);
       return newCC;
+    } else {
+      throw new Error("Unable to process credit card");
     }
   },
-  async saveAddress(_, args, { req, db }) {
-    await validateUser(req.userId, db);
+
+  async saveAddress(_, args, { req, prisma }) {
+    await validateUser(req.userId, prisma);
     const { input } = args;
     console.log("SaveAddress:", input);
-    const newAddress = await db.mutation.createAddress({
-      data: {
+
+    // Update all current user addresses to inactive
+    await prisma.updateManyAddresses({
+      where: { user: { id: req.userId }, active: true },
+      data: { active: false }
+    });
+
+    // See if there is a matching address
+    const [tmpAddress] = await prisma.addresses({
+      where: {
+        user: { id: req.userId },
+        ...input
+      }
+    });
+
+    var address;
+    if (!tmpAddress) {
+      address = await prisma.createAddress({
+        ...input,
+        active: true,
+        user: {
+          connect: {
+            id: req.userId
+          }
+        }
+      });
+    } else {
+      address = await prisma.updateAddress({
+        where: { id: tmpAddress.id },
+        data: {
+          active: true
+        }
+      });
+    }
+
+    // Update all other address to active == false
+
+    return address;
+  },
+
+  saveTmpVisit: async (_, args, { req, prisma }) => {
+    await validateUser(req.userId, prisma);
+    const { input } = args;
+    ///  Check for current visit
+    const [visit] = await prisma.visits({
+      where: {
+        user: { id: req.userId },
+        type: input.type,
+        status: "TEMPORARY"
+      }
+    });
+    console.log("Visits:", visit);
+
+    return prisma.upsertVisit({
+      where: { id: visit ? visit.id : "" },
+      update: {
+        ...input,
+        user: {
+          connect: {
+            id: req.userId
+          }
+        }
+      },
+      create: {
         ...input,
         user: {
           connect: {
@@ -219,13 +270,6 @@ const Mutation = {
         }
       }
     });
-    await db.mutation.updateUser({
-      where: { id: req.userId },
-      data: {
-        currentAddress: newAddress.id
-      }
-    });
-    return newAddress;
   }
 };
 

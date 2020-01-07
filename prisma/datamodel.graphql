@@ -38,10 +38,8 @@ type User {
   lastName: String!
   password: String!
   email: String! @unique
-  currentAddress: String
   addresses: [Address]!
-  currentCard: String
-  creditcards: [CreditCard]!
+  creditCards: [CreditCard]!
   photoId: String
   plans: [Plan]!
   visits: [Visit]!
@@ -54,10 +52,10 @@ type Visit {
   id: ID! @id
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  user: User!
-  type: PlanType!
+  user: User
+  type: PlanType! @default(value: ED)
   questionnaire: Json!
-  status: VisitStatus!
+  status: VisitStatus! @default(value: TEMPORARY)
 }
 
 type Address {
@@ -65,12 +63,13 @@ type Address {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   user: User!
-  addressOne: String
+  active: Boolean! @default(value: false)
+  addressOne: String!
   addressTwo: String
-  city: String
-  state: String
-  zipcode: String
-  telephone: String
+  city: String!
+  state: String!
+  zipcode: String!
+  telephone: String!
 }
 
 type Plan {
@@ -98,6 +97,7 @@ type CreditCard {
   id: ID! @id
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+  active: Boolean! @default(value: false)
   user: User!
   ccToken: String!
   ccType: String!

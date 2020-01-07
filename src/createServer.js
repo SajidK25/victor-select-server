@@ -10,7 +10,8 @@ const { createTokens } = require("./auth");
 const { importSchema } = require("graphql-import");
 const { resolvers } = require("./resolvers");
 const { directiveResolvers } = require("./directives");
-const { db } = require("./db");
+const { prisma } = require("./generated/prisma-client");
+// const { db } = require("./db");
 
 const schema = makeExecutableSchema({
   typeDefs: importSchema("./src/schema.graphql"),
@@ -21,7 +22,8 @@ const schema = makeExecutableSchema({
 const startServer = async () => {
   const server = new ApolloServer({
     schema,
-    context: req => ({ ...req, db })
+    //   context: req => ({ ...req, db })
+    context: req => ({ ...req, prisma })
   });
 
   const app = express();
@@ -93,7 +95,7 @@ const startServer = async () => {
       return next();
     }
 
-    const user = await db.query.user(
+    const user = await prisma.user(
       { where: { id: data.userId } },
       "{id, role, email, count, firstName, lastName}"
     );
