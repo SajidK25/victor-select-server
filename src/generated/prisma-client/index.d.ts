@@ -377,6 +377,8 @@ export type UserOrderByInput =
   | "email_DESC"
   | "photoId_ASC"
   | "photoId_DESC"
+  | "currVisit_ASC"
+  | "currVisit_DESC"
   | "resetToken_ASC"
   | "resetToken_DESC"
   | "resetTokenExpiry_ASC"
@@ -1002,6 +1004,7 @@ export interface UserCreateWithoutAddressesInput {
   photoId?: Maybe<String>;
   plans?: Maybe<PlanCreateManyWithoutUserInput>;
   visits?: Maybe<VisitCreateManyWithoutUserInput>;
+  currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
   count?: Maybe<Int>;
@@ -1075,6 +1078,7 @@ export interface UserCreateWithoutVisitsInput {
   creditCards?: Maybe<CreditCardCreateManyWithoutUserInput>;
   photoId?: Maybe<String>;
   plans?: Maybe<PlanCreateManyWithoutUserInput>;
+  currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
   count?: Maybe<Int>;
@@ -1138,6 +1142,7 @@ export interface UserUpdateWithoutAddressesDataInput {
   photoId?: Maybe<String>;
   plans?: Maybe<PlanUpdateManyWithoutUserInput>;
   visits?: Maybe<VisitUpdateManyWithoutUserInput>;
+  currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
   count?: Maybe<Int>;
@@ -1367,6 +1372,7 @@ export interface UserUpdateWithoutVisitsDataInput {
   creditCards?: Maybe<CreditCardUpdateManyWithoutUserInput>;
   photoId?: Maybe<String>;
   plans?: Maybe<PlanUpdateManyWithoutUserInput>;
+  currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
   count?: Maybe<Int>;
@@ -1873,6 +1879,7 @@ export interface UserCreateWithoutCreditCardsInput {
   photoId?: Maybe<String>;
   plans?: Maybe<PlanCreateManyWithoutUserInput>;
   visits?: Maybe<VisitCreateManyWithoutUserInput>;
+  currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
   count?: Maybe<Int>;
@@ -1904,6 +1911,7 @@ export interface UserUpdateWithoutCreditCardsDataInput {
   photoId?: Maybe<String>;
   plans?: Maybe<PlanUpdateManyWithoutUserInput>;
   visits?: Maybe<VisitUpdateManyWithoutUserInput>;
+  currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
   count?: Maybe<Int>;
@@ -1957,6 +1965,7 @@ export interface UserCreateWithoutPlansInput {
   creditCards?: Maybe<CreditCardCreateManyWithoutUserInput>;
   photoId?: Maybe<String>;
   visits?: Maybe<VisitCreateManyWithoutUserInput>;
+  currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
   count?: Maybe<Int>;
@@ -1997,6 +2006,7 @@ export interface UserUpdateWithoutPlansDataInput {
   creditCards?: Maybe<CreditCardUpdateManyWithoutUserInput>;
   photoId?: Maybe<String>;
   visits?: Maybe<VisitUpdateManyWithoutUserInput>;
+  currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
   count?: Maybe<Int>;
@@ -2035,6 +2045,7 @@ export interface UserCreateInput {
   photoId?: Maybe<String>;
   plans?: Maybe<PlanCreateManyWithoutUserInput>;
   visits?: Maybe<VisitCreateManyWithoutUserInput>;
+  currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
   count?: Maybe<Int>;
@@ -2051,6 +2062,7 @@ export interface UserUpdateInput {
   photoId?: Maybe<String>;
   plans?: Maybe<PlanUpdateManyWithoutUserInput>;
   visits?: Maybe<VisitUpdateManyWithoutUserInput>;
+  currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
   count?: Maybe<Int>;
@@ -2063,6 +2075,7 @@ export interface UserUpdateManyMutationInput {
   password?: Maybe<String>;
   email?: Maybe<String>;
   photoId?: Maybe<String>;
+  currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
   count?: Maybe<Int>;
@@ -2215,6 +2228,7 @@ export interface User {
   password: String;
   email: String;
   photoId?: String;
+  currVisit?: Json;
   resetToken?: String;
   resetTokenExpiry?: Float;
   count?: Int;
@@ -2266,6 +2280,7 @@ export interface UserPromise extends Promise<User>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  currVisit: () => Promise<Json>;
   resetToken: () => Promise<String>;
   resetTokenExpiry: () => Promise<Float>;
   count: () => Promise<Int>;
@@ -2319,6 +2334,7 @@ export interface UserSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  currVisit: () => Promise<AsyncIterator<Json>>;
   resetToken: () => Promise<AsyncIterator<String>>;
   resetTokenExpiry: () => Promise<AsyncIterator<Float>>;
   count: () => Promise<AsyncIterator<Int>>;
@@ -2372,6 +2388,7 @@ export interface UserNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  currVisit: () => Promise<Json>;
   resetToken: () => Promise<String>;
   resetTokenExpiry: () => Promise<Float>;
   count: () => Promise<Int>;
@@ -3119,6 +3136,7 @@ export interface UserPreviousValues {
   password: String;
   email: String;
   photoId?: String;
+  currVisit?: Json;
   resetToken?: String;
   resetTokenExpiry?: Float;
   count?: Int;
@@ -3136,6 +3154,7 @@ export interface UserPreviousValuesPromise
   password: () => Promise<String>;
   email: () => Promise<String>;
   photoId: () => Promise<String>;
+  currVisit: () => Promise<Json>;
   resetToken: () => Promise<String>;
   resetTokenExpiry: () => Promise<Float>;
   count: () => Promise<Int>;
@@ -3153,6 +3172,7 @@ export interface UserPreviousValuesSubscription
   password: () => Promise<AsyncIterator<String>>;
   email: () => Promise<AsyncIterator<String>>;
   photoId: () => Promise<AsyncIterator<String>>;
+  currVisit: () => Promise<AsyncIterator<Json>>;
   resetToken: () => Promise<AsyncIterator<String>>;
   resetTokenExpiry: () => Promise<AsyncIterator<Float>>;
   count: () => Promise<AsyncIterator<Int>>;

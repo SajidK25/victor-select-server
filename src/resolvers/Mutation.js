@@ -33,6 +33,7 @@ const Mutation = {
     return true;
   },
   register: async (_, args, ctx) => {
+    console.log("Entering register...");
     const { prisma } = ctx;
     const { input } = args;
     input.email = input.email.toLowerCase();
@@ -164,6 +165,7 @@ const Mutation = {
 
   saveCard: async (_, args, { req, prisma }) => {
     await validateUser(req.userId, prisma);
+
     const { input } = args;
 
     const savedCard = await saveCreditCard(input);
@@ -194,10 +196,12 @@ const Mutation = {
     }
   },
 
-  async saveAddress(_, args, { req, prisma }) {
+  //  async makePayment(_, { input }, { req, prisma }) {
+  //    await validateUser(req.userId, prisma);
+  //  },
+
+  async saveAddress(_, { input }, { req, prisma }) {
     await validateUser(req.userId, prisma);
-    const { input } = args;
-    console.log("SaveAddress:", input);
 
     // Update all current user addresses to inactive
     await prisma.updateManyAddresses({
@@ -238,38 +242,122 @@ const Mutation = {
     return address;
   },
 
-  saveTmpVisit: async (_, args, { req, prisma }) => {
+  updateCurrVisit: async (_, args, { req, prisma }) => {
     await validateUser(req.userId, prisma);
     const { input } = args;
-    ///  Check for current visit
-    const [visit] = await prisma.visits({
+    delete input.payment;
+    await prisma.updateUser({
+      data: { currVisit: input },
+      where: { id: req.userId }
+    });
+    return { message: "OK" };
+  },
+
+  saveNewVisit: async (_, args, { req, prisma }) => {
+    console.log("Save New Visit!");
+    await validateUser(req.userId, prisma);
+    const user = await prisma.user({ id: req.userId });
+
+    const { input } = args;
+
+    // first validate and save credit card
+    const cardInput = {
+      cardNumber: input.payment.cardNumber,
+      cardExpiry: input.payment.cardExpiry,
+      cardCVC: input.payment.cardCVC,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      zipCode: input.personal.zipCode,
+      address: input.personal.addressOne
+    };
+
+    const savedCard = await saveCreditCard(cardInput);
+    if (savedCard) {
+      // Update all current user credit cards to inactive
+      await prisma.updateManyCreditCards({
+        where: { user: { id: req.userId }, active: true },
+        data: { active: false }
+      });
+      // Save new active card
+      const newCC = await prisma.createCreditCard({
+        ccType: savedCard.type,
+        ccToken: savedCard.key,
+        ccNumber: savedCard.cardnumber,
+        ccExpire: cardInput.cardCVC,
+        active: true,
+        user: {
+          connect: {
+            id: req.userId
+          }
+        }
+      });
+    }
+
+    // Next add address
+    addressInput = {
+      addressOne: input.personal.addressOne,
+      addressTwo: input.personal.addressTwo,
+      city: input.personal.city,
+      state: input.personal.state,
+      zipcode: input.personal.zipCode,
+      telephone: input.personal.telephone
+    };
+
+    await prisma.updateManyAddresses({
+      where: { user: { id: req.userId }, active: true },
+      data: { active: false }
+    });
+
+    // See if there is a matching address
+    const [tmpAddress] = await prisma.addresses({
       where: {
         user: { id: req.userId },
-        type: input.type,
-        status: "TEMPORARY"
+        ...addressInput
       }
     });
-    console.log("Visits:", visit);
 
-    return prisma.upsertVisit({
-      where: { id: visit ? visit.id : "" },
-      update: {
-        ...input,
+    var address;
+    if (!tmpAddress) {
+      address = await prisma.createAddress({
+        ...addressInput,
+        active: true,
         user: {
           connect: {
             id: req.userId
           }
         }
-      },
-      create: {
-        ...input,
-        user: {
-          connect: {
-            id: req.userId
-          }
+      });
+    } else {
+      address = await prisma.updateAddress({
+        where: { id: tmpAddress.id },
+        data: {
+          active: true
+        }
+      });
+    }
+    // Save new visit
+    const questionaire = input;
+    delete questionaire.page;
+    delete questionaire.personal;
+    delete questionaire.payment;
+
+    const visit = await prisma.createVisit({
+      type: input.type,
+      questionnaire: questionaire,
+      user: {
+        connect: {
+          id: req.userId
         }
       }
     });
+    console.log("Visit", visit);
+    // Update user
+    await prisma.updateUser({
+      data: { currVisit: null },
+      where: { id: req.userId }
+    });
+
+    return { message: "OK" };
   }
 };
 

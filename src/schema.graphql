@@ -13,6 +13,7 @@ input SaveCardInput {
   lastName: String
   address: String
   zipcode: String
+  invoice: String
 }
 
 input SaveAddressInput {
@@ -26,6 +27,7 @@ input SaveAddressInput {
 
 input SaveVisitInput {
   type: PlanType
+  pageIndex: String
   questionnaire: Json!
 }
 
@@ -51,9 +53,10 @@ type Mutation {
   ): User!
   logout: Boolean!
   invalidateTokens: Boolean!
+  updateCurrVisit(input: Json): SuccessMessage!
   saveCard(input: SaveCardInput!): CreditCard!
   saveAddress(input: SaveAddressInput!): Address!
-  saveTmpVisit(input: SaveVisitInput!): Visit!
+  saveNewVisit(input: Json!): SuccessMessage!
 }
 
 type Query {
@@ -78,6 +81,7 @@ type User {
   addresses: [Address]!
   creditCards: [CreditCard]!
   visits: [Visit]!
+  currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
 }

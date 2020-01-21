@@ -1469,6 +1469,7 @@ type User {
   photoId: String
   plans(where: PlanWhereInput, orderBy: PlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Plan!]
   visits(where: VisitWhereInput, orderBy: VisitOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Visit!]
+  currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
   count: Int
@@ -1492,6 +1493,7 @@ input UserCreateInput {
   photoId: String
   plans: PlanCreateManyWithoutUserInput
   visits: VisitCreateManyWithoutUserInput
+  currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
   count: Int
@@ -1528,6 +1530,7 @@ input UserCreateWithoutAddressesInput {
   photoId: String
   plans: PlanCreateManyWithoutUserInput
   visits: VisitCreateManyWithoutUserInput
+  currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
   count: Int
@@ -1544,6 +1547,7 @@ input UserCreateWithoutCreditCardsInput {
   photoId: String
   plans: PlanCreateManyWithoutUserInput
   visits: VisitCreateManyWithoutUserInput
+  currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
   count: Int
@@ -1560,6 +1564,7 @@ input UserCreateWithoutPlansInput {
   creditCards: CreditCardCreateManyWithoutUserInput
   photoId: String
   visits: VisitCreateManyWithoutUserInput
+  currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
   count: Int
@@ -1576,6 +1581,7 @@ input UserCreateWithoutVisitsInput {
   creditCards: CreditCardCreateManyWithoutUserInput
   photoId: String
   plans: PlanCreateManyWithoutUserInput
+  currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
   count: Int
@@ -1605,6 +1611,8 @@ enum UserOrderByInput {
   email_DESC
   photoId_ASC
   photoId_DESC
+  currVisit_ASC
+  currVisit_DESC
   resetToken_ASC
   resetToken_DESC
   resetTokenExpiry_ASC
@@ -1623,6 +1631,7 @@ type UserPreviousValues {
   password: String!
   email: String!
   photoId: String
+  currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
   count: Int
@@ -1657,6 +1666,7 @@ input UserUpdateInput {
   photoId: String
   plans: PlanUpdateManyWithoutUserInput
   visits: VisitUpdateManyWithoutUserInput
+  currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
   count: Int
@@ -1669,6 +1679,7 @@ input UserUpdateManyMutationInput {
   password: String
   email: String
   photoId: String
+  currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
   count: Int
@@ -1714,6 +1725,7 @@ input UserUpdateWithoutAddressesDataInput {
   photoId: String
   plans: PlanUpdateManyWithoutUserInput
   visits: VisitUpdateManyWithoutUserInput
+  currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
   count: Int
@@ -1729,6 +1741,7 @@ input UserUpdateWithoutCreditCardsDataInput {
   photoId: String
   plans: PlanUpdateManyWithoutUserInput
   visits: VisitUpdateManyWithoutUserInput
+  currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
   count: Int
@@ -1744,6 +1757,7 @@ input UserUpdateWithoutPlansDataInput {
   creditCards: CreditCardUpdateManyWithoutUserInput
   photoId: String
   visits: VisitUpdateManyWithoutUserInput
+  currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
   count: Int
@@ -1759,6 +1773,7 @@ input UserUpdateWithoutVisitsDataInput {
   creditCards: CreditCardUpdateManyWithoutUserInput
   photoId: String
   plans: PlanUpdateManyWithoutUserInput
+  currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
   count: Int

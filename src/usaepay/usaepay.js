@@ -21,14 +21,62 @@ const usaepayAPI = got.extend({
   resolveBodyOnly: true
 });
 
+// This will save a card and run a sale for $1.00
 const saveCreditCard = async input => {
   console.log("input", input);
   validateArgument(input, "input");
   validateArgument(input.cardNumber, "input.cardNumber");
-  validateArgument(input.expiration, "input.expiration");
+  validateArgument(input.cardExpiry, "input.cardExpiry");
 
   var data = {
-    command: "cc:save",
+    command: "cc:authonly",
+    amount: 1.0,
+    creditcard: {
+      number: input.cardNumber,
+      expiration: input.cardExpiry
+    },
+    save_card: true
+  };
+
+  if (input.firstName && input.lastName) {
+    data.creditcard.cardholder = input.firstName + " " + input.lastName;
+  }
+  if (input.address) {
+    data.creditcard.avs_street = input.address;
+  }
+  if (input.zipcode) {
+    data.creditcard.avs_zip = input.zipcode;
+  }
+  if (input.cardCVC) {
+    data.creditcard.cvc = input.cardCVC;
+  }
+
+  console.log("Data:", data);
+  const body = await usaepayAPI.post("transactions", {
+    json: data
+  });
+
+  console.log("Body:", body);
+  console.log("Code", body.result_code);
+  if (!body || body.result_code !== "A") {
+    throw new Error("Card not approved");
+  }
+  if (!body.savedcard || !body.savedcard.cardnumber) {
+    throw new Error("Card could not be saved");
+  }
+
+  return body.savedcard;
+};
+
+const makePayment = async input => {
+  console.log("input", input);
+  validateArgument(input, "input");
+  validateArgument(input.ccToken, "input.ccToken"); // Token or card number
+  validateArgument(input.ccExpire, "input.ccExpire");
+
+  var data = {
+    command: "cc:sale",
+    amount: 1.0,
     creditcard: {
       number: input.cardNumber,
       expiration: input.expiration

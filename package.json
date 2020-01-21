@@ -36,9 +36,6 @@
     "sha256": "^0.2.0"
   },
   "license": "MIT",
-  "repository": {
-    "url": "wesbos.com"
-  },
   "babel": {
     "presets": [
       [
