@@ -55,6 +55,34 @@ const sendResetMail = ({ email, name, url }) => {
   sendMail(msg);
 };
 
+const sendWelcomeMail = ({ email, name }) => {
+  const msg = {
+    from: {
+      email: "brian@bbaker.net",
+      name: "Victory Select"
+    },
+    reply_to: {
+      email: "info@victoryselect.com",
+      name: "Victory Select"
+    },
+    personalizations: [
+      {
+        to: [
+          {
+            email: email
+          }
+        ],
+        dynamic_template_data: {
+          name: name
+        },
+        subject: "Welcome to VictorySelect"
+      }
+    ],
+    template_id: "d-1ea2eba2ed044883a22824126b0f42a1"
+  };
+  sendMail(msg);
+};
+
 const makeANiceEmail = text => `
   <div className="email" style="
     border: 1px solid black;
@@ -70,4 +98,4 @@ const makeANiceEmail = text => `
 `;
 
 // exports.transport = transport
-module.exports = { sendResetMail };
+module.exports = { sendResetMail, sendWelcomeMail };

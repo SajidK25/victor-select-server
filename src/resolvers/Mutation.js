@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const { randomBytes } = require("crypto");
 const { promisify } = require("util");
-const { sendResetMail } = require("../mail");
+const { sendResetMail, sendWelcomeMail } = require("../mail");
 const { createTokens } = require("../auth");
 const { saveCreditCard } = require("../usaepay/usaepay");
 const { createCustomerProfile } = require("../authorizenet/Customer");
@@ -336,6 +336,12 @@ const Mutation = {
       });
     }
     // Save new visit
+    const birthDate = new Date(input.personal.birthDate);
+    console.log("BirthDate", birthDate);
+    const gender = input.personal.gender;
+    const photoId = input.personal.licenseImage;
+
+    // Isolate the questionnaire
     const questionaire = input;
     delete questionaire.page;
     delete questionaire.personal;
@@ -352,10 +358,16 @@ const Mutation = {
     });
     console.log("Visit", visit);
     // Update user
-    await prisma.updateUser({
-      data: { currVisit: null },
+    const updateUser = await prisma.updateUser({
+      data: {
+        currVisit: null,
+        gender: gender,
+        birthDate: birthDate,
+        photoId: photoId
+      },
       where: { id: req.userId }
     });
+    sendWelcomeMail({ email: updateUser.email, name: updateUser.firstName });
 
     return { message: "OK" };
   }

@@ -5,6 +5,16 @@ directive @hasRole(roles: [String]) on QUERY | FIELD_DEFINITION | MUTATION
 directive @isOwner(type: String) on QUERY | FIELD_DEFINITION | MUTATION
 directive @isOwnerOrHasRole(type: String, roles: [String]) on QUERY | MUTATION
 
+input UserConnectionInput {
+  where: UserWhereInput
+  orderBy: UserOrderByInput
+  first: Int
+  last: Int
+  before: String
+  after: String
+  skip: Int
+}
+
 input SaveCardInput {
   cardNumber: String!
   expiration: String!
@@ -69,6 +79,10 @@ type Query {
   validZipCode(zipcode: String!): Boolean!
   Visit(id: String!): Visit
   visits: [Visit]!
+  visitsCount: Int!
+  newVisits: [Visit]!
+  visitsConnection: VisitConnection!
+  usersConnection(input: UserConnectionInput): UserConnection!
 }
 
 type User {
@@ -78,6 +92,9 @@ type User {
   email: String!
   count: Int
   role: Role
+  gender: String
+  birthDate: DateTime
+  photoId: String
   addresses: [Address]!
   creditCards: [CreditCard]!
   visits: [Visit]!

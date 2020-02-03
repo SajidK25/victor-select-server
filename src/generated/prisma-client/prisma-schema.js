@@ -1467,6 +1467,8 @@ type User {
   addresses(where: AddressWhereInput, orderBy: AddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Address!]
   creditCards(where: CreditCardWhereInput, orderBy: CreditCardOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CreditCard!]
   photoId: String
+  gender: String
+  birthDate: DateTime
   plans(where: PlanWhereInput, orderBy: PlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Plan!]
   visits(where: VisitWhereInput, orderBy: VisitOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Visit!]
   currVisit: Json
@@ -1491,6 +1493,8 @@ input UserCreateInput {
   addresses: AddressCreateManyWithoutUserInput
   creditCards: CreditCardCreateManyWithoutUserInput
   photoId: String
+  gender: String
+  birthDate: DateTime
   plans: PlanCreateManyWithoutUserInput
   visits: VisitCreateManyWithoutUserInput
   currVisit: Json
@@ -1528,6 +1532,8 @@ input UserCreateWithoutAddressesInput {
   email: String!
   creditCards: CreditCardCreateManyWithoutUserInput
   photoId: String
+  gender: String
+  birthDate: DateTime
   plans: PlanCreateManyWithoutUserInput
   visits: VisitCreateManyWithoutUserInput
   currVisit: Json
@@ -1545,6 +1551,8 @@ input UserCreateWithoutCreditCardsInput {
   email: String!
   addresses: AddressCreateManyWithoutUserInput
   photoId: String
+  gender: String
+  birthDate: DateTime
   plans: PlanCreateManyWithoutUserInput
   visits: VisitCreateManyWithoutUserInput
   currVisit: Json
@@ -1563,6 +1571,8 @@ input UserCreateWithoutPlansInput {
   addresses: AddressCreateManyWithoutUserInput
   creditCards: CreditCardCreateManyWithoutUserInput
   photoId: String
+  gender: String
+  birthDate: DateTime
   visits: VisitCreateManyWithoutUserInput
   currVisit: Json
   resetToken: String
@@ -1580,6 +1590,8 @@ input UserCreateWithoutVisitsInput {
   addresses: AddressCreateManyWithoutUserInput
   creditCards: CreditCardCreateManyWithoutUserInput
   photoId: String
+  gender: String
+  birthDate: DateTime
   plans: PlanCreateManyWithoutUserInput
   currVisit: Json
   resetToken: String
@@ -1611,6 +1623,10 @@ enum UserOrderByInput {
   email_DESC
   photoId_ASC
   photoId_DESC
+  gender_ASC
+  gender_DESC
+  birthDate_ASC
+  birthDate_DESC
   currVisit_ASC
   currVisit_DESC
   resetToken_ASC
@@ -1631,6 +1647,8 @@ type UserPreviousValues {
   password: String!
   email: String!
   photoId: String
+  gender: String
+  birthDate: DateTime
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
@@ -1664,6 +1682,8 @@ input UserUpdateInput {
   addresses: AddressUpdateManyWithoutUserInput
   creditCards: CreditCardUpdateManyWithoutUserInput
   photoId: String
+  gender: String
+  birthDate: DateTime
   plans: PlanUpdateManyWithoutUserInput
   visits: VisitUpdateManyWithoutUserInput
   currVisit: Json
@@ -1679,6 +1699,8 @@ input UserUpdateManyMutationInput {
   password: String
   email: String
   photoId: String
+  gender: String
+  birthDate: DateTime
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
@@ -1723,6 +1745,8 @@ input UserUpdateWithoutAddressesDataInput {
   email: String
   creditCards: CreditCardUpdateManyWithoutUserInput
   photoId: String
+  gender: String
+  birthDate: DateTime
   plans: PlanUpdateManyWithoutUserInput
   visits: VisitUpdateManyWithoutUserInput
   currVisit: Json
@@ -1739,6 +1763,8 @@ input UserUpdateWithoutCreditCardsDataInput {
   email: String
   addresses: AddressUpdateManyWithoutUserInput
   photoId: String
+  gender: String
+  birthDate: DateTime
   plans: PlanUpdateManyWithoutUserInput
   visits: VisitUpdateManyWithoutUserInput
   currVisit: Json
@@ -1756,6 +1782,8 @@ input UserUpdateWithoutPlansDataInput {
   addresses: AddressUpdateManyWithoutUserInput
   creditCards: CreditCardUpdateManyWithoutUserInput
   photoId: String
+  gender: String
+  birthDate: DateTime
   visits: VisitUpdateManyWithoutUserInput
   currVisit: Json
   resetToken: String
@@ -1772,6 +1800,8 @@ input UserUpdateWithoutVisitsDataInput {
   addresses: AddressUpdateManyWithoutUserInput
   creditCards: CreditCardUpdateManyWithoutUserInput
   photoId: String
+  gender: String
+  birthDate: DateTime
   plans: PlanUpdateManyWithoutUserInput
   currVisit: Json
   resetToken: String
@@ -1910,6 +1940,28 @@ input UserWhereInput {
   photoId_not_starts_with: String
   photoId_ends_with: String
   photoId_not_ends_with: String
+  gender: String
+  gender_not: String
+  gender_in: [String!]
+  gender_not_in: [String!]
+  gender_lt: String
+  gender_lte: String
+  gender_gt: String
+  gender_gte: String
+  gender_contains: String
+  gender_not_contains: String
+  gender_starts_with: String
+  gender_not_starts_with: String
+  gender_ends_with: String
+  gender_not_ends_with: String
+  birthDate: DateTime
+  birthDate_not: DateTime
+  birthDate_in: [DateTime!]
+  birthDate_not_in: [DateTime!]
+  birthDate_lt: DateTime
+  birthDate_lte: DateTime
+  birthDate_gt: DateTime
+  birthDate_gte: DateTime
   plans_every: PlanWhereInput
   plans_some: PlanWhereInput
   plans_none: PlanWhereInput

@@ -377,6 +377,10 @@ export type UserOrderByInput =
   | "email_DESC"
   | "photoId_ASC"
   | "photoId_DESC"
+  | "gender_ASC"
+  | "gender_DESC"
+  | "birthDate_ASC"
+  | "birthDate_DESC"
   | "currVisit_ASC"
   | "currVisit_DESC"
   | "resetToken_ASC"
@@ -626,6 +630,28 @@ export interface UserWhereInput {
   photoId_not_starts_with?: Maybe<String>;
   photoId_ends_with?: Maybe<String>;
   photoId_not_ends_with?: Maybe<String>;
+  gender?: Maybe<String>;
+  gender_not?: Maybe<String>;
+  gender_in?: Maybe<String[] | String>;
+  gender_not_in?: Maybe<String[] | String>;
+  gender_lt?: Maybe<String>;
+  gender_lte?: Maybe<String>;
+  gender_gt?: Maybe<String>;
+  gender_gte?: Maybe<String>;
+  gender_contains?: Maybe<String>;
+  gender_not_contains?: Maybe<String>;
+  gender_starts_with?: Maybe<String>;
+  gender_not_starts_with?: Maybe<String>;
+  gender_ends_with?: Maybe<String>;
+  gender_not_ends_with?: Maybe<String>;
+  birthDate?: Maybe<DateTimeInput>;
+  birthDate_not?: Maybe<DateTimeInput>;
+  birthDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  birthDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  birthDate_lt?: Maybe<DateTimeInput>;
+  birthDate_lte?: Maybe<DateTimeInput>;
+  birthDate_gt?: Maybe<DateTimeInput>;
+  birthDate_gte?: Maybe<DateTimeInput>;
   plans_every?: Maybe<PlanWhereInput>;
   plans_some?: Maybe<PlanWhereInput>;
   plans_none?: Maybe<PlanWhereInput>;
@@ -1002,6 +1028,8 @@ export interface UserCreateWithoutAddressesInput {
   email: String;
   creditCards?: Maybe<CreditCardCreateManyWithoutUserInput>;
   photoId?: Maybe<String>;
+  gender?: Maybe<String>;
+  birthDate?: Maybe<DateTimeInput>;
   plans?: Maybe<PlanCreateManyWithoutUserInput>;
   visits?: Maybe<VisitCreateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
@@ -1077,6 +1105,8 @@ export interface UserCreateWithoutVisitsInput {
   addresses?: Maybe<AddressCreateManyWithoutUserInput>;
   creditCards?: Maybe<CreditCardCreateManyWithoutUserInput>;
   photoId?: Maybe<String>;
+  gender?: Maybe<String>;
+  birthDate?: Maybe<DateTimeInput>;
   plans?: Maybe<PlanCreateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
@@ -1140,6 +1170,8 @@ export interface UserUpdateWithoutAddressesDataInput {
   email?: Maybe<String>;
   creditCards?: Maybe<CreditCardUpdateManyWithoutUserInput>;
   photoId?: Maybe<String>;
+  gender?: Maybe<String>;
+  birthDate?: Maybe<DateTimeInput>;
   plans?: Maybe<PlanUpdateManyWithoutUserInput>;
   visits?: Maybe<VisitUpdateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
@@ -1371,6 +1403,8 @@ export interface UserUpdateWithoutVisitsDataInput {
   addresses?: Maybe<AddressUpdateManyWithoutUserInput>;
   creditCards?: Maybe<CreditCardUpdateManyWithoutUserInput>;
   photoId?: Maybe<String>;
+  gender?: Maybe<String>;
+  birthDate?: Maybe<DateTimeInput>;
   plans?: Maybe<PlanUpdateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
@@ -1877,6 +1911,8 @@ export interface UserCreateWithoutCreditCardsInput {
   email: String;
   addresses?: Maybe<AddressCreateManyWithoutUserInput>;
   photoId?: Maybe<String>;
+  gender?: Maybe<String>;
+  birthDate?: Maybe<DateTimeInput>;
   plans?: Maybe<PlanCreateManyWithoutUserInput>;
   visits?: Maybe<VisitCreateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
@@ -1909,6 +1945,8 @@ export interface UserUpdateWithoutCreditCardsDataInput {
   email?: Maybe<String>;
   addresses?: Maybe<AddressUpdateManyWithoutUserInput>;
   photoId?: Maybe<String>;
+  gender?: Maybe<String>;
+  birthDate?: Maybe<DateTimeInput>;
   plans?: Maybe<PlanUpdateManyWithoutUserInput>;
   visits?: Maybe<VisitUpdateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
@@ -1964,6 +2002,8 @@ export interface UserCreateWithoutPlansInput {
   addresses?: Maybe<AddressCreateManyWithoutUserInput>;
   creditCards?: Maybe<CreditCardCreateManyWithoutUserInput>;
   photoId?: Maybe<String>;
+  gender?: Maybe<String>;
+  birthDate?: Maybe<DateTimeInput>;
   visits?: Maybe<VisitCreateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
@@ -2005,6 +2045,8 @@ export interface UserUpdateWithoutPlansDataInput {
   addresses?: Maybe<AddressUpdateManyWithoutUserInput>;
   creditCards?: Maybe<CreditCardUpdateManyWithoutUserInput>;
   photoId?: Maybe<String>;
+  gender?: Maybe<String>;
+  birthDate?: Maybe<DateTimeInput>;
   visits?: Maybe<VisitUpdateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
@@ -2043,6 +2085,8 @@ export interface UserCreateInput {
   addresses?: Maybe<AddressCreateManyWithoutUserInput>;
   creditCards?: Maybe<CreditCardCreateManyWithoutUserInput>;
   photoId?: Maybe<String>;
+  gender?: Maybe<String>;
+  birthDate?: Maybe<DateTimeInput>;
   plans?: Maybe<PlanCreateManyWithoutUserInput>;
   visits?: Maybe<VisitCreateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
@@ -2060,6 +2104,8 @@ export interface UserUpdateInput {
   addresses?: Maybe<AddressUpdateManyWithoutUserInput>;
   creditCards?: Maybe<CreditCardUpdateManyWithoutUserInput>;
   photoId?: Maybe<String>;
+  gender?: Maybe<String>;
+  birthDate?: Maybe<DateTimeInput>;
   plans?: Maybe<PlanUpdateManyWithoutUserInput>;
   visits?: Maybe<VisitUpdateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
@@ -2075,6 +2121,8 @@ export interface UserUpdateManyMutationInput {
   password?: Maybe<String>;
   email?: Maybe<String>;
   photoId?: Maybe<String>;
+  gender?: Maybe<String>;
+  birthDate?: Maybe<DateTimeInput>;
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
@@ -2228,6 +2276,8 @@ export interface User {
   password: String;
   email: String;
   photoId?: String;
+  gender?: String;
+  birthDate?: DateTimeOutput;
   currVisit?: Json;
   resetToken?: String;
   resetTokenExpiry?: Float;
@@ -2262,6 +2312,8 @@ export interface UserPromise extends Promise<User>, Fragmentable {
     last?: Int;
   }) => T;
   photoId: () => Promise<String>;
+  gender: () => Promise<String>;
+  birthDate: () => Promise<DateTimeOutput>;
   plans: <T = FragmentableArray<Plan>>(args?: {
     where?: PlanWhereInput;
     orderBy?: PlanOrderByInput;
@@ -2316,6 +2368,8 @@ export interface UserSubscription
     last?: Int;
   }) => T;
   photoId: () => Promise<AsyncIterator<String>>;
+  gender: () => Promise<AsyncIterator<String>>;
+  birthDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   plans: <T = Promise<AsyncIterator<PlanSubscription>>>(args?: {
     where?: PlanWhereInput;
     orderBy?: PlanOrderByInput;
@@ -2370,6 +2424,8 @@ export interface UserNullablePromise
     last?: Int;
   }) => T;
   photoId: () => Promise<String>;
+  gender: () => Promise<String>;
+  birthDate: () => Promise<DateTimeOutput>;
   plans: <T = FragmentableArray<Plan>>(args?: {
     where?: PlanWhereInput;
     orderBy?: PlanOrderByInput;
@@ -3136,6 +3192,8 @@ export interface UserPreviousValues {
   password: String;
   email: String;
   photoId?: String;
+  gender?: String;
+  birthDate?: DateTimeOutput;
   currVisit?: Json;
   resetToken?: String;
   resetTokenExpiry?: Float;
@@ -3154,6 +3212,8 @@ export interface UserPreviousValuesPromise
   password: () => Promise<String>;
   email: () => Promise<String>;
   photoId: () => Promise<String>;
+  gender: () => Promise<String>;
+  birthDate: () => Promise<DateTimeOutput>;
   currVisit: () => Promise<Json>;
   resetToken: () => Promise<String>;
   resetTokenExpiry: () => Promise<Float>;
@@ -3172,6 +3232,8 @@ export interface UserPreviousValuesSubscription
   password: () => Promise<AsyncIterator<String>>;
   email: () => Promise<AsyncIterator<String>>;
   photoId: () => Promise<AsyncIterator<String>>;
+  gender: () => Promise<AsyncIterator<String>>;
+  birthDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   currVisit: () => Promise<AsyncIterator<Json>>;
   resetToken: () => Promise<AsyncIterator<String>>;
   resetTokenExpiry: () => Promise<AsyncIterator<Float>>;

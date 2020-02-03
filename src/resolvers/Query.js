@@ -29,6 +29,25 @@ const Query = {
     return prisma.visits({}, info);
   },
 
+  visitsConnection: async (_, args, { prisma }, info) => {
+    return await prisma.visitsConnection(args.first);
+  },
+
+  usersConnection: async (_, args, { prisma }) => {
+    return await prisma.usersConnection(args.input);
+  },
+
+  newVisits: (_, __, { prisma }, info) => {
+    return prisma.visits({ where: { status: "PENDING" } }, info);
+  },
+
+  visitsCount: async (_, __, { prisma }) => {
+    return await prisma
+      .visitsConnection()
+      .aggregate()
+      .count();
+  },
+
   creditCards: (_, __, { prisma }) => {
     return prisma.creditCards();
   },
@@ -43,10 +62,10 @@ const Query = {
   }
 };
 
-const Visit = {
-  user: (parent, _, { prisma }) => {
-    return prisma.visit({ id: parent.id }).user();
-  }
-};
+// const Visit = {
+//   user: (parent, _, { prisma }) => {
+//     return prisma.visit({ id: parent.id }).user();
+//   }
+// };
 
-module.exports = { Query, Visit };
+module.exports = { Query };

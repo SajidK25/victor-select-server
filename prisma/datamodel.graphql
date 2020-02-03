@@ -41,6 +41,8 @@ type User {
   addresses: [Address]!
   creditCards: [CreditCard]!
   photoId: String
+  gender: String
+  birthDate: DateTime
   plans: [Plan]!
   visits: [Visit]!
   currVisit: Json
