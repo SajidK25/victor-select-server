@@ -1,23 +1,23 @@
-const { sign } = require('jsonwebtoken')
+const { sign } = require("jsonwebtoken");
 
 const createTokens = user => {
   const refreshToken = sign(
     { userId: user.id, count: user.count },
     process.env.REFRESH_TOKEN_SECRET,
     {
-      expiresIn: '1d'
+      expiresIn: "1d"
     }
-  )
+  );
 
   const accessToken = sign(
     { userId: user.id },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: '30min'
+      expiresIn: "60min"
     }
-  )
+  );
 
-  return { refreshToken, accessToken }
-}
+  return { refreshToken, accessToken };
+};
 
-module.exports = { createTokens }
+module.exports = { createTokens };

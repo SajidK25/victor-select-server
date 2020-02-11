@@ -253,6 +253,16 @@ const Mutation = {
     return { message: "OK" };
   },
 
+  updateVisit: async (_, { id, status = "APPROVED" }, { prisma }) => {
+    await prisma.updateVisit({
+      data: {
+        status: status
+      },
+      where: { id: id }
+    });
+    return { message: "OK" };
+  },
+
   saveNewVisit: async (_, args, { req, prisma }) => {
     console.log("Save New Visit!");
     await validateUser(req.userId, prisma);

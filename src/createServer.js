@@ -29,7 +29,7 @@ const startServer = async () => {
   const app = express();
 
   var corsOptions = {
-    origin: process.env.FRONTEND_URL,
+    origin: process.env.FRONTEND_URL.split(" "),
     credentials: true // <-- REQUIRED backend setting
   };
 

@@ -13,6 +13,20 @@ const Query = {
     return prisma.user({ id: req.userId });
   },
 
+  physician: async (_, __, { req, prisma }) => {
+    if (!req.userId) {
+      return null;
+    }
+    const user = await prisma.user({ id: req.userId });
+    console.log("Physician:", user);
+
+    if (!user || user.role !== "PHYSICIAN") {
+      return null;
+    }
+
+    return user;
+  },
+
   validZipCode: async (_, args) => {
     return validateZipcode(args.zipcode);
   },
@@ -25,20 +39,30 @@ const Query = {
     return await prisma.user({ id: args.id });
   },
 
-  visits: (_, __, { prisma }, info) => {
-    return prisma.visits({}, info);
+  visit: async (_, { id }, { prisma }) => {
+    return await prisma.visit({ id: id });
   },
 
-  visitsConnection: async (_, args, { prisma }, info) => {
-    return await prisma.visitsConnection(args.first);
+  visits: async (
+    _,
+    { pageSize = 20, after, status = "PENDING" },
+    { prisma },
+    info
+  ) => {
+    let variables = {
+      orderBy: "createdAt_ASC",
+      first: pageSize,
+      after: after,
+      where: { status: status }
+    };
+
+    console.log("Variables:", variables);
+
+    return await prisma.visitsConnection(variables);
   },
 
   usersConnection: async (_, args, { prisma }) => {
     return await prisma.usersConnection(args.input);
-  },
-
-  newVisits: (_, __, { prisma }, info) => {
-    return prisma.visits({ where: { status: "PENDING" } }, info);
   },
 
   visitsCount: async (_, __, { prisma }) => {

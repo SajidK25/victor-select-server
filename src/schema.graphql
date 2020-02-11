@@ -67,21 +67,21 @@ type Mutation {
   saveCard(input: SaveCardInput!): CreditCard!
   saveAddress(input: SaveAddressInput!): Address!
   saveNewVisit(input: Json!): SuccessMessage!
+  updateVisit(id: String!, status: String): SuccessMessage!
 }
 
 type Query {
   me: User @isAuthenticated
+  physician: User
   user(id: String!): User
   users: [User]!
   creditCards: [CreditCard]!
   userExists(email: String!): Boolean!
   hello: SuccessMessage
   validZipCode(zipcode: String!): Boolean!
-  Visit(id: String!): Visit
-  visits: [Visit]!
+  visit(id: String!): Visit
   visitsCount: Int!
-  newVisits: [Visit]!
-  visitsConnection: VisitConnection!
+  visits(pageSize: Int, after: String, status: String): VisitConnection!
   usersConnection(input: UserConnectionInput): UserConnection!
 }
 
