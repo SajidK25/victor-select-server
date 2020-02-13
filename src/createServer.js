@@ -29,7 +29,10 @@ const startServer = async () => {
   const app = express();
 
   var corsOptions = {
-    origin: process.env.FRONTEND_URL.split(" "),
+    origin: [
+      "https://victory-select.herokuapp.com",
+      "https://physician-select.herokuapp.com"
+    ],
     credentials: true // <-- REQUIRED backend setting
   };
 
