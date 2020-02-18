@@ -57,7 +57,7 @@ const Mutation = {
       }
     }
 
-    console.log(args.email);
+    console.log(args.input);
     const newUser = await prisma.createUser({ ...input });
     setUser(newUser, ctx);
 
@@ -65,6 +65,8 @@ const Mutation = {
   },
   login: async (_, { email, password }, ctx) => {
     const { prisma } = ctx;
+    console.log("email:", email);
+
     // 1. Check for a user with that email address
     email = email.toLowerCase();
     const user = await prisma.user({ email });
@@ -199,6 +201,44 @@ const Mutation = {
   //  async makePayment(_, { input }, { req, prisma }) {
   //    await validateUser(req.userId, prisma);
   //  },
+  async addMessage(_, { input }, { req, prisma }) {
+    const user = await validateUser(req.userId, prisma);
+
+    const visitUser = await prisma.visit({ id: input.visitId }).user();
+    if (!visitUser) {
+      throw new Error("Unable to find visit record");
+    }
+    console.log("Visit User:", visitUser);
+
+    const msgInput = {
+      visit: {
+        connect: {
+          id: input.visitId
+        }
+      },
+      text: input.text,
+      user: {
+        connect: {
+          id: visitUser.id
+        }
+      },
+      private: input.private
+    };
+
+    if (user.role === "PHYSICIAN") {
+      msgInput.physician = {
+        connect: {
+          id: user.id
+        }
+      };
+    }
+
+    const message = await prisma.createMessage({
+      ...msgInput
+    });
+
+    return message;
+  },
 
   async saveAddress(_, { input }, { req, prisma }) {
     await validateUser(req.userId, prisma);
@@ -293,7 +333,7 @@ const Mutation = {
         ccType: savedCard.type,
         ccToken: savedCard.key,
         ccNumber: savedCard.cardnumber,
-        ccExpire: cardInput.cardCVC,
+        ccExpire: cardInput.cardExpiry,
         active: true,
         user: {
           connect: {
@@ -326,9 +366,8 @@ const Mutation = {
       }
     });
 
-    var address;
     if (!tmpAddress) {
-      address = await prisma.createAddress({
+      await prisma.createAddress({
         ...addressInput,
         active: true,
         user: {
@@ -338,7 +377,7 @@ const Mutation = {
         }
       });
     } else {
-      address = await prisma.updateAddress({
+      await prisma.updateAddress({
         where: { id: tmpAddress.id },
         data: {
           active: true
@@ -383,7 +422,7 @@ const Mutation = {
   }
 };
 
-module.exports = { Mutation };
+module.exports = { Mutation, validateUser };
 
 //  createVisit(
 //    questionaire: Json!

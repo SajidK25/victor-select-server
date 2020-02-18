@@ -1,6 +1,7 @@
 const { forwardTo } = require("prisma-binding");
 const { hasPermission } = require("../utils");
 const { validateZipcode } = require("../helpers/validateZipcode");
+const { validateUser } = require("./Mutation");
 const { getCustomerProfile } = require("../authorizenet/Customer");
 
 const ctxUser = ctx => ctx.request.user;
@@ -46,9 +47,10 @@ const Query = {
   visits: async (
     _,
     { pageSize = 20, after, status = "PENDING" },
-    { prisma },
+    { prisma, req },
     info
   ) => {
+    await validateUser(req.userId, prisma);
     let variables = {
       orderBy: "createdAt_ASC",
       first: pageSize,

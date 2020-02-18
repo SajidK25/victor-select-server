@@ -107,3 +107,15 @@ type CreditCard {
   ccNumber: String!
   ccExpire: String!
 }
+
+type Message {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  visit: Visit!
+  private: Boolean! @default(value: true)
+  read: Boolean! @default(value: false)
+  physician: User @relation(name: "MessagePhysician")
+  user: User! @relation(name: "MessageUser")
+  text: String!
+}

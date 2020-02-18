@@ -48,6 +48,12 @@ input RegisterInput {
   lastName: String!
 }
 
+input AddMessageInput {
+  visitId: String!
+  text: String!
+  private: Boolean
+}
+
 type SuccessMessage {
   message: String
 }
@@ -62,6 +68,7 @@ type Mutation {
     confirmPassword: String!
   ): User!
   logout: Boolean!
+  addMessage(input: AddMessageInput!): Message!
   invalidateTokens: Boolean!
   updateCurrVisit(input: Json): SuccessMessage!
   saveCard(input: SaveCardInput!): CreditCard!

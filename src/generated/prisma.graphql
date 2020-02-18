@@ -431,6 +431,10 @@ type AggregateCreditCard {
   count: Int!
 }
 
+type AggregateMessage {
+  count: Int!
+}
+
 type AggregatePlan {
   count: Int!
 }
@@ -802,6 +806,157 @@ scalar Json
 
 scalar Long
 
+type Message {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  visit: Visit!
+  private: Boolean!
+  read: Boolean!
+  physician: User
+  user: User!
+  text: String!
+}
+
+type MessageConnection {
+  pageInfo: PageInfo!
+  edges: [MessageEdge]!
+  aggregate: AggregateMessage!
+}
+
+input MessageCreateInput {
+  id: ID
+  visit: VisitCreateOneInput!
+  private: Boolean
+  read: Boolean
+  physician: UserCreateOneInput
+  user: UserCreateOneInput!
+  text: String!
+}
+
+type MessageEdge {
+  node: Message!
+  cursor: String!
+}
+
+enum MessageOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  private_ASC
+  private_DESC
+  read_ASC
+  read_DESC
+  text_ASC
+  text_DESC
+}
+
+type MessagePreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  private: Boolean!
+  read: Boolean!
+  text: String!
+}
+
+type MessageSubscriptionPayload {
+  mutation: MutationType!
+  node: Message
+  updatedFields: [String!]
+  previousValues: MessagePreviousValues
+}
+
+input MessageSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: MessageWhereInput
+  AND: [MessageSubscriptionWhereInput!]
+  OR: [MessageSubscriptionWhereInput!]
+  NOT: [MessageSubscriptionWhereInput!]
+}
+
+input MessageUpdateInput {
+  visit: VisitUpdateOneRequiredInput
+  private: Boolean
+  read: Boolean
+  physician: UserUpdateOneInput
+  user: UserUpdateOneRequiredInput
+  text: String
+}
+
+input MessageUpdateManyMutationInput {
+  private: Boolean
+  read: Boolean
+  text: String
+}
+
+input MessageWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  visit: VisitWhereInput
+  private: Boolean
+  private_not: Boolean
+  read: Boolean
+  read_not: Boolean
+  physician: UserWhereInput
+  user: UserWhereInput
+  text: String
+  text_not: String
+  text_in: [String!]
+  text_not_in: [String!]
+  text_lt: String
+  text_lte: String
+  text_gt: String
+  text_gte: String
+  text_contains: String
+  text_not_contains: String
+  text_starts_with: String
+  text_not_starts_with: String
+  text_ends_with: String
+  text_not_ends_with: String
+  AND: [MessageWhereInput!]
+  OR: [MessageWhereInput!]
+  NOT: [MessageWhereInput!]
+}
+
+input MessageWhereUniqueInput {
+  id: ID
+}
+
 type Mutation {
   createAddress(data: AddressCreateInput!): Address!
   updateAddress(data: AddressUpdateInput!, where: AddressWhereUniqueInput!): Address
@@ -815,6 +970,12 @@ type Mutation {
   upsertCreditCard(where: CreditCardWhereUniqueInput!, create: CreditCardCreateInput!, update: CreditCardUpdateInput!): CreditCard!
   deleteCreditCard(where: CreditCardWhereUniqueInput!): CreditCard
   deleteManyCreditCards(where: CreditCardWhereInput): BatchPayload!
+  createMessage(data: MessageCreateInput!): Message!
+  updateMessage(data: MessageUpdateInput!, where: MessageWhereUniqueInput!): Message
+  updateManyMessages(data: MessageUpdateManyMutationInput!, where: MessageWhereInput): BatchPayload!
+  upsertMessage(where: MessageWhereUniqueInput!, create: MessageCreateInput!, update: MessageUpdateInput!): Message!
+  deleteMessage(where: MessageWhereUniqueInput!): Message
+  deleteManyMessages(where: MessageWhereInput): BatchPayload!
   createPlan(data: PlanCreateInput!): Plan!
   updatePlan(data: PlanUpdateInput!, where: PlanWhereUniqueInput!): Plan
   updateManyPlans(data: PlanUpdateManyMutationInput!, where: PlanWhereInput): BatchPayload!
@@ -1423,6 +1584,9 @@ type Query {
   creditCard(where: CreditCardWhereUniqueInput!): CreditCard
   creditCards(where: CreditCardWhereInput, orderBy: CreditCardOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CreditCard]!
   creditCardsConnection(where: CreditCardWhereInput, orderBy: CreditCardOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CreditCardConnection!
+  message(where: MessageWhereUniqueInput!): Message
+  messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message]!
+  messagesConnection(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): MessageConnection!
   plan(where: PlanWhereUniqueInput!): Plan
   plans(where: PlanWhereInput, orderBy: PlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Plan]!
   plansConnection(where: PlanWhereInput, orderBy: PlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PlanConnection!
@@ -1445,6 +1609,7 @@ enum Role {
 type Subscription {
   address(where: AddressSubscriptionWhereInput): AddressSubscriptionPayload
   creditCard(where: CreditCardSubscriptionWhereInput): CreditCardSubscriptionPayload
+  message(where: MessageSubscriptionWhereInput): MessageSubscriptionPayload
   plan(where: PlanSubscriptionWhereInput): PlanSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   visit(where: VisitSubscriptionWhereInput): VisitSubscriptionPayload
@@ -1496,6 +1661,11 @@ input UserCreateInput {
   resetToken: String
   resetTokenExpiry: Float
   count: Int
+}
+
+input UserCreateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
 }
 
 input UserCreateOneWithoutAddressesInput {
@@ -1668,6 +1838,25 @@ input UserSubscriptionWhereInput {
   NOT: [UserSubscriptionWhereInput!]
 }
 
+input UserUpdateDataInput {
+  role: Role
+  firstName: String
+  lastName: String
+  password: String
+  email: String
+  addresses: AddressUpdateManyWithoutUserInput
+  creditCards: CreditCardUpdateManyWithoutUserInput
+  photoId: String
+  gender: String
+  birthDate: DateTime
+  plans: PlanUpdateManyWithoutUserInput
+  visits: VisitUpdateManyWithoutUserInput
+  currVisit: Json
+  resetToken: String
+  resetTokenExpiry: Float
+  count: Int
+}
+
 input UserUpdateInput {
   role: Role
   firstName: String
@@ -1700,6 +1889,22 @@ input UserUpdateManyMutationInput {
   resetToken: String
   resetTokenExpiry: Float
   count: Int
+}
+
+input UserUpdateOneInput {
+  create: UserCreateInput
+  update: UserUpdateDataInput
+  upsert: UserUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateOneRequiredInput {
+  create: UserCreateInput
+  update: UserUpdateDataInput
+  upsert: UserUpsertNestedInput
+  connect: UserWhereUniqueInput
 }
 
 input UserUpdateOneRequiredWithoutAddressesInput {
@@ -1802,6 +2007,11 @@ input UserUpdateWithoutVisitsDataInput {
   resetToken: String
   resetTokenExpiry: Float
   count: Int
+}
+
+input UserUpsertNestedInput {
+  update: UserUpdateDataInput!
+  create: UserCreateInput!
 }
 
 input UserUpsertWithoutAddressesInput {

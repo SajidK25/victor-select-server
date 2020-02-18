@@ -18,6 +18,7 @@ export type Maybe<T> = T | undefined | null;
 export interface Exists {
   address: (where?: AddressWhereInput) => Promise<boolean>;
   creditCard: (where?: CreditCardWhereInput) => Promise<boolean>;
+  message: (where?: MessageWhereInput) => Promise<boolean>;
   plan: (where?: PlanWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
   visit: (where?: VisitWhereInput) => Promise<boolean>;
@@ -80,6 +81,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => CreditCardConnectionPromise;
+  message: (where: MessageWhereUniqueInput) => MessageNullablePromise;
+  messages: (args?: {
+    where?: MessageWhereInput;
+    orderBy?: MessageOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<Message>;
+  messagesConnection: (args?: {
+    where?: MessageWhereInput;
+    orderBy?: MessageOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => MessageConnectionPromise;
   plan: (where: PlanWhereUniqueInput) => PlanNullablePromise;
   plans: (args?: {
     where?: PlanWhereInput;
@@ -175,6 +195,22 @@ export interface Prisma {
   }) => CreditCardPromise;
   deleteCreditCard: (where: CreditCardWhereUniqueInput) => CreditCardPromise;
   deleteManyCreditCards: (where?: CreditCardWhereInput) => BatchPayloadPromise;
+  createMessage: (data: MessageCreateInput) => MessagePromise;
+  updateMessage: (args: {
+    data: MessageUpdateInput;
+    where: MessageWhereUniqueInput;
+  }) => MessagePromise;
+  updateManyMessages: (args: {
+    data: MessageUpdateManyMutationInput;
+    where?: MessageWhereInput;
+  }) => BatchPayloadPromise;
+  upsertMessage: (args: {
+    where: MessageWhereUniqueInput;
+    create: MessageCreateInput;
+    update: MessageUpdateInput;
+  }) => MessagePromise;
+  deleteMessage: (where: MessageWhereUniqueInput) => MessagePromise;
+  deleteManyMessages: (where?: MessageWhereInput) => BatchPayloadPromise;
   createPlan: (data: PlanCreateInput) => PlanPromise;
   updatePlan: (args: {
     data: PlanUpdateInput;
@@ -238,6 +274,9 @@ export interface Subscription {
   creditCard: (
     where?: CreditCardSubscriptionWhereInput
   ) => CreditCardSubscriptionPayloadSubscription;
+  message: (
+    where?: MessageSubscriptionWhereInput
+  ) => MessageSubscriptionPayloadSubscription;
   plan: (
     where?: PlanSubscriptionWhereInput
   ) => PlanSubscriptionPayloadSubscription;
@@ -357,6 +396,20 @@ export type VisitOrderByInput =
   | "questionnaire_DESC"
   | "status_ASC"
   | "status_DESC";
+
+export type MessageOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "private_ASC"
+  | "private_DESC"
+  | "read_ASC"
+  | "read_DESC"
+  | "text_ASC"
+  | "text_DESC";
 
 export type UserOrderByInput =
   | "id_ASC"
@@ -988,6 +1041,67 @@ export interface VisitWhereInput {
 export type CreditCardWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
+
+export type MessageWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface MessageWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  visit?: Maybe<VisitWhereInput>;
+  private?: Maybe<Boolean>;
+  private_not?: Maybe<Boolean>;
+  read?: Maybe<Boolean>;
+  read_not?: Maybe<Boolean>;
+  physician?: Maybe<UserWhereInput>;
+  user?: Maybe<UserWhereInput>;
+  text?: Maybe<String>;
+  text_not?: Maybe<String>;
+  text_in?: Maybe<String[] | String>;
+  text_not_in?: Maybe<String[] | String>;
+  text_lt?: Maybe<String>;
+  text_lte?: Maybe<String>;
+  text_gt?: Maybe<String>;
+  text_gte?: Maybe<String>;
+  text_contains?: Maybe<String>;
+  text_not_contains?: Maybe<String>;
+  text_starts_with?: Maybe<String>;
+  text_not_starts_with?: Maybe<String>;
+  text_ends_with?: Maybe<String>;
+  text_not_ends_with?: Maybe<String>;
+  AND?: Maybe<MessageWhereInput[] | MessageWhereInput>;
+  OR?: Maybe<MessageWhereInput[] | MessageWhereInput>;
+  NOT?: Maybe<MessageWhereInput[] | MessageWhereInput>;
+}
 
 export type PlanWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -1968,6 +2082,96 @@ export interface CreditCardUpdateManyMutationInput {
   ccExpire?: Maybe<String>;
 }
 
+export interface MessageCreateInput {
+  id?: Maybe<ID_Input>;
+  visit: VisitCreateOneInput;
+  private?: Maybe<Boolean>;
+  read?: Maybe<Boolean>;
+  physician?: Maybe<UserCreateOneInput>;
+  user: UserCreateOneInput;
+  text: String;
+}
+
+export interface UserCreateOneInput {
+  create?: Maybe<UserCreateInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserCreateInput {
+  id?: Maybe<ID_Input>;
+  role?: Maybe<Role>;
+  firstName: String;
+  lastName: String;
+  password: String;
+  email: String;
+  addresses?: Maybe<AddressCreateManyWithoutUserInput>;
+  creditCards?: Maybe<CreditCardCreateManyWithoutUserInput>;
+  photoId?: Maybe<String>;
+  gender?: Maybe<String>;
+  birthDate?: Maybe<DateTimeInput>;
+  plans?: Maybe<PlanCreateManyWithoutUserInput>;
+  visits?: Maybe<VisitCreateManyWithoutUserInput>;
+  currVisit?: Maybe<Json>;
+  resetToken?: Maybe<String>;
+  resetTokenExpiry?: Maybe<Float>;
+  count?: Maybe<Int>;
+}
+
+export interface MessageUpdateInput {
+  visit?: Maybe<VisitUpdateOneRequiredInput>;
+  private?: Maybe<Boolean>;
+  read?: Maybe<Boolean>;
+  physician?: Maybe<UserUpdateOneInput>;
+  user?: Maybe<UserUpdateOneRequiredInput>;
+  text?: Maybe<String>;
+}
+
+export interface UserUpdateOneInput {
+  create?: Maybe<UserCreateInput>;
+  update?: Maybe<UserUpdateDataInput>;
+  upsert?: Maybe<UserUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserUpdateDataInput {
+  role?: Maybe<Role>;
+  firstName?: Maybe<String>;
+  lastName?: Maybe<String>;
+  password?: Maybe<String>;
+  email?: Maybe<String>;
+  addresses?: Maybe<AddressUpdateManyWithoutUserInput>;
+  creditCards?: Maybe<CreditCardUpdateManyWithoutUserInput>;
+  photoId?: Maybe<String>;
+  gender?: Maybe<String>;
+  birthDate?: Maybe<DateTimeInput>;
+  plans?: Maybe<PlanUpdateManyWithoutUserInput>;
+  visits?: Maybe<VisitUpdateManyWithoutUserInput>;
+  currVisit?: Maybe<Json>;
+  resetToken?: Maybe<String>;
+  resetTokenExpiry?: Maybe<Float>;
+  count?: Maybe<Int>;
+}
+
+export interface UserUpsertNestedInput {
+  update: UserUpdateDataInput;
+  create: UserCreateInput;
+}
+
+export interface UserUpdateOneRequiredInput {
+  create?: Maybe<UserCreateInput>;
+  update?: Maybe<UserUpdateDataInput>;
+  upsert?: Maybe<UserUpsertNestedInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface MessageUpdateManyMutationInput {
+  private?: Maybe<Boolean>;
+  read?: Maybe<Boolean>;
+  text?: Maybe<String>;
+}
+
 export interface PlanCreateInput {
   id?: Maybe<ID_Input>;
   status?: Maybe<PlanStatus>;
@@ -2075,26 +2279,6 @@ export interface PlanUpdateManyMutationInput {
   amountDue?: Maybe<Int>;
 }
 
-export interface UserCreateInput {
-  id?: Maybe<ID_Input>;
-  role?: Maybe<Role>;
-  firstName: String;
-  lastName: String;
-  password: String;
-  email: String;
-  addresses?: Maybe<AddressCreateManyWithoutUserInput>;
-  creditCards?: Maybe<CreditCardCreateManyWithoutUserInput>;
-  photoId?: Maybe<String>;
-  gender?: Maybe<String>;
-  birthDate?: Maybe<DateTimeInput>;
-  plans?: Maybe<PlanCreateManyWithoutUserInput>;
-  visits?: Maybe<VisitCreateManyWithoutUserInput>;
-  currVisit?: Maybe<Json>;
-  resetToken?: Maybe<String>;
-  resetTokenExpiry?: Maybe<Float>;
-  count?: Maybe<Int>;
-}
-
 export interface UserUpdateInput {
   role?: Maybe<Role>;
   firstName?: Maybe<String>;
@@ -2168,6 +2352,17 @@ export interface CreditCardSubscriptionWhereInput {
   NOT?: Maybe<
     CreditCardSubscriptionWhereInput[] | CreditCardSubscriptionWhereInput
   >;
+}
+
+export interface MessageSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<MessageWhereInput>;
+  AND?: Maybe<MessageSubscriptionWhereInput[] | MessageSubscriptionWhereInput>;
+  OR?: Maybe<MessageSubscriptionWhereInput[] | MessageSubscriptionWhereInput>;
+  NOT?: Maybe<MessageSubscriptionWhereInput[] | MessageSubscriptionWhereInput>;
 }
 
 export interface PlanSubscriptionWhereInput {
@@ -2763,6 +2958,109 @@ export interface AggregateCreditCardSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface Message {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  private: Boolean;
+  read: Boolean;
+  text: String;
+}
+
+export interface MessagePromise extends Promise<Message>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  visit: <T = VisitPromise>() => T;
+  private: () => Promise<Boolean>;
+  read: () => Promise<Boolean>;
+  physician: <T = UserPromise>() => T;
+  user: <T = UserPromise>() => T;
+  text: () => Promise<String>;
+}
+
+export interface MessageSubscription
+  extends Promise<AsyncIterator<Message>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  visit: <T = VisitSubscription>() => T;
+  private: () => Promise<AsyncIterator<Boolean>>;
+  read: () => Promise<AsyncIterator<Boolean>>;
+  physician: <T = UserSubscription>() => T;
+  user: <T = UserSubscription>() => T;
+  text: () => Promise<AsyncIterator<String>>;
+}
+
+export interface MessageNullablePromise
+  extends Promise<Message | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  visit: <T = VisitPromise>() => T;
+  private: () => Promise<Boolean>;
+  read: () => Promise<Boolean>;
+  physician: <T = UserPromise>() => T;
+  user: <T = UserPromise>() => T;
+  text: () => Promise<String>;
+}
+
+export interface MessageConnection {
+  pageInfo: PageInfo;
+  edges: MessageEdge[];
+}
+
+export interface MessageConnectionPromise
+  extends Promise<MessageConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<MessageEdge>>() => T;
+  aggregate: <T = AggregateMessagePromise>() => T;
+}
+
+export interface MessageConnectionSubscription
+  extends Promise<AsyncIterator<MessageConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<MessageEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateMessageSubscription>() => T;
+}
+
+export interface MessageEdge {
+  node: Message;
+  cursor: String;
+}
+
+export interface MessageEdgePromise extends Promise<MessageEdge>, Fragmentable {
+  node: <T = MessagePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface MessageEdgeSubscription
+  extends Promise<AsyncIterator<MessageEdge>>,
+    Fragmentable {
+  node: <T = MessageSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateMessage {
+  count: Int;
+}
+
+export interface AggregateMessagePromise
+  extends Promise<AggregateMessage>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateMessageSubscription
+  extends Promise<AsyncIterator<AggregateMessage>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface PlanConnection {
   pageInfo: PageInfo;
   edges: PlanEdge[];
@@ -3071,6 +3369,62 @@ export interface CreditCardPreviousValuesSubscription
   ccExpire: () => Promise<AsyncIterator<String>>;
 }
 
+export interface MessageSubscriptionPayload {
+  mutation: MutationType;
+  node: Message;
+  updatedFields: String[];
+  previousValues: MessagePreviousValues;
+}
+
+export interface MessageSubscriptionPayloadPromise
+  extends Promise<MessageSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = MessagePromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = MessagePreviousValuesPromise>() => T;
+}
+
+export interface MessageSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<MessageSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = MessageSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = MessagePreviousValuesSubscription>() => T;
+}
+
+export interface MessagePreviousValues {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  private: Boolean;
+  read: Boolean;
+  text: String;
+}
+
+export interface MessagePreviousValuesPromise
+  extends Promise<MessagePreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  private: () => Promise<Boolean>;
+  read: () => Promise<Boolean>;
+  text: () => Promise<String>;
+}
+
+export interface MessagePreviousValuesSubscription
+  extends Promise<AsyncIterator<MessagePreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  private: () => Promise<AsyncIterator<Boolean>>;
+  read: () => Promise<AsyncIterator<Boolean>>;
+  text: () => Promise<AsyncIterator<String>>;
+}
+
 export interface PlanSubscriptionPayload {
   mutation: MutationType;
   node: Plan;
@@ -3375,6 +3729,10 @@ export const models: Model[] = [
   },
   {
     name: "CreditCard",
+    embedded: false
+  },
+  {
+    name: "Message",
     embedded: false
   }
 ];
