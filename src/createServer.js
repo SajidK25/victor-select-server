@@ -31,7 +31,10 @@ const startServer = async () => {
   var corsOptions = {
     origin: [
       "https://victory-select.herokuapp.com",
-      "https://physician-select.herokuapp.com"
+      "https://physician-select.herokuapp.com",
+      "http://localhost:3000",
+      "http://localhost:3005",
+      "http://localhost:5000"
     ],
     credentials: true // <-- REQUIRED backend setting
   };
