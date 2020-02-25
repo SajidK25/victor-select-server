@@ -29,7 +29,7 @@ const startServer = async () => {
   const app = express();
 
   var corsOptions = {
-    origin: "*"
+    origin: "https://victory-select.herokuapp.com",
     credentials: true // <-- REQUIRED backend setting
   };
 
