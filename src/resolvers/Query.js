@@ -7,11 +7,11 @@ const { getCustomerProfile } = require("../authorizenet/Customer");
 const ctxUser = ctx => ctx.request.user;
 
 const Query = {
-  me: (_, __, { req, prisma }) => {
+  me: async (_, __, { req, prisma }) => {
     if (!req.userId) {
       return null;
     }
-    return prisma.user({ id: req.userId });
+    return await prisma.user({ id: req.userId });
   },
 
   physician: async (_, __, { req, prisma }) => {
@@ -32,7 +32,8 @@ const Query = {
     return validateZipcode(args.zipcode);
   },
 
-  users: async (_, __, { prisma }) => {
+  users: async (_, __, { prisma, req }) => {
+    await validateUser(req.userId, prisma, true);
     return await prisma.users();
   },
 
@@ -50,7 +51,7 @@ const Query = {
     { prisma, req },
     info
   ) => {
-    await validateUser(req.userId, prisma);
+    await validateUser(req.userId, prisma, true);
     let variables = {
       orderBy: "createdAt_ASC",
       first: pageSize,

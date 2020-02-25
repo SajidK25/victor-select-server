@@ -10,9 +10,17 @@ const setUser = (user, ctx) => {
   const tokens = createTokens(user);
   ctx.res.cookie("refresh-token", tokens.refreshToken, { httpOnly: true });
   ctx.res.cookie("access-token", tokens.accessToken, { httpOnly: true });
+
+  const refreshToken = ctx.req.cookies["refresh-token"];
+  const accessToken = ctx.req.cookies["access-token"];
+  if (!refreshToken && !accessToken) {
+    throw new Error("Cookies are not set");
+  } else {
+    console.log("Cookies set");
+  }
 };
 
-const validateUser = async (userId, prisma) => {
+const validateUser = async (userId, prisma, isAdmin = false) => {
   if (!userId) {
     throw new Error("You must be logged in to do this");
   }
@@ -20,6 +28,10 @@ const validateUser = async (userId, prisma) => {
   if (!user) {
     throw new Error(`Can't find user ID: ${userId}`);
   }
+  if (isAdmin && (user.role != "PHYSICIAN" || user.role != "ADMIN")) {
+    throw new Error("Not allowed to run this operation");
+  }
+
   return user;
 };
 

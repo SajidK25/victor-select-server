@@ -77,6 +77,7 @@ const startServer = async () => {
     const refreshToken = req.cookies["refresh-token"];
     const accessToken = req.cookies["access-token"];
     if (!refreshToken && !accessToken) {
+      throw new Error("Cookies are not set");
       return next();
     }
 
