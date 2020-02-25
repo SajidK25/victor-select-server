@@ -29,13 +29,7 @@ const startServer = async () => {
   const app = express();
 
   var corsOptions = {
-    origin: [
-      "https://victory-select.herokuapp.com",
-      "https://physician-select.herokuapp.com",
-      "http://localhost:3000",
-      "http://localhost:3005",
-      "http://localhost:5000"
-    ],
+    origin: "*"
     credentials: true // <-- REQUIRED backend setting
   };
 
@@ -70,7 +64,7 @@ const startServer = async () => {
     })
   );
   app.use(helmet.referrerPolicy({ policy: "no-referrer" }));
-  app.use(cors(corsOptions));
+  app.use(cors());
   app.use(cookieParser());
 
   app.use(async (req, res, next) => {
