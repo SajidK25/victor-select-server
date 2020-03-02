@@ -440,8 +440,8 @@ export type UserOrderByInput =
   | "resetToken_DESC"
   | "resetTokenExpiry_ASC"
   | "resetTokenExpiry_DESC"
-  | "count_ASC"
-  | "count_DESC";
+  | "tokenVersion_ASC"
+  | "tokenVersion_DESC";
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
@@ -733,14 +733,14 @@ export interface UserWhereInput {
   resetTokenExpiry_lte?: Maybe<Float>;
   resetTokenExpiry_gt?: Maybe<Float>;
   resetTokenExpiry_gte?: Maybe<Float>;
-  count?: Maybe<Int>;
-  count_not?: Maybe<Int>;
-  count_in?: Maybe<Int[] | Int>;
-  count_not_in?: Maybe<Int[] | Int>;
-  count_lt?: Maybe<Int>;
-  count_lte?: Maybe<Int>;
-  count_gt?: Maybe<Int>;
-  count_gte?: Maybe<Int>;
+  tokenVersion?: Maybe<Int>;
+  tokenVersion_not?: Maybe<Int>;
+  tokenVersion_in?: Maybe<Int[] | Int>;
+  tokenVersion_not_in?: Maybe<Int[] | Int>;
+  tokenVersion_lt?: Maybe<Int>;
+  tokenVersion_lte?: Maybe<Int>;
+  tokenVersion_gt?: Maybe<Int>;
+  tokenVersion_gte?: Maybe<Int>;
   AND?: Maybe<UserWhereInput[] | UserWhereInput>;
   OR?: Maybe<UserWhereInput[] | UserWhereInput>;
   NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
@@ -1149,7 +1149,7 @@ export interface UserCreateWithoutAddressesInput {
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
-  count?: Maybe<Int>;
+  tokenVersion?: Maybe<Int>;
 }
 
 export interface CreditCardCreateManyWithoutUserInput {
@@ -1225,7 +1225,7 @@ export interface UserCreateWithoutVisitsInput {
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
-  count?: Maybe<Int>;
+  tokenVersion?: Maybe<Int>;
 }
 
 export interface AddressCreateManyWithoutUserInput {
@@ -1291,7 +1291,7 @@ export interface UserUpdateWithoutAddressesDataInput {
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
-  count?: Maybe<Int>;
+  tokenVersion?: Maybe<Int>;
 }
 
 export interface CreditCardUpdateManyWithoutUserInput {
@@ -1523,7 +1523,7 @@ export interface UserUpdateWithoutVisitsDataInput {
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
-  count?: Maybe<Int>;
+  tokenVersion?: Maybe<Int>;
 }
 
 export interface AddressUpdateManyWithoutUserInput {
@@ -2032,7 +2032,7 @@ export interface UserCreateWithoutCreditCardsInput {
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
-  count?: Maybe<Int>;
+  tokenVersion?: Maybe<Int>;
 }
 
 export interface CreditCardUpdateInput {
@@ -2066,7 +2066,7 @@ export interface UserUpdateWithoutCreditCardsDataInput {
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
-  count?: Maybe<Int>;
+  tokenVersion?: Maybe<Int>;
 }
 
 export interface UserUpsertWithoutCreditCardsInput {
@@ -2114,7 +2114,7 @@ export interface UserCreateInput {
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
-  count?: Maybe<Int>;
+  tokenVersion?: Maybe<Int>;
 }
 
 export interface MessageUpdateInput {
@@ -2151,7 +2151,7 @@ export interface UserUpdateDataInput {
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
-  count?: Maybe<Int>;
+  tokenVersion?: Maybe<Int>;
 }
 
 export interface UserUpsertNestedInput {
@@ -2212,7 +2212,7 @@ export interface UserCreateWithoutPlansInput {
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
-  count?: Maybe<Int>;
+  tokenVersion?: Maybe<Int>;
 }
 
 export interface PlanUpdateInput {
@@ -2255,7 +2255,7 @@ export interface UserUpdateWithoutPlansDataInput {
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
-  count?: Maybe<Int>;
+  tokenVersion?: Maybe<Int>;
 }
 
 export interface UserUpsertWithoutPlansInput {
@@ -2295,7 +2295,7 @@ export interface UserUpdateInput {
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
-  count?: Maybe<Int>;
+  tokenVersion?: Maybe<Int>;
 }
 
 export interface UserUpdateManyMutationInput {
@@ -2310,7 +2310,7 @@ export interface UserUpdateManyMutationInput {
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
-  count?: Maybe<Int>;
+  tokenVersion?: Maybe<Int>;
 }
 
 export interface VisitUpdateInput {
@@ -2476,7 +2476,7 @@ export interface User {
   currVisit?: Json;
   resetToken?: String;
   resetTokenExpiry?: Float;
-  count?: Int;
+  tokenVersion?: Int;
 }
 
 export interface UserPromise extends Promise<User>, Fragmentable {
@@ -2530,7 +2530,7 @@ export interface UserPromise extends Promise<User>, Fragmentable {
   currVisit: () => Promise<Json>;
   resetToken: () => Promise<String>;
   resetTokenExpiry: () => Promise<Float>;
-  count: () => Promise<Int>;
+  tokenVersion: () => Promise<Int>;
 }
 
 export interface UserSubscription
@@ -2586,7 +2586,7 @@ export interface UserSubscription
   currVisit: () => Promise<AsyncIterator<Json>>;
   resetToken: () => Promise<AsyncIterator<String>>;
   resetTokenExpiry: () => Promise<AsyncIterator<Float>>;
-  count: () => Promise<AsyncIterator<Int>>;
+  tokenVersion: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface UserNullablePromise
@@ -2642,7 +2642,7 @@ export interface UserNullablePromise
   currVisit: () => Promise<Json>;
   resetToken: () => Promise<String>;
   resetTokenExpiry: () => Promise<Float>;
-  count: () => Promise<Int>;
+  tokenVersion: () => Promise<Int>;
 }
 
 export interface CreditCard {
@@ -3551,7 +3551,7 @@ export interface UserPreviousValues {
   currVisit?: Json;
   resetToken?: String;
   resetTokenExpiry?: Float;
-  count?: Int;
+  tokenVersion?: Int;
 }
 
 export interface UserPreviousValuesPromise
@@ -3571,7 +3571,7 @@ export interface UserPreviousValuesPromise
   currVisit: () => Promise<Json>;
   resetToken: () => Promise<String>;
   resetTokenExpiry: () => Promise<Float>;
-  count: () => Promise<Int>;
+  tokenVersion: () => Promise<Int>;
 }
 
 export interface UserPreviousValuesSubscription
@@ -3591,7 +3591,7 @@ export interface UserPreviousValuesSubscription
   currVisit: () => Promise<AsyncIterator<Json>>;
   resetToken: () => Promise<AsyncIterator<String>>;
   resetTokenExpiry: () => Promise<AsyncIterator<Float>>;
-  count: () => Promise<AsyncIterator<Int>>;
+  tokenVersion: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface VisitSubscriptionPayload {

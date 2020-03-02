@@ -54,13 +54,24 @@ input AddMessageInput {
   private: Boolean
 }
 
+type LoginMessage {
+  accessToken: String
+  user: User
+}
+
+type RegisterMessage {
+  message: String!
+  accessToken: String
+  user: User
+}
+
 type SuccessMessage {
   message: String
 }
 
 type Mutation {
-  login(email: String!, password: String!): User
-  register(input: RegisterInput!): SuccessMessage!
+  login(email: String!, password: String!): LoginMessage
+  register(input: RegisterInput!): RegisterMessage!
   requestReset(email: String!): SuccessMessage!
   resetPassword(
     resetToken: String!
@@ -69,7 +80,7 @@ type Mutation {
   ): User!
   logout: Boolean!
   addMessage(input: AddMessageInput!): Message!
-  invalidateTokens: Boolean!
+  revokeRefreshTokensForUser(userId: String!): Boolean!
   updateCurrVisit(input: Json): SuccessMessage!
   saveCard(input: SaveCardInput!): CreditCard!
   saveAddress(input: SaveAddressInput!): Address!
@@ -78,8 +89,8 @@ type Mutation {
 }
 
 type Query {
-  me: User @isAuthenticated
-  physician: User
+  me: User
+  admin: User
   user(id: String!): User
   users: [User]!
   creditCards: [CreditCard]!
@@ -97,7 +108,7 @@ type User {
   firstName: String!
   lastName: String!
   email: String!
-  count: Int
+  tokenVersion: Int
   role: Role
   gender: String
   birthDate: DateTime

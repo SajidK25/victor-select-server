@@ -48,7 +48,7 @@ type User {
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
-  count: Int @default(value: 0)
+  tokenVersion: Int @default(value: 0)
 }
 
 type Visit {

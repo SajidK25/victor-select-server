@@ -2,9 +2,10 @@ const bcrypt = require("bcryptjs");
 const { randomBytes } = require("crypto");
 const { promisify } = require("util");
 const { sendResetMail, sendWelcomeMail } = require("../mail");
-const { createTokens } = require("../auth");
 const { saveCreditCard } = require("../usaepay/usaepay");
 const { createCustomerProfile } = require("../authorizenet/Customer");
+const { sendRefreshToken } = require("../sendRefreshToken");
+const { createRefreshToken, createAccessToken } = require("../auth");
 
 const setUser = (user, ctx) => {
   const tokens = createTokens(user);
@@ -38,45 +39,46 @@ const validateUser = async (userId, prisma, isAdmin = false) => {
 const ctxUser = ctx => ctx.request.user;
 
 const Mutation = {
-  logout: async (_, __, { res, req }) => {
-    req.userId = null;
-    res.clearCookie("access-token");
-    res.clearCookie("refresh-token");
+  logout: async (_, __, { res }) => {
+    sendRefreshToken(res, "");
+
     return true;
   },
-  register: async (_, args, ctx) => {
+  register: async (_, args, { prisma, res }) => {
     console.log("Entering register...");
-    const { prisma } = ctx;
     const { input } = args;
     input.email = input.email.toLowerCase();
     const user = await prisma.user({ email: input.email });
     console.log("Register User:", user);
     input.password = await bcrypt.hash(input.password, 10);
+    let newUser;
+    let message = "";
     if (user) {
-      if (user.role === "PATIENT") {
-        return { message: "EXISTS" };
-      }
-      if (user.role === "VISITOR") {
+      if (user.role !== "VISITOR") {
+        return { message: "EXISTS", accessToken: "", user: null };
+      } else {
         // Update information
         // copy the updates
-        const updateUser = await prisma.updateUser({
+        newUser = await prisma.updateUser({
           where: { email: input.email },
           data: { ...input }
         });
-        console.log("UpdateUser:", updateUser);
-        setUser(updateUser, ctx);
-        return { message: "OK" };
+        message = "OK";
       }
+    } else {
+      newUser = await prisma.createUser({ ...input });
+      message = "OK";
     }
 
-    console.log(args.input);
-    const newUser = await prisma.createUser({ ...input });
-    setUser(newUser, ctx);
+    sendRefreshToken(res, createRefreshToken(newUser));
 
-    return { message: "OK" };
+    return {
+      message: message,
+      accessToken: createAccessToken(newUser),
+      user: newUser
+    };
   },
-  login: async (_, { email, password }, ctx) => {
-    const { prisma } = ctx;
+  login: async (_, { email, password }, { res, prisma }) => {
     console.log("email:", email);
 
     // 1. Check for a user with that email address
@@ -91,10 +93,14 @@ const Mutation = {
       throw new Error("Invalid email or password");
     }
 
-    // Set the cookies with the token...
-    setUser(user, ctx);
+    // Login successful
+    sendRefreshToken(res, createRefreshToken(user));
 
-    return user;
+    // Set the cookies with the token...
+    return {
+      accessToken: createAccessToken(user),
+      user
+    };
   },
 
   requestReset: async (_, args, { prisma }) => {
@@ -157,22 +163,16 @@ const Mutation = {
     return updatedUser;
   },
 
-  invalidateTokens: async (_, __, { req, prisma }) => {
-    console.log("Invalidate:", req);
-    if (!req.userId) {
-      return false;
-    }
-
-    const user = await prisma.user({ id: req.userId });
+  revokeRefreshTokensForUser: async (_, args, { req, prisma }) => {
+    const user = await prisma.user({ id: args.userId });
     if (!user) {
       return false;
     }
     const count = user.count + 1;
     await prisma.updateUser({
       data: { count },
-      where: { id: req.userId }
+      where: { id: args.userId }
     });
-    res.clearCookie("access-token");
 
     return true;
   },

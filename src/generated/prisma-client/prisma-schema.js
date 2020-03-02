@@ -1639,7 +1639,7 @@ type User {
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
-  count: Int
+  tokenVersion: Int
 }
 
 type UserConnection {
@@ -1665,7 +1665,7 @@ input UserCreateInput {
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
-  count: Int
+  tokenVersion: Int
 }
 
 input UserCreateOneInput {
@@ -1709,7 +1709,7 @@ input UserCreateWithoutAddressesInput {
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
-  count: Int
+  tokenVersion: Int
 }
 
 input UserCreateWithoutCreditCardsInput {
@@ -1728,7 +1728,7 @@ input UserCreateWithoutCreditCardsInput {
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
-  count: Int
+  tokenVersion: Int
 }
 
 input UserCreateWithoutPlansInput {
@@ -1747,7 +1747,7 @@ input UserCreateWithoutPlansInput {
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
-  count: Int
+  tokenVersion: Int
 }
 
 input UserCreateWithoutVisitsInput {
@@ -1766,7 +1766,7 @@ input UserCreateWithoutVisitsInput {
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
-  count: Int
+  tokenVersion: Int
 }
 
 type UserEdge {
@@ -1803,8 +1803,8 @@ enum UserOrderByInput {
   resetToken_DESC
   resetTokenExpiry_ASC
   resetTokenExpiry_DESC
-  count_ASC
-  count_DESC
+  tokenVersion_ASC
+  tokenVersion_DESC
 }
 
 type UserPreviousValues {
@@ -1822,7 +1822,7 @@ type UserPreviousValues {
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
-  count: Int
+  tokenVersion: Int
 }
 
 type UserSubscriptionPayload {
@@ -1859,7 +1859,7 @@ input UserUpdateDataInput {
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
-  count: Int
+  tokenVersion: Int
 }
 
 input UserUpdateInput {
@@ -1878,7 +1878,7 @@ input UserUpdateInput {
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
-  count: Int
+  tokenVersion: Int
 }
 
 input UserUpdateManyMutationInput {
@@ -1893,7 +1893,7 @@ input UserUpdateManyMutationInput {
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
-  count: Int
+  tokenVersion: Int
 }
 
 input UserUpdateOneInput {
@@ -1957,7 +1957,7 @@ input UserUpdateWithoutAddressesDataInput {
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
-  count: Int
+  tokenVersion: Int
 }
 
 input UserUpdateWithoutCreditCardsDataInput {
@@ -1975,7 +1975,7 @@ input UserUpdateWithoutCreditCardsDataInput {
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
-  count: Int
+  tokenVersion: Int
 }
 
 input UserUpdateWithoutPlansDataInput {
@@ -1993,7 +1993,7 @@ input UserUpdateWithoutPlansDataInput {
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
-  count: Int
+  tokenVersion: Int
 }
 
 input UserUpdateWithoutVisitsDataInput {
@@ -2011,7 +2011,7 @@ input UserUpdateWithoutVisitsDataInput {
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
-  count: Int
+  tokenVersion: Int
 }
 
 input UserUpsertNestedInput {
@@ -2200,14 +2200,14 @@ input UserWhereInput {
   resetTokenExpiry_lte: Float
   resetTokenExpiry_gt: Float
   resetTokenExpiry_gte: Float
-  count: Int
-  count_not: Int
-  count_in: [Int!]
-  count_not_in: [Int!]
-  count_lt: Int
-  count_lte: Int
-  count_gt: Int
-  count_gte: Int
+  tokenVersion: Int
+  tokenVersion_not: Int
+  tokenVersion_in: [Int!]
+  tokenVersion_not_in: [Int!]
+  tokenVersion_lt: Int
+  tokenVersion_lte: Int
+  tokenVersion_gt: Int
+  tokenVersion_gte: Int
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

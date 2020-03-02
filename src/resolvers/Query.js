@@ -1,31 +1,25 @@
-const { forwardTo } = require("prisma-binding");
 const { hasPermission } = require("../utils");
 const { validateZipcode } = require("../helpers/validateZipcode");
-const { validateUser } = require("./Mutation");
+const { getAuthorizedUserId, validateUser } = require("../auth");
 const { getCustomerProfile } = require("../authorizenet/Customer");
-
-const ctxUser = ctx => ctx.request.user;
 
 const Query = {
   me: async (_, __, { req, prisma }) => {
-    if (!req.userId) {
+    const payload = getAuthorizedUserId(req);
+    if (!payload) {
       return null;
     }
-    return await prisma.user({ id: req.userId });
+
+    return await prisma.user({ id: payload.userId });
   },
 
-  physician: async (_, __, { req, prisma }) => {
-    if (!req.userId) {
-      return null;
-    }
-    const user = await prisma.user({ id: req.userId });
-    console.log("Physician:", user);
-
-    if (!user || user.role !== "PHYSICIAN") {
+  admin: async (_, __, { req, prisma }) => {
+    const payload = validateUser(req, true);
+    if (!payload) {
       return null;
     }
 
-    return user;
+    return await prisma.user({ id: payload.userId });
   },
 
   validZipCode: async (_, args) => {
@@ -33,7 +27,7 @@ const Query = {
   },
 
   users: async (_, __, { prisma, req }) => {
-    await validateUser(req.userId, prisma, true);
+    await validateUser(req, true);
     return await prisma.users();
   },
 
@@ -51,7 +45,7 @@ const Query = {
     { prisma, req },
     info
   ) => {
-    await validateUser(req.userId, prisma, true);
+    await validateUser(req, true);
     let variables = {
       orderBy: "createdAt_ASC",
       first: pageSize,
@@ -75,9 +69,11 @@ const Query = {
       .count();
   },
 
-  creditCards: (_, __, { prisma }) => {
+  creditCards: async (_, __, { prisma }) => {
+    await validateUser(req, true);
     return prisma.creditCards();
   },
+
   userExists: async (_, args, { prisma }) => {
     args.email = args.email.toLowerCase();
     // if it's a visitor account we won't enforce the duplicate
