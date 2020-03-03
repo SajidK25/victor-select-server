@@ -3,40 +3,12 @@ const { randomBytes } = require("crypto");
 const { promisify } = require("util");
 const { sendResetMail, sendWelcomeMail } = require("../mail");
 const { saveCreditCard } = require("../usaepay/usaepay");
-const { createCustomerProfile } = require("../authorizenet/Customer");
 const { sendRefreshToken } = require("../sendRefreshToken");
-const { createRefreshToken, createAccessToken } = require("../auth");
-
-const setUser = (user, ctx) => {
-  const tokens = createTokens(user);
-  ctx.res.cookie("refresh-token", tokens.refreshToken, { httpOnly: true });
-  ctx.res.cookie("access-token", tokens.accessToken, { httpOnly: true });
-
-  const refreshToken = ctx.req.cookies["refresh-token"];
-  const accessToken = ctx.req.cookies["access-token"];
-  if (!refreshToken && !accessToken) {
-    throw new Error("Cookies are not set");
-  } else {
-    console.log("Cookies set");
-  }
-};
-
-const validateUser = async (userId, prisma, isAdmin = false) => {
-  if (!userId) {
-    throw new Error("You must be logged in to do this");
-  }
-  const user = await prisma.user({ id: userId });
-  if (!user) {
-    throw new Error(`Can't find user ID: ${userId}`);
-  }
-  if (isAdmin && (user.role != "PHYSICIAN" || user.role != "ADMIN")) {
-    throw new Error("Not allowed to run this operation");
-  }
-
-  return user;
-};
-
-const ctxUser = ctx => ctx.request.user;
+const {
+  createRefreshToken,
+  createAccessToken,
+  validateUser
+} = require("../auth");
 
 const Mutation = {
   logout: async (_, __, { res }) => {
@@ -126,8 +98,7 @@ const Mutation = {
     return { message: "Thanks!" };
   },
 
-  resetPassword: async (_, args, ctx) => {
-    const { prisma } = ctx;
+  resetPassword: async (_, args, { prisma }) => {
     // 1. check if the passwords match
     if (args.password !== args.confirmPassword) {
       throw new Error("Yo Passwords don't match!");
@@ -178,7 +149,8 @@ const Mutation = {
   },
 
   saveCard: async (_, args, { req, prisma }) => {
-    await validateUser(req.userId, prisma);
+    const payload = await validateUser(req);
+    const { userId } = payload;
 
     const { input } = args;
 
@@ -186,7 +158,7 @@ const Mutation = {
     if (savedCard) {
       // Update all current user credit cards to inactive
       await prisma.updateManyCreditCards({
-        where: { user: { id: req.userId }, active: true },
+        where: { user: { id: userId }, active: true },
         data: { active: false }
       });
       // Save new active card
@@ -198,7 +170,7 @@ const Mutation = {
         active: true,
         user: {
           connect: {
-            id: req.userId
+            id: userId
           }
         }
       });
@@ -214,7 +186,8 @@ const Mutation = {
   //    await validateUser(req.userId, prisma);
   //  },
   async addMessage(_, { input }, { req, prisma }) {
-    const user = await validateUser(req.userId, prisma);
+    const payload = await validateUser(req);
+    const { userId, userRole } = payload;
 
     const visitUser = await prisma.visit({ id: input.visitId }).user();
     if (!visitUser) {
@@ -237,10 +210,10 @@ const Mutation = {
       private: input.private
     };
 
-    if (user.role === "PHYSICIAN") {
+    if (userRole === "PHYSICIAN") {
       msgInput.physician = {
         connect: {
-          id: user.id
+          id: userId
         }
       };
     }
@@ -253,18 +226,19 @@ const Mutation = {
   },
 
   async saveAddress(_, { input }, { req, prisma }) {
-    await validateUser(req.userId, prisma);
+    const payload = await validateUser(req);
+    const { userId } = payload;
 
     // Update all current user addresses to inactive
     await prisma.updateManyAddresses({
-      where: { user: { id: req.userId }, active: true },
+      where: { user: { id: userId }, active: true },
       data: { active: false }
     });
 
     // See if there is a matching address
     const [tmpAddress] = await prisma.addresses({
       where: {
-        user: { id: req.userId },
+        user: { id: userId },
         ...input
       }
     });
@@ -276,7 +250,7 @@ const Mutation = {
         active: true,
         user: {
           connect: {
-            id: req.userId
+            id: userId
           }
         }
       });
@@ -295,12 +269,14 @@ const Mutation = {
   },
 
   updateCurrVisit: async (_, args, { req, prisma }) => {
-    await validateUser(req.userId, prisma);
+    const payload = await validateUser(req);
+    if (!payload) return { message: "ERROR" };
+
     const { input } = args;
     delete input.payment;
     await prisma.updateUser({
       data: { currVisit: input },
-      where: { id: req.userId }
+      where: { id: payload.userId }
     });
     return { message: "OK" };
   },
@@ -317,8 +293,13 @@ const Mutation = {
 
   saveNewVisit: async (_, args, { req, prisma }) => {
     console.log("Save New Visit!");
-    await validateUser(req.userId, prisma);
-    const user = await prisma.user({ id: req.userId });
+    const payload = await validateUser(req);
+
+    const { userId } = payload;
+    console.log("Payload", payload);
+    console.log("UserId", userId);
+
+    const user = await prisma.user({ id: userId });
 
     const { input } = args;
 
@@ -337,7 +318,7 @@ const Mutation = {
     if (savedCard) {
       // Update all current user credit cards to inactive
       await prisma.updateManyCreditCards({
-        where: { user: { id: req.userId }, active: true },
+        where: { user: { id: userId }, active: true },
         data: { active: false }
       });
       // Save new active card
@@ -349,7 +330,7 @@ const Mutation = {
         active: true,
         user: {
           connect: {
-            id: req.userId
+            id: userId
           }
         }
       });
@@ -366,14 +347,14 @@ const Mutation = {
     };
 
     await prisma.updateManyAddresses({
-      where: { user: { id: req.userId }, active: true },
+      where: { user: { id: userId }, active: true },
       data: { active: false }
     });
 
     // See if there is a matching address
     const [tmpAddress] = await prisma.addresses({
       where: {
-        user: { id: req.userId },
+        user: { id: userId },
         ...addressInput
       }
     });
@@ -384,7 +365,7 @@ const Mutation = {
         active: true,
         user: {
           connect: {
-            id: req.userId
+            id: userId
           }
         }
       });
@@ -413,7 +394,7 @@ const Mutation = {
       questionnaire: questionaire,
       user: {
         connect: {
-          id: req.userId
+          id: userId
         }
       }
     });
@@ -426,7 +407,7 @@ const Mutation = {
         birthDate: birthDate,
         photoId: photoId
       },
-      where: { id: req.userId }
+      where: { id: userId }
     });
     sendWelcomeMail({ email: updateUser.email, name: updateUser.firstName });
 
@@ -434,7 +415,7 @@ const Mutation = {
   }
 };
 
-module.exports = { Mutation, validateUser };
+module.exports = { Mutation };
 
 //  createVisit(
 //    questionaire: Json!

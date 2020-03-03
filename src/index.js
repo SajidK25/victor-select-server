@@ -17,7 +17,8 @@ const { prisma } = require("./generated/prisma-client");
 var whitelist = [
   "http://localhost:3005",
   "http://localhost:3000",
-  "https://physician-select.herokuapp.com"
+  "https://physician-select.herokuapp.com",
+  "https://victory-select.herokuapp.com"
 ];
 
 let corsOptions = {
