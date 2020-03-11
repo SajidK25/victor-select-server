@@ -39,6 +39,29 @@ const Query = {
     return await prisma.visit({ id: id });
   },
 
+  prescription: async (_, { id }, { prisma }) => {
+    return await prisma.prescription({ id: id });
+  },
+
+  prescriptions: async (
+    _,
+    { pageSize = 20, after, status = "PENDING" },
+    { prisma, req },
+    info
+  ) => {
+    await validateUser(req, true);
+    let variables = {
+      orderBy: "createdAt_ASC",
+      first: pageSize,
+      after: after,
+      where: { status: status }
+    };
+
+    console.log("Variables:", variables);
+
+    return await prisma.prescriptionsConnection(variables);
+  },
+
   visits: async (
     _,
     { pageSize = 20, after, status = "PENDING" },

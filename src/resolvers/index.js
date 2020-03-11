@@ -5,6 +5,7 @@ const { Visit } = require("./Visit");
 const { Address } = require("./Address");
 const { CreditCard } = require("./CreditCard");
 const { Message } = require("./Message");
+const { Prescription } = require("./Prescription");
 
 const resolvers = {
   Mutation,
@@ -13,6 +14,7 @@ const resolvers = {
   Visit,
   Address,
   CreditCard,
+  Prescription,
   Message
 };
 

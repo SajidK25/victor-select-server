@@ -19,7 +19,9 @@ export interface Exists {
   address: (where?: AddressWhereInput) => Promise<boolean>;
   creditCard: (where?: CreditCardWhereInput) => Promise<boolean>;
   message: (where?: MessageWhereInput) => Promise<boolean>;
-  plan: (where?: PlanWhereInput) => Promise<boolean>;
+  prescription: (where?: PrescriptionWhereInput) => Promise<boolean>;
+  product: (where?: ProductWhereInput) => Promise<boolean>;
+  shipment: (where?: ShipmentWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
   visit: (where?: VisitWhereInput) => Promise<boolean>;
 }
@@ -100,25 +102,65 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => MessageConnectionPromise;
-  plan: (where: PlanWhereUniqueInput) => PlanNullablePromise;
-  plans: (args?: {
-    where?: PlanWhereInput;
-    orderBy?: PlanOrderByInput;
+  prescription: (
+    where: PrescriptionWhereUniqueInput
+  ) => PrescriptionNullablePromise;
+  prescriptions: (args?: {
+    where?: PrescriptionWhereInput;
+    orderBy?: PrescriptionOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
     first?: Int;
     last?: Int;
-  }) => FragmentableArray<Plan>;
-  plansConnection: (args?: {
-    where?: PlanWhereInput;
-    orderBy?: PlanOrderByInput;
+  }) => FragmentableArray<Prescription>;
+  prescriptionsConnection: (args?: {
+    where?: PrescriptionWhereInput;
+    orderBy?: PrescriptionOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
     first?: Int;
     last?: Int;
-  }) => PlanConnectionPromise;
+  }) => PrescriptionConnectionPromise;
+  product: (where: ProductWhereUniqueInput) => ProductNullablePromise;
+  products: (args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<Product>;
+  productsConnection: (args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => ProductConnectionPromise;
+  shipment: (where: ShipmentWhereUniqueInput) => ShipmentNullablePromise;
+  shipments: (args?: {
+    where?: ShipmentWhereInput;
+    orderBy?: ShipmentOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<Shipment>;
+  shipmentsConnection: (args?: {
+    where?: ShipmentWhereInput;
+    orderBy?: ShipmentOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => ShipmentConnectionPromise;
   user: (where: UserWhereUniqueInput) => UserNullablePromise;
   users: (args?: {
     where?: UserWhereInput;
@@ -211,22 +253,58 @@ export interface Prisma {
   }) => MessagePromise;
   deleteMessage: (where: MessageWhereUniqueInput) => MessagePromise;
   deleteManyMessages: (where?: MessageWhereInput) => BatchPayloadPromise;
-  createPlan: (data: PlanCreateInput) => PlanPromise;
-  updatePlan: (args: {
-    data: PlanUpdateInput;
-    where: PlanWhereUniqueInput;
-  }) => PlanPromise;
-  updateManyPlans: (args: {
-    data: PlanUpdateManyMutationInput;
-    where?: PlanWhereInput;
+  createPrescription: (data: PrescriptionCreateInput) => PrescriptionPromise;
+  updatePrescription: (args: {
+    data: PrescriptionUpdateInput;
+    where: PrescriptionWhereUniqueInput;
+  }) => PrescriptionPromise;
+  updateManyPrescriptions: (args: {
+    data: PrescriptionUpdateManyMutationInput;
+    where?: PrescriptionWhereInput;
   }) => BatchPayloadPromise;
-  upsertPlan: (args: {
-    where: PlanWhereUniqueInput;
-    create: PlanCreateInput;
-    update: PlanUpdateInput;
-  }) => PlanPromise;
-  deletePlan: (where: PlanWhereUniqueInput) => PlanPromise;
-  deleteManyPlans: (where?: PlanWhereInput) => BatchPayloadPromise;
+  upsertPrescription: (args: {
+    where: PrescriptionWhereUniqueInput;
+    create: PrescriptionCreateInput;
+    update: PrescriptionUpdateInput;
+  }) => PrescriptionPromise;
+  deletePrescription: (
+    where: PrescriptionWhereUniqueInput
+  ) => PrescriptionPromise;
+  deleteManyPrescriptions: (
+    where?: PrescriptionWhereInput
+  ) => BatchPayloadPromise;
+  createProduct: (data: ProductCreateInput) => ProductPromise;
+  updateProduct: (args: {
+    data: ProductUpdateInput;
+    where: ProductWhereUniqueInput;
+  }) => ProductPromise;
+  updateManyProducts: (args: {
+    data: ProductUpdateManyMutationInput;
+    where?: ProductWhereInput;
+  }) => BatchPayloadPromise;
+  upsertProduct: (args: {
+    where: ProductWhereUniqueInput;
+    create: ProductCreateInput;
+    update: ProductUpdateInput;
+  }) => ProductPromise;
+  deleteProduct: (where: ProductWhereUniqueInput) => ProductPromise;
+  deleteManyProducts: (where?: ProductWhereInput) => BatchPayloadPromise;
+  createShipment: (data: ShipmentCreateInput) => ShipmentPromise;
+  updateShipment: (args: {
+    data: ShipmentUpdateInput;
+    where: ShipmentWhereUniqueInput;
+  }) => ShipmentPromise;
+  updateManyShipments: (args: {
+    data: ShipmentUpdateManyMutationInput;
+    where?: ShipmentWhereInput;
+  }) => BatchPayloadPromise;
+  upsertShipment: (args: {
+    where: ShipmentWhereUniqueInput;
+    create: ShipmentCreateInput;
+    update: ShipmentUpdateInput;
+  }) => ShipmentPromise;
+  deleteShipment: (where: ShipmentWhereUniqueInput) => ShipmentPromise;
+  deleteManyShipments: (where?: ShipmentWhereInput) => BatchPayloadPromise;
   createUser: (data: UserCreateInput) => UserPromise;
   updateUser: (args: {
     data: UserUpdateInput;
@@ -277,9 +355,15 @@ export interface Subscription {
   message: (
     where?: MessageSubscriptionWhereInput
   ) => MessageSubscriptionPayloadSubscription;
-  plan: (
-    where?: PlanSubscriptionWhereInput
-  ) => PlanSubscriptionPayloadSubscription;
+  prescription: (
+    where?: PrescriptionSubscriptionWhereInput
+  ) => PrescriptionSubscriptionPayloadSubscription;
+  product: (
+    where?: ProductSubscriptionWhereInput
+  ) => ProductSubscriptionPayloadSubscription;
+  shipment: (
+    where?: ShipmentSubscriptionWhereInput
+  ) => ShipmentSubscriptionPayloadSubscription;
   user: (
     where?: UserSubscriptionWhereInput
   ) => UserSubscriptionPayloadSubscription;
@@ -298,14 +382,24 @@ export interface ClientConstructor<T> {
 
 export type Role = "ADMIN" | "PATIENT" | "PHYSICIAN" | "VISITOR";
 
-export type PlanStatus =
+export type PrescriptionStatus =
   | "PENDING"
-  | "ACTIVE"
+  | "DENIED"
+  | "NEW"
+  | "REFILL"
+  | "UNFILLED"
+  | "SHIPPED"
+  | "PAYMENT_DENIED"
   | "ONDEMAND"
-  | "CLOSED"
-  | "DENIED";
+  | "CLOSED";
 
-export type PlanType = "ED" | "HAIR" | "SLEEP" | "JOY" | "ALLERGY" | "WEIGHT";
+export type PrescriptionType =
+  | "ED"
+  | "HAIR"
+  | "SLEEP"
+  | "JOY"
+  | "ALLERGY"
+  | "WEIGHT";
 
 export type VisitStatus = "PENDING" | "APPROVED" | "DENIED" | "TEMPORARY";
 
@@ -349,7 +443,7 @@ export type CreditCardOrderByInput =
   | "ccExpire_ASC"
   | "ccExpire_DESC";
 
-export type PlanOrderByInput =
+export type PrescriptionOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "createdAt_ASC"
@@ -360,14 +454,12 @@ export type PlanOrderByInput =
   | "status_DESC"
   | "type_ASC"
   | "type_DESC"
-  | "drugName_ASC"
-  | "drugName_DESC"
-  | "strength_ASC"
-  | "strength_DESC"
   | "timesPerMonth_ASC"
   | "timesPerMonth_DESC"
-  | "addonName_ASC"
-  | "addonName_DESC"
+  | "addonTimesPerMonth_ASC"
+  | "addonTimesPerMonth_DESC"
+  | "approvedDate_ASC"
+  | "approvedDate_DESC"
   | "startDate_ASC"
   | "startDate_DESC"
   | "expireDate_ASC"
@@ -410,6 +502,44 @@ export type MessageOrderByInput =
   | "read_DESC"
   | "text_ASC"
   | "text_DESC";
+
+export type ProductOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "productId_ASC"
+  | "productId_DESC"
+  | "type_ASC"
+  | "type_DESC"
+  | "category_ASC"
+  | "category_DESC"
+  | "productName_ASC"
+  | "productName_DESC"
+  | "display_ASC"
+  | "display_DESC"
+  | "default_ASC"
+  | "default_DESC"
+  | "doseDisplay_ASC"
+  | "doseDisplay_DESC"
+  | "subTitle_ASC"
+  | "subTitle_DESC"
+  | "monthlyPrice_ASC"
+  | "monthlyPrice_DESC"
+  | "twoMonthPrice_ASC"
+  | "twoMonthPrice_DESC"
+  | "threeMonthPrice_ASC"
+  | "threeMonthPrice_DESC";
+
+export type ShipmentOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "shipDate_ASC"
+  | "shipDate_DESC"
+  | "trackingNumber_ASC"
+  | "trackingNumber_DESC";
 
 export type UserOrderByInput =
   | "id_ASC"
@@ -705,9 +835,9 @@ export interface UserWhereInput {
   birthDate_lte?: Maybe<DateTimeInput>;
   birthDate_gt?: Maybe<DateTimeInput>;
   birthDate_gte?: Maybe<DateTimeInput>;
-  plans_every?: Maybe<PlanWhereInput>;
-  plans_some?: Maybe<PlanWhereInput>;
-  plans_none?: Maybe<PlanWhereInput>;
+  prescriptions_every?: Maybe<PrescriptionWhereInput>;
+  prescriptions_some?: Maybe<PrescriptionWhereInput>;
+  prescriptions_none?: Maybe<PrescriptionWhereInput>;
   visits_every?: Maybe<VisitWhereInput>;
   visits_some?: Maybe<VisitWhereInput>;
   visits_none?: Maybe<VisitWhereInput>;
@@ -841,7 +971,7 @@ export interface CreditCardWhereInput {
   NOT?: Maybe<CreditCardWhereInput[] | CreditCardWhereInput>;
 }
 
-export interface PlanWhereInput {
+export interface PrescriptionWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -872,44 +1002,17 @@ export interface PlanWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  status?: Maybe<PlanStatus>;
-  status_not?: Maybe<PlanStatus>;
-  status_in?: Maybe<PlanStatus[] | PlanStatus>;
-  status_not_in?: Maybe<PlanStatus[] | PlanStatus>;
+  status?: Maybe<PrescriptionStatus>;
+  status_not?: Maybe<PrescriptionStatus>;
+  status_in?: Maybe<PrescriptionStatus[] | PrescriptionStatus>;
+  status_not_in?: Maybe<PrescriptionStatus[] | PrescriptionStatus>;
   user?: Maybe<UserWhereInput>;
   visit?: Maybe<VisitWhereInput>;
-  type?: Maybe<PlanType>;
-  type_not?: Maybe<PlanType>;
-  type_in?: Maybe<PlanType[] | PlanType>;
-  type_not_in?: Maybe<PlanType[] | PlanType>;
-  drugName?: Maybe<String>;
-  drugName_not?: Maybe<String>;
-  drugName_in?: Maybe<String[] | String>;
-  drugName_not_in?: Maybe<String[] | String>;
-  drugName_lt?: Maybe<String>;
-  drugName_lte?: Maybe<String>;
-  drugName_gt?: Maybe<String>;
-  drugName_gte?: Maybe<String>;
-  drugName_contains?: Maybe<String>;
-  drugName_not_contains?: Maybe<String>;
-  drugName_starts_with?: Maybe<String>;
-  drugName_not_starts_with?: Maybe<String>;
-  drugName_ends_with?: Maybe<String>;
-  drugName_not_ends_with?: Maybe<String>;
-  strength?: Maybe<String>;
-  strength_not?: Maybe<String>;
-  strength_in?: Maybe<String[] | String>;
-  strength_not_in?: Maybe<String[] | String>;
-  strength_lt?: Maybe<String>;
-  strength_lte?: Maybe<String>;
-  strength_gt?: Maybe<String>;
-  strength_gte?: Maybe<String>;
-  strength_contains?: Maybe<String>;
-  strength_not_contains?: Maybe<String>;
-  strength_starts_with?: Maybe<String>;
-  strength_not_starts_with?: Maybe<String>;
-  strength_ends_with?: Maybe<String>;
-  strength_not_ends_with?: Maybe<String>;
+  type?: Maybe<PrescriptionType>;
+  type_not?: Maybe<PrescriptionType>;
+  type_in?: Maybe<PrescriptionType[] | PrescriptionType>;
+  type_not_in?: Maybe<PrescriptionType[] | PrescriptionType>;
+  product?: Maybe<ProductWhereInput>;
   timesPerMonth?: Maybe<Int>;
   timesPerMonth_not?: Maybe<Int>;
   timesPerMonth_in?: Maybe<Int[] | Int>;
@@ -918,20 +1021,23 @@ export interface PlanWhereInput {
   timesPerMonth_lte?: Maybe<Int>;
   timesPerMonth_gt?: Maybe<Int>;
   timesPerMonth_gte?: Maybe<Int>;
-  addonName?: Maybe<String>;
-  addonName_not?: Maybe<String>;
-  addonName_in?: Maybe<String[] | String>;
-  addonName_not_in?: Maybe<String[] | String>;
-  addonName_lt?: Maybe<String>;
-  addonName_lte?: Maybe<String>;
-  addonName_gt?: Maybe<String>;
-  addonName_gte?: Maybe<String>;
-  addonName_contains?: Maybe<String>;
-  addonName_not_contains?: Maybe<String>;
-  addonName_starts_with?: Maybe<String>;
-  addonName_not_starts_with?: Maybe<String>;
-  addonName_ends_with?: Maybe<String>;
-  addonName_not_ends_with?: Maybe<String>;
+  addon?: Maybe<ProductWhereInput>;
+  addonTimesPerMonth?: Maybe<Int>;
+  addonTimesPerMonth_not?: Maybe<Int>;
+  addonTimesPerMonth_in?: Maybe<Int[] | Int>;
+  addonTimesPerMonth_not_in?: Maybe<Int[] | Int>;
+  addonTimesPerMonth_lt?: Maybe<Int>;
+  addonTimesPerMonth_lte?: Maybe<Int>;
+  addonTimesPerMonth_gt?: Maybe<Int>;
+  addonTimesPerMonth_gte?: Maybe<Int>;
+  approvedDate?: Maybe<DateTimeInput>;
+  approvedDate_not?: Maybe<DateTimeInput>;
+  approvedDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  approvedDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  approvedDate_lt?: Maybe<DateTimeInput>;
+  approvedDate_lte?: Maybe<DateTimeInput>;
+  approvedDate_gt?: Maybe<DateTimeInput>;
+  approvedDate_gte?: Maybe<DateTimeInput>;
   startDate?: Maybe<DateTimeInput>;
   startDate_not?: Maybe<DateTimeInput>;
   startDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -988,9 +1094,9 @@ export interface PlanWhereInput {
   amountDue_lte?: Maybe<Int>;
   amountDue_gt?: Maybe<Int>;
   amountDue_gte?: Maybe<Int>;
-  AND?: Maybe<PlanWhereInput[] | PlanWhereInput>;
-  OR?: Maybe<PlanWhereInput[] | PlanWhereInput>;
-  NOT?: Maybe<PlanWhereInput[] | PlanWhereInput>;
+  AND?: Maybe<PrescriptionWhereInput[] | PrescriptionWhereInput>;
+  OR?: Maybe<PrescriptionWhereInput[] | PrescriptionWhereInput>;
+  NOT?: Maybe<PrescriptionWhereInput[] | PrescriptionWhereInput>;
 }
 
 export interface VisitWhereInput {
@@ -1025,10 +1131,10 @@ export interface VisitWhereInput {
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
   user?: Maybe<UserWhereInput>;
-  type?: Maybe<PlanType>;
-  type_not?: Maybe<PlanType>;
-  type_in?: Maybe<PlanType[] | PlanType>;
-  type_not_in?: Maybe<PlanType[] | PlanType>;
+  type?: Maybe<PrescriptionType>;
+  type_not?: Maybe<PrescriptionType>;
+  type_in?: Maybe<PrescriptionType[] | PrescriptionType>;
+  type_not_in?: Maybe<PrescriptionType[] | PrescriptionType>;
   status?: Maybe<VisitStatus>;
   status_not?: Maybe<VisitStatus>;
   status_in?: Maybe<VisitStatus[] | VisitStatus>;
@@ -1036,6 +1142,140 @@ export interface VisitWhereInput {
   AND?: Maybe<VisitWhereInput[] | VisitWhereInput>;
   OR?: Maybe<VisitWhereInput[] | VisitWhereInput>;
   NOT?: Maybe<VisitWhereInput[] | VisitWhereInput>;
+}
+
+export interface ProductWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  productId?: Maybe<String>;
+  productId_not?: Maybe<String>;
+  productId_in?: Maybe<String[] | String>;
+  productId_not_in?: Maybe<String[] | String>;
+  productId_lt?: Maybe<String>;
+  productId_lte?: Maybe<String>;
+  productId_gt?: Maybe<String>;
+  productId_gte?: Maybe<String>;
+  productId_contains?: Maybe<String>;
+  productId_not_contains?: Maybe<String>;
+  productId_starts_with?: Maybe<String>;
+  productId_not_starts_with?: Maybe<String>;
+  productId_ends_with?: Maybe<String>;
+  productId_not_ends_with?: Maybe<String>;
+  type?: Maybe<PrescriptionType>;
+  type_not?: Maybe<PrescriptionType>;
+  type_in?: Maybe<PrescriptionType[] | PrescriptionType>;
+  type_not_in?: Maybe<PrescriptionType[] | PrescriptionType>;
+  category?: Maybe<String>;
+  category_not?: Maybe<String>;
+  category_in?: Maybe<String[] | String>;
+  category_not_in?: Maybe<String[] | String>;
+  category_lt?: Maybe<String>;
+  category_lte?: Maybe<String>;
+  category_gt?: Maybe<String>;
+  category_gte?: Maybe<String>;
+  category_contains?: Maybe<String>;
+  category_not_contains?: Maybe<String>;
+  category_starts_with?: Maybe<String>;
+  category_not_starts_with?: Maybe<String>;
+  category_ends_with?: Maybe<String>;
+  category_not_ends_with?: Maybe<String>;
+  productName?: Maybe<String>;
+  productName_not?: Maybe<String>;
+  productName_in?: Maybe<String[] | String>;
+  productName_not_in?: Maybe<String[] | String>;
+  productName_lt?: Maybe<String>;
+  productName_lte?: Maybe<String>;
+  productName_gt?: Maybe<String>;
+  productName_gte?: Maybe<String>;
+  productName_contains?: Maybe<String>;
+  productName_not_contains?: Maybe<String>;
+  productName_starts_with?: Maybe<String>;
+  productName_not_starts_with?: Maybe<String>;
+  productName_ends_with?: Maybe<String>;
+  productName_not_ends_with?: Maybe<String>;
+  display?: Maybe<String>;
+  display_not?: Maybe<String>;
+  display_in?: Maybe<String[] | String>;
+  display_not_in?: Maybe<String[] | String>;
+  display_lt?: Maybe<String>;
+  display_lte?: Maybe<String>;
+  display_gt?: Maybe<String>;
+  display_gte?: Maybe<String>;
+  display_contains?: Maybe<String>;
+  display_not_contains?: Maybe<String>;
+  display_starts_with?: Maybe<String>;
+  display_not_starts_with?: Maybe<String>;
+  display_ends_with?: Maybe<String>;
+  display_not_ends_with?: Maybe<String>;
+  default?: Maybe<Boolean>;
+  default_not?: Maybe<Boolean>;
+  doseDisplay?: Maybe<String>;
+  doseDisplay_not?: Maybe<String>;
+  doseDisplay_in?: Maybe<String[] | String>;
+  doseDisplay_not_in?: Maybe<String[] | String>;
+  doseDisplay_lt?: Maybe<String>;
+  doseDisplay_lte?: Maybe<String>;
+  doseDisplay_gt?: Maybe<String>;
+  doseDisplay_gte?: Maybe<String>;
+  doseDisplay_contains?: Maybe<String>;
+  doseDisplay_not_contains?: Maybe<String>;
+  doseDisplay_starts_with?: Maybe<String>;
+  doseDisplay_not_starts_with?: Maybe<String>;
+  doseDisplay_ends_with?: Maybe<String>;
+  doseDisplay_not_ends_with?: Maybe<String>;
+  subTitle?: Maybe<String>;
+  subTitle_not?: Maybe<String>;
+  subTitle_in?: Maybe<String[] | String>;
+  subTitle_not_in?: Maybe<String[] | String>;
+  subTitle_lt?: Maybe<String>;
+  subTitle_lte?: Maybe<String>;
+  subTitle_gt?: Maybe<String>;
+  subTitle_gte?: Maybe<String>;
+  subTitle_contains?: Maybe<String>;
+  subTitle_not_contains?: Maybe<String>;
+  subTitle_starts_with?: Maybe<String>;
+  subTitle_not_starts_with?: Maybe<String>;
+  subTitle_ends_with?: Maybe<String>;
+  subTitle_not_ends_with?: Maybe<String>;
+  monthlyPrice?: Maybe<Int>;
+  monthlyPrice_not?: Maybe<Int>;
+  monthlyPrice_in?: Maybe<Int[] | Int>;
+  monthlyPrice_not_in?: Maybe<Int[] | Int>;
+  monthlyPrice_lt?: Maybe<Int>;
+  monthlyPrice_lte?: Maybe<Int>;
+  monthlyPrice_gt?: Maybe<Int>;
+  monthlyPrice_gte?: Maybe<Int>;
+  twoMonthPrice?: Maybe<Int>;
+  twoMonthPrice_not?: Maybe<Int>;
+  twoMonthPrice_in?: Maybe<Int[] | Int>;
+  twoMonthPrice_not_in?: Maybe<Int[] | Int>;
+  twoMonthPrice_lt?: Maybe<Int>;
+  twoMonthPrice_lte?: Maybe<Int>;
+  twoMonthPrice_gt?: Maybe<Int>;
+  twoMonthPrice_gte?: Maybe<Int>;
+  threeMonthPrice?: Maybe<Int>;
+  threeMonthPrice_not?: Maybe<Int>;
+  threeMonthPrice_in?: Maybe<Int[] | Int>;
+  threeMonthPrice_not_in?: Maybe<Int[] | Int>;
+  threeMonthPrice_lt?: Maybe<Int>;
+  threeMonthPrice_lte?: Maybe<Int>;
+  threeMonthPrice_gt?: Maybe<Int>;
+  threeMonthPrice_gte?: Maybe<Int>;
+  AND?: Maybe<ProductWhereInput[] | ProductWhereInput>;
+  OR?: Maybe<ProductWhereInput[] | ProductWhereInput>;
+  NOT?: Maybe<ProductWhereInput[] | ProductWhereInput>;
 }
 
 export type CreditCardWhereUniqueInput = AtLeastOne<{
@@ -1103,9 +1343,80 @@ export interface MessageWhereInput {
   NOT?: Maybe<MessageWhereInput[] | MessageWhereInput>;
 }
 
-export type PlanWhereUniqueInput = AtLeastOne<{
+export type PrescriptionWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
+
+export type ProductWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  productId?: Maybe<String>;
+}>;
+
+export type ShipmentWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface ShipmentWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  user?: Maybe<UserWhereInput>;
+  address?: Maybe<AddressWhereInput>;
+  prescription?: Maybe<PrescriptionWhereInput>;
+  shipDate?: Maybe<DateTimeInput>;
+  shipDate_not?: Maybe<DateTimeInput>;
+  shipDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  shipDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  shipDate_lt?: Maybe<DateTimeInput>;
+  shipDate_lte?: Maybe<DateTimeInput>;
+  shipDate_gt?: Maybe<DateTimeInput>;
+  shipDate_gte?: Maybe<DateTimeInput>;
+  trackingNumber?: Maybe<String>;
+  trackingNumber_not?: Maybe<String>;
+  trackingNumber_in?: Maybe<String[] | String>;
+  trackingNumber_not_in?: Maybe<String[] | String>;
+  trackingNumber_lt?: Maybe<String>;
+  trackingNumber_lte?: Maybe<String>;
+  trackingNumber_gt?: Maybe<String>;
+  trackingNumber_gte?: Maybe<String>;
+  trackingNumber_contains?: Maybe<String>;
+  trackingNumber_not_contains?: Maybe<String>;
+  trackingNumber_starts_with?: Maybe<String>;
+  trackingNumber_not_starts_with?: Maybe<String>;
+  trackingNumber_ends_with?: Maybe<String>;
+  trackingNumber_not_ends_with?: Maybe<String>;
+  creditCard?: Maybe<CreditCardWhereInput>;
+  AND?: Maybe<ShipmentWhereInput[] | ShipmentWhereInput>;
+  OR?: Maybe<ShipmentWhereInput[] | ShipmentWhereInput>;
+  NOT?: Maybe<ShipmentWhereInput[] | ShipmentWhereInput>;
+}
 
 export type UserWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -1144,7 +1455,7 @@ export interface UserCreateWithoutAddressesInput {
   photoId?: Maybe<String>;
   gender?: Maybe<String>;
   birthDate?: Maybe<DateTimeInput>;
-  plans?: Maybe<PlanCreateManyWithoutUserInput>;
+  prescriptions?: Maybe<PrescriptionCreateManyWithoutUserInput>;
   visits?: Maybe<VisitCreateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
@@ -1168,22 +1479,27 @@ export interface CreditCardCreateWithoutUserInput {
   ccExpire: String;
 }
 
-export interface PlanCreateManyWithoutUserInput {
-  create?: Maybe<PlanCreateWithoutUserInput[] | PlanCreateWithoutUserInput>;
-  connect?: Maybe<PlanWhereUniqueInput[] | PlanWhereUniqueInput>;
+export interface PrescriptionCreateManyWithoutUserInput {
+  create?: Maybe<
+    PrescriptionCreateWithoutUserInput[] | PrescriptionCreateWithoutUserInput
+  >;
+  connect?: Maybe<
+    PrescriptionWhereUniqueInput[] | PrescriptionWhereUniqueInput
+  >;
 }
 
-export interface PlanCreateWithoutUserInput {
+export interface PrescriptionCreateWithoutUserInput {
   id?: Maybe<ID_Input>;
-  status?: Maybe<PlanStatus>;
+  status?: Maybe<PrescriptionStatus>;
   visit: VisitCreateOneInput;
-  type: PlanType;
-  drugName: String;
-  strength?: Maybe<String>;
+  type: PrescriptionType;
+  product: ProductCreateOneInput;
   timesPerMonth: Int;
-  addonName?: Maybe<String>;
-  startDate: DateTimeInput;
-  expireDate: DateTimeInput;
+  addon?: Maybe<ProductCreateOneInput>;
+  addonTimesPerMonth?: Maybe<Int>;
+  approvedDate?: Maybe<DateTimeInput>;
+  startDate?: Maybe<DateTimeInput>;
+  expireDate?: Maybe<DateTimeInput>;
   totalRefills: Int;
   refillsRemaining: Int;
   nextDelivery?: Maybe<DateTimeInput>;
@@ -1199,7 +1515,7 @@ export interface VisitCreateOneInput {
 export interface VisitCreateInput {
   id?: Maybe<ID_Input>;
   user?: Maybe<UserCreateOneWithoutVisitsInput>;
-  type?: Maybe<PlanType>;
+  type?: Maybe<PrescriptionType>;
   questionnaire: Json;
   status?: Maybe<VisitStatus>;
 }
@@ -1221,7 +1537,7 @@ export interface UserCreateWithoutVisitsInput {
   photoId?: Maybe<String>;
   gender?: Maybe<String>;
   birthDate?: Maybe<DateTimeInput>;
-  plans?: Maybe<PlanCreateManyWithoutUserInput>;
+  prescriptions?: Maybe<PrescriptionCreateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
@@ -1246,6 +1562,26 @@ export interface AddressCreateWithoutUserInput {
   telephone: String;
 }
 
+export interface ProductCreateOneInput {
+  create?: Maybe<ProductCreateInput>;
+  connect?: Maybe<ProductWhereUniqueInput>;
+}
+
+export interface ProductCreateInput {
+  id?: Maybe<ID_Input>;
+  productId: String;
+  type: PrescriptionType;
+  category: String;
+  productName: String;
+  display: String;
+  default?: Maybe<Boolean>;
+  doseDisplay?: Maybe<String>;
+  subTitle?: Maybe<String>;
+  monthlyPrice: Int;
+  twoMonthPrice: Int;
+  threeMonthPrice: Int;
+}
+
 export interface VisitCreateManyWithoutUserInput {
   create?: Maybe<VisitCreateWithoutUserInput[] | VisitCreateWithoutUserInput>;
   connect?: Maybe<VisitWhereUniqueInput[] | VisitWhereUniqueInput>;
@@ -1253,7 +1589,7 @@ export interface VisitCreateManyWithoutUserInput {
 
 export interface VisitCreateWithoutUserInput {
   id?: Maybe<ID_Input>;
-  type?: Maybe<PlanType>;
+  type?: Maybe<PrescriptionType>;
   questionnaire: Json;
   status?: Maybe<VisitStatus>;
 }
@@ -1286,7 +1622,7 @@ export interface UserUpdateWithoutAddressesDataInput {
   photoId?: Maybe<String>;
   gender?: Maybe<String>;
   birthDate?: Maybe<DateTimeInput>;
-  plans?: Maybe<PlanUpdateManyWithoutUserInput>;
+  prescriptions?: Maybe<PrescriptionUpdateManyWithoutUserInput>;
   visits?: Maybe<VisitUpdateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
@@ -1443,39 +1779,49 @@ export interface CreditCardUpdateManyDataInput {
   ccExpire?: Maybe<String>;
 }
 
-export interface PlanUpdateManyWithoutUserInput {
-  create?: Maybe<PlanCreateWithoutUserInput[] | PlanCreateWithoutUserInput>;
-  delete?: Maybe<PlanWhereUniqueInput[] | PlanWhereUniqueInput>;
-  connect?: Maybe<PlanWhereUniqueInput[] | PlanWhereUniqueInput>;
-  set?: Maybe<PlanWhereUniqueInput[] | PlanWhereUniqueInput>;
-  disconnect?: Maybe<PlanWhereUniqueInput[] | PlanWhereUniqueInput>;
+export interface PrescriptionUpdateManyWithoutUserInput {
+  create?: Maybe<
+    PrescriptionCreateWithoutUserInput[] | PrescriptionCreateWithoutUserInput
+  >;
+  delete?: Maybe<PrescriptionWhereUniqueInput[] | PrescriptionWhereUniqueInput>;
+  connect?: Maybe<
+    PrescriptionWhereUniqueInput[] | PrescriptionWhereUniqueInput
+  >;
+  set?: Maybe<PrescriptionWhereUniqueInput[] | PrescriptionWhereUniqueInput>;
+  disconnect?: Maybe<
+    PrescriptionWhereUniqueInput[] | PrescriptionWhereUniqueInput
+  >;
   update?: Maybe<
-    | PlanUpdateWithWhereUniqueWithoutUserInput[]
-    | PlanUpdateWithWhereUniqueWithoutUserInput
+    | PrescriptionUpdateWithWhereUniqueWithoutUserInput[]
+    | PrescriptionUpdateWithWhereUniqueWithoutUserInput
   >;
   upsert?: Maybe<
-    | PlanUpsertWithWhereUniqueWithoutUserInput[]
-    | PlanUpsertWithWhereUniqueWithoutUserInput
+    | PrescriptionUpsertWithWhereUniqueWithoutUserInput[]
+    | PrescriptionUpsertWithWhereUniqueWithoutUserInput
   >;
-  deleteMany?: Maybe<PlanScalarWhereInput[] | PlanScalarWhereInput>;
+  deleteMany?: Maybe<
+    PrescriptionScalarWhereInput[] | PrescriptionScalarWhereInput
+  >;
   updateMany?: Maybe<
-    PlanUpdateManyWithWhereNestedInput[] | PlanUpdateManyWithWhereNestedInput
+    | PrescriptionUpdateManyWithWhereNestedInput[]
+    | PrescriptionUpdateManyWithWhereNestedInput
   >;
 }
 
-export interface PlanUpdateWithWhereUniqueWithoutUserInput {
-  where: PlanWhereUniqueInput;
-  data: PlanUpdateWithoutUserDataInput;
+export interface PrescriptionUpdateWithWhereUniqueWithoutUserInput {
+  where: PrescriptionWhereUniqueInput;
+  data: PrescriptionUpdateWithoutUserDataInput;
 }
 
-export interface PlanUpdateWithoutUserDataInput {
-  status?: Maybe<PlanStatus>;
+export interface PrescriptionUpdateWithoutUserDataInput {
+  status?: Maybe<PrescriptionStatus>;
   visit?: Maybe<VisitUpdateOneRequiredInput>;
-  type?: Maybe<PlanType>;
-  drugName?: Maybe<String>;
-  strength?: Maybe<String>;
+  type?: Maybe<PrescriptionType>;
+  product?: Maybe<ProductUpdateOneRequiredInput>;
   timesPerMonth?: Maybe<Int>;
-  addonName?: Maybe<String>;
+  addon?: Maybe<ProductUpdateOneInput>;
+  addonTimesPerMonth?: Maybe<Int>;
+  approvedDate?: Maybe<DateTimeInput>;
   startDate?: Maybe<DateTimeInput>;
   expireDate?: Maybe<DateTimeInput>;
   totalRefills?: Maybe<Int>;
@@ -1494,7 +1840,7 @@ export interface VisitUpdateOneRequiredInput {
 
 export interface VisitUpdateDataInput {
   user?: Maybe<UserUpdateOneWithoutVisitsInput>;
-  type?: Maybe<PlanType>;
+  type?: Maybe<PrescriptionType>;
   questionnaire?: Maybe<Json>;
   status?: Maybe<VisitStatus>;
 }
@@ -1519,7 +1865,7 @@ export interface UserUpdateWithoutVisitsDataInput {
   photoId?: Maybe<String>;
   gender?: Maybe<String>;
   birthDate?: Maybe<DateTimeInput>;
-  plans?: Maybe<PlanUpdateManyWithoutUserInput>;
+  prescriptions?: Maybe<PrescriptionUpdateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<Float>;
@@ -1717,13 +2063,48 @@ export interface VisitUpsertNestedInput {
   create: VisitCreateInput;
 }
 
-export interface PlanUpsertWithWhereUniqueWithoutUserInput {
-  where: PlanWhereUniqueInput;
-  update: PlanUpdateWithoutUserDataInput;
-  create: PlanCreateWithoutUserInput;
+export interface ProductUpdateOneRequiredInput {
+  create?: Maybe<ProductCreateInput>;
+  update?: Maybe<ProductUpdateDataInput>;
+  upsert?: Maybe<ProductUpsertNestedInput>;
+  connect?: Maybe<ProductWhereUniqueInput>;
 }
 
-export interface PlanScalarWhereInput {
+export interface ProductUpdateDataInput {
+  productId?: Maybe<String>;
+  type?: Maybe<PrescriptionType>;
+  category?: Maybe<String>;
+  productName?: Maybe<String>;
+  display?: Maybe<String>;
+  default?: Maybe<Boolean>;
+  doseDisplay?: Maybe<String>;
+  subTitle?: Maybe<String>;
+  monthlyPrice?: Maybe<Int>;
+  twoMonthPrice?: Maybe<Int>;
+  threeMonthPrice?: Maybe<Int>;
+}
+
+export interface ProductUpsertNestedInput {
+  update: ProductUpdateDataInput;
+  create: ProductCreateInput;
+}
+
+export interface ProductUpdateOneInput {
+  create?: Maybe<ProductCreateInput>;
+  update?: Maybe<ProductUpdateDataInput>;
+  upsert?: Maybe<ProductUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<ProductWhereUniqueInput>;
+}
+
+export interface PrescriptionUpsertWithWhereUniqueWithoutUserInput {
+  where: PrescriptionWhereUniqueInput;
+  update: PrescriptionUpdateWithoutUserDataInput;
+  create: PrescriptionCreateWithoutUserInput;
+}
+
+export interface PrescriptionScalarWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -1754,42 +2135,14 @@ export interface PlanScalarWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  status?: Maybe<PlanStatus>;
-  status_not?: Maybe<PlanStatus>;
-  status_in?: Maybe<PlanStatus[] | PlanStatus>;
-  status_not_in?: Maybe<PlanStatus[] | PlanStatus>;
-  type?: Maybe<PlanType>;
-  type_not?: Maybe<PlanType>;
-  type_in?: Maybe<PlanType[] | PlanType>;
-  type_not_in?: Maybe<PlanType[] | PlanType>;
-  drugName?: Maybe<String>;
-  drugName_not?: Maybe<String>;
-  drugName_in?: Maybe<String[] | String>;
-  drugName_not_in?: Maybe<String[] | String>;
-  drugName_lt?: Maybe<String>;
-  drugName_lte?: Maybe<String>;
-  drugName_gt?: Maybe<String>;
-  drugName_gte?: Maybe<String>;
-  drugName_contains?: Maybe<String>;
-  drugName_not_contains?: Maybe<String>;
-  drugName_starts_with?: Maybe<String>;
-  drugName_not_starts_with?: Maybe<String>;
-  drugName_ends_with?: Maybe<String>;
-  drugName_not_ends_with?: Maybe<String>;
-  strength?: Maybe<String>;
-  strength_not?: Maybe<String>;
-  strength_in?: Maybe<String[] | String>;
-  strength_not_in?: Maybe<String[] | String>;
-  strength_lt?: Maybe<String>;
-  strength_lte?: Maybe<String>;
-  strength_gt?: Maybe<String>;
-  strength_gte?: Maybe<String>;
-  strength_contains?: Maybe<String>;
-  strength_not_contains?: Maybe<String>;
-  strength_starts_with?: Maybe<String>;
-  strength_not_starts_with?: Maybe<String>;
-  strength_ends_with?: Maybe<String>;
-  strength_not_ends_with?: Maybe<String>;
+  status?: Maybe<PrescriptionStatus>;
+  status_not?: Maybe<PrescriptionStatus>;
+  status_in?: Maybe<PrescriptionStatus[] | PrescriptionStatus>;
+  status_not_in?: Maybe<PrescriptionStatus[] | PrescriptionStatus>;
+  type?: Maybe<PrescriptionType>;
+  type_not?: Maybe<PrescriptionType>;
+  type_in?: Maybe<PrescriptionType[] | PrescriptionType>;
+  type_not_in?: Maybe<PrescriptionType[] | PrescriptionType>;
   timesPerMonth?: Maybe<Int>;
   timesPerMonth_not?: Maybe<Int>;
   timesPerMonth_in?: Maybe<Int[] | Int>;
@@ -1798,20 +2151,22 @@ export interface PlanScalarWhereInput {
   timesPerMonth_lte?: Maybe<Int>;
   timesPerMonth_gt?: Maybe<Int>;
   timesPerMonth_gte?: Maybe<Int>;
-  addonName?: Maybe<String>;
-  addonName_not?: Maybe<String>;
-  addonName_in?: Maybe<String[] | String>;
-  addonName_not_in?: Maybe<String[] | String>;
-  addonName_lt?: Maybe<String>;
-  addonName_lte?: Maybe<String>;
-  addonName_gt?: Maybe<String>;
-  addonName_gte?: Maybe<String>;
-  addonName_contains?: Maybe<String>;
-  addonName_not_contains?: Maybe<String>;
-  addonName_starts_with?: Maybe<String>;
-  addonName_not_starts_with?: Maybe<String>;
-  addonName_ends_with?: Maybe<String>;
-  addonName_not_ends_with?: Maybe<String>;
+  addonTimesPerMonth?: Maybe<Int>;
+  addonTimesPerMonth_not?: Maybe<Int>;
+  addonTimesPerMonth_in?: Maybe<Int[] | Int>;
+  addonTimesPerMonth_not_in?: Maybe<Int[] | Int>;
+  addonTimesPerMonth_lt?: Maybe<Int>;
+  addonTimesPerMonth_lte?: Maybe<Int>;
+  addonTimesPerMonth_gt?: Maybe<Int>;
+  addonTimesPerMonth_gte?: Maybe<Int>;
+  approvedDate?: Maybe<DateTimeInput>;
+  approvedDate_not?: Maybe<DateTimeInput>;
+  approvedDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  approvedDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  approvedDate_lt?: Maybe<DateTimeInput>;
+  approvedDate_lte?: Maybe<DateTimeInput>;
+  approvedDate_gt?: Maybe<DateTimeInput>;
+  approvedDate_gte?: Maybe<DateTimeInput>;
   startDate?: Maybe<DateTimeInput>;
   startDate_not?: Maybe<DateTimeInput>;
   startDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -1868,23 +2223,22 @@ export interface PlanScalarWhereInput {
   amountDue_lte?: Maybe<Int>;
   amountDue_gt?: Maybe<Int>;
   amountDue_gte?: Maybe<Int>;
-  AND?: Maybe<PlanScalarWhereInput[] | PlanScalarWhereInput>;
-  OR?: Maybe<PlanScalarWhereInput[] | PlanScalarWhereInput>;
-  NOT?: Maybe<PlanScalarWhereInput[] | PlanScalarWhereInput>;
+  AND?: Maybe<PrescriptionScalarWhereInput[] | PrescriptionScalarWhereInput>;
+  OR?: Maybe<PrescriptionScalarWhereInput[] | PrescriptionScalarWhereInput>;
+  NOT?: Maybe<PrescriptionScalarWhereInput[] | PrescriptionScalarWhereInput>;
 }
 
-export interface PlanUpdateManyWithWhereNestedInput {
-  where: PlanScalarWhereInput;
-  data: PlanUpdateManyDataInput;
+export interface PrescriptionUpdateManyWithWhereNestedInput {
+  where: PrescriptionScalarWhereInput;
+  data: PrescriptionUpdateManyDataInput;
 }
 
-export interface PlanUpdateManyDataInput {
-  status?: Maybe<PlanStatus>;
-  type?: Maybe<PlanType>;
-  drugName?: Maybe<String>;
-  strength?: Maybe<String>;
+export interface PrescriptionUpdateManyDataInput {
+  status?: Maybe<PrescriptionStatus>;
+  type?: Maybe<PrescriptionType>;
   timesPerMonth?: Maybe<Int>;
-  addonName?: Maybe<String>;
+  addonTimesPerMonth?: Maybe<Int>;
+  approvedDate?: Maybe<DateTimeInput>;
   startDate?: Maybe<DateTimeInput>;
   expireDate?: Maybe<DateTimeInput>;
   totalRefills?: Maybe<Int>;
@@ -1920,7 +2274,7 @@ export interface VisitUpdateWithWhereUniqueWithoutUserInput {
 }
 
 export interface VisitUpdateWithoutUserDataInput {
-  type?: Maybe<PlanType>;
+  type?: Maybe<PrescriptionType>;
   questionnaire?: Maybe<Json>;
   status?: Maybe<VisitStatus>;
 }
@@ -1962,10 +2316,10 @@ export interface VisitScalarWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  type?: Maybe<PlanType>;
-  type_not?: Maybe<PlanType>;
-  type_in?: Maybe<PlanType[] | PlanType>;
-  type_not_in?: Maybe<PlanType[] | PlanType>;
+  type?: Maybe<PrescriptionType>;
+  type_not?: Maybe<PrescriptionType>;
+  type_in?: Maybe<PrescriptionType[] | PrescriptionType>;
+  type_not_in?: Maybe<PrescriptionType[] | PrescriptionType>;
   status?: Maybe<VisitStatus>;
   status_not?: Maybe<VisitStatus>;
   status_in?: Maybe<VisitStatus[] | VisitStatus>;
@@ -1981,7 +2335,7 @@ export interface VisitUpdateManyWithWhereNestedInput {
 }
 
 export interface VisitUpdateManyDataInput {
-  type?: Maybe<PlanType>;
+  type?: Maybe<PrescriptionType>;
   questionnaire?: Maybe<Json>;
   status?: Maybe<VisitStatus>;
 }
@@ -2027,7 +2381,7 @@ export interface UserCreateWithoutCreditCardsInput {
   photoId?: Maybe<String>;
   gender?: Maybe<String>;
   birthDate?: Maybe<DateTimeInput>;
-  plans?: Maybe<PlanCreateManyWithoutUserInput>;
+  prescriptions?: Maybe<PrescriptionCreateManyWithoutUserInput>;
   visits?: Maybe<VisitCreateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
@@ -2061,7 +2415,7 @@ export interface UserUpdateWithoutCreditCardsDataInput {
   photoId?: Maybe<String>;
   gender?: Maybe<String>;
   birthDate?: Maybe<DateTimeInput>;
-  plans?: Maybe<PlanUpdateManyWithoutUserInput>;
+  prescriptions?: Maybe<PrescriptionUpdateManyWithoutUserInput>;
   visits?: Maybe<VisitUpdateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
@@ -2109,7 +2463,7 @@ export interface UserCreateInput {
   photoId?: Maybe<String>;
   gender?: Maybe<String>;
   birthDate?: Maybe<DateTimeInput>;
-  plans?: Maybe<PlanCreateManyWithoutUserInput>;
+  prescriptions?: Maybe<PrescriptionCreateManyWithoutUserInput>;
   visits?: Maybe<VisitCreateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
@@ -2146,7 +2500,7 @@ export interface UserUpdateDataInput {
   photoId?: Maybe<String>;
   gender?: Maybe<String>;
   birthDate?: Maybe<DateTimeInput>;
-  plans?: Maybe<PlanUpdateManyWithoutUserInput>;
+  prescriptions?: Maybe<PrescriptionUpdateManyWithoutUserInput>;
   visits?: Maybe<VisitUpdateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
@@ -2172,18 +2526,19 @@ export interface MessageUpdateManyMutationInput {
   text?: Maybe<String>;
 }
 
-export interface PlanCreateInput {
+export interface PrescriptionCreateInput {
   id?: Maybe<ID_Input>;
-  status?: Maybe<PlanStatus>;
-  user: UserCreateOneWithoutPlansInput;
+  status?: Maybe<PrescriptionStatus>;
+  user: UserCreateOneWithoutPrescriptionsInput;
   visit: VisitCreateOneInput;
-  type: PlanType;
-  drugName: String;
-  strength?: Maybe<String>;
+  type: PrescriptionType;
+  product: ProductCreateOneInput;
   timesPerMonth: Int;
-  addonName?: Maybe<String>;
-  startDate: DateTimeInput;
-  expireDate: DateTimeInput;
+  addon?: Maybe<ProductCreateOneInput>;
+  addonTimesPerMonth?: Maybe<Int>;
+  approvedDate?: Maybe<DateTimeInput>;
+  startDate?: Maybe<DateTimeInput>;
+  expireDate?: Maybe<DateTimeInput>;
   totalRefills: Int;
   refillsRemaining: Int;
   nextDelivery?: Maybe<DateTimeInput>;
@@ -2191,12 +2546,12 @@ export interface PlanCreateInput {
   amountDue: Int;
 }
 
-export interface UserCreateOneWithoutPlansInput {
-  create?: Maybe<UserCreateWithoutPlansInput>;
+export interface UserCreateOneWithoutPrescriptionsInput {
+  create?: Maybe<UserCreateWithoutPrescriptionsInput>;
   connect?: Maybe<UserWhereUniqueInput>;
 }
 
-export interface UserCreateWithoutPlansInput {
+export interface UserCreateWithoutPrescriptionsInput {
   id?: Maybe<ID_Input>;
   role?: Maybe<Role>;
   firstName: String;
@@ -2215,15 +2570,16 @@ export interface UserCreateWithoutPlansInput {
   tokenVersion?: Maybe<Int>;
 }
 
-export interface PlanUpdateInput {
-  status?: Maybe<PlanStatus>;
-  user?: Maybe<UserUpdateOneRequiredWithoutPlansInput>;
+export interface PrescriptionUpdateInput {
+  status?: Maybe<PrescriptionStatus>;
+  user?: Maybe<UserUpdateOneRequiredWithoutPrescriptionsInput>;
   visit?: Maybe<VisitUpdateOneRequiredInput>;
-  type?: Maybe<PlanType>;
-  drugName?: Maybe<String>;
-  strength?: Maybe<String>;
+  type?: Maybe<PrescriptionType>;
+  product?: Maybe<ProductUpdateOneRequiredInput>;
   timesPerMonth?: Maybe<Int>;
-  addonName?: Maybe<String>;
+  addon?: Maybe<ProductUpdateOneInput>;
+  addonTimesPerMonth?: Maybe<Int>;
+  approvedDate?: Maybe<DateTimeInput>;
   startDate?: Maybe<DateTimeInput>;
   expireDate?: Maybe<DateTimeInput>;
   totalRefills?: Maybe<Int>;
@@ -2233,14 +2589,14 @@ export interface PlanUpdateInput {
   amountDue?: Maybe<Int>;
 }
 
-export interface UserUpdateOneRequiredWithoutPlansInput {
-  create?: Maybe<UserCreateWithoutPlansInput>;
-  update?: Maybe<UserUpdateWithoutPlansDataInput>;
-  upsert?: Maybe<UserUpsertWithoutPlansInput>;
+export interface UserUpdateOneRequiredWithoutPrescriptionsInput {
+  create?: Maybe<UserCreateWithoutPrescriptionsInput>;
+  update?: Maybe<UserUpdateWithoutPrescriptionsDataInput>;
+  upsert?: Maybe<UserUpsertWithoutPrescriptionsInput>;
   connect?: Maybe<UserWhereUniqueInput>;
 }
 
-export interface UserUpdateWithoutPlansDataInput {
+export interface UserUpdateWithoutPrescriptionsDataInput {
   role?: Maybe<Role>;
   firstName?: Maybe<String>;
   lastName?: Maybe<String>;
@@ -2258,18 +2614,17 @@ export interface UserUpdateWithoutPlansDataInput {
   tokenVersion?: Maybe<Int>;
 }
 
-export interface UserUpsertWithoutPlansInput {
-  update: UserUpdateWithoutPlansDataInput;
-  create: UserCreateWithoutPlansInput;
+export interface UserUpsertWithoutPrescriptionsInput {
+  update: UserUpdateWithoutPrescriptionsDataInput;
+  create: UserCreateWithoutPrescriptionsInput;
 }
 
-export interface PlanUpdateManyMutationInput {
-  status?: Maybe<PlanStatus>;
-  type?: Maybe<PlanType>;
-  drugName?: Maybe<String>;
-  strength?: Maybe<String>;
+export interface PrescriptionUpdateManyMutationInput {
+  status?: Maybe<PrescriptionStatus>;
+  type?: Maybe<PrescriptionType>;
   timesPerMonth?: Maybe<Int>;
-  addonName?: Maybe<String>;
+  addonTimesPerMonth?: Maybe<Int>;
+  approvedDate?: Maybe<DateTimeInput>;
   startDate?: Maybe<DateTimeInput>;
   expireDate?: Maybe<DateTimeInput>;
   totalRefills?: Maybe<Int>;
@@ -2277,6 +2632,150 @@ export interface PlanUpdateManyMutationInput {
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval?: Maybe<Int>;
   amountDue?: Maybe<Int>;
+}
+
+export interface ProductUpdateInput {
+  productId?: Maybe<String>;
+  type?: Maybe<PrescriptionType>;
+  category?: Maybe<String>;
+  productName?: Maybe<String>;
+  display?: Maybe<String>;
+  default?: Maybe<Boolean>;
+  doseDisplay?: Maybe<String>;
+  subTitle?: Maybe<String>;
+  monthlyPrice?: Maybe<Int>;
+  twoMonthPrice?: Maybe<Int>;
+  threeMonthPrice?: Maybe<Int>;
+}
+
+export interface ProductUpdateManyMutationInput {
+  productId?: Maybe<String>;
+  type?: Maybe<PrescriptionType>;
+  category?: Maybe<String>;
+  productName?: Maybe<String>;
+  display?: Maybe<String>;
+  default?: Maybe<Boolean>;
+  doseDisplay?: Maybe<String>;
+  subTitle?: Maybe<String>;
+  monthlyPrice?: Maybe<Int>;
+  twoMonthPrice?: Maybe<Int>;
+  threeMonthPrice?: Maybe<Int>;
+}
+
+export interface ShipmentCreateInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneInput;
+  address: AddressCreateOneInput;
+  prescription: PrescriptionCreateOneInput;
+  shipDate?: Maybe<DateTimeInput>;
+  trackingNumber?: Maybe<String>;
+  creditCard?: Maybe<CreditCardCreateOneInput>;
+}
+
+export interface AddressCreateOneInput {
+  create?: Maybe<AddressCreateInput>;
+  connect?: Maybe<AddressWhereUniqueInput>;
+}
+
+export interface PrescriptionCreateOneInput {
+  create?: Maybe<PrescriptionCreateInput>;
+  connect?: Maybe<PrescriptionWhereUniqueInput>;
+}
+
+export interface CreditCardCreateOneInput {
+  create?: Maybe<CreditCardCreateInput>;
+  connect?: Maybe<CreditCardWhereUniqueInput>;
+}
+
+export interface ShipmentUpdateInput {
+  user?: Maybe<UserUpdateOneRequiredInput>;
+  address?: Maybe<AddressUpdateOneRequiredInput>;
+  prescription?: Maybe<PrescriptionUpdateOneRequiredInput>;
+  shipDate?: Maybe<DateTimeInput>;
+  trackingNumber?: Maybe<String>;
+  creditCard?: Maybe<CreditCardUpdateOneInput>;
+}
+
+export interface AddressUpdateOneRequiredInput {
+  create?: Maybe<AddressCreateInput>;
+  update?: Maybe<AddressUpdateDataInput>;
+  upsert?: Maybe<AddressUpsertNestedInput>;
+  connect?: Maybe<AddressWhereUniqueInput>;
+}
+
+export interface AddressUpdateDataInput {
+  user?: Maybe<UserUpdateOneRequiredWithoutAddressesInput>;
+  active?: Maybe<Boolean>;
+  addressOne?: Maybe<String>;
+  addressTwo?: Maybe<String>;
+  city?: Maybe<String>;
+  state?: Maybe<String>;
+  zipcode?: Maybe<String>;
+  telephone?: Maybe<String>;
+}
+
+export interface AddressUpsertNestedInput {
+  update: AddressUpdateDataInput;
+  create: AddressCreateInput;
+}
+
+export interface PrescriptionUpdateOneRequiredInput {
+  create?: Maybe<PrescriptionCreateInput>;
+  update?: Maybe<PrescriptionUpdateDataInput>;
+  upsert?: Maybe<PrescriptionUpsertNestedInput>;
+  connect?: Maybe<PrescriptionWhereUniqueInput>;
+}
+
+export interface PrescriptionUpdateDataInput {
+  status?: Maybe<PrescriptionStatus>;
+  user?: Maybe<UserUpdateOneRequiredWithoutPrescriptionsInput>;
+  visit?: Maybe<VisitUpdateOneRequiredInput>;
+  type?: Maybe<PrescriptionType>;
+  product?: Maybe<ProductUpdateOneRequiredInput>;
+  timesPerMonth?: Maybe<Int>;
+  addon?: Maybe<ProductUpdateOneInput>;
+  addonTimesPerMonth?: Maybe<Int>;
+  approvedDate?: Maybe<DateTimeInput>;
+  startDate?: Maybe<DateTimeInput>;
+  expireDate?: Maybe<DateTimeInput>;
+  totalRefills?: Maybe<Int>;
+  refillsRemaining?: Maybe<Int>;
+  nextDelivery?: Maybe<DateTimeInput>;
+  shippingInterval?: Maybe<Int>;
+  amountDue?: Maybe<Int>;
+}
+
+export interface PrescriptionUpsertNestedInput {
+  update: PrescriptionUpdateDataInput;
+  create: PrescriptionCreateInput;
+}
+
+export interface CreditCardUpdateOneInput {
+  create?: Maybe<CreditCardCreateInput>;
+  update?: Maybe<CreditCardUpdateDataInput>;
+  upsert?: Maybe<CreditCardUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<CreditCardWhereUniqueInput>;
+}
+
+export interface CreditCardUpdateDataInput {
+  active?: Maybe<Boolean>;
+  user?: Maybe<UserUpdateOneRequiredWithoutCreditCardsInput>;
+  ccToken?: Maybe<String>;
+  ccType?: Maybe<String>;
+  ccNumber?: Maybe<String>;
+  ccExpire?: Maybe<String>;
+}
+
+export interface CreditCardUpsertNestedInput {
+  update: CreditCardUpdateDataInput;
+  create: CreditCardCreateInput;
+}
+
+export interface ShipmentUpdateManyMutationInput {
+  shipDate?: Maybe<DateTimeInput>;
+  trackingNumber?: Maybe<String>;
 }
 
 export interface UserUpdateInput {
@@ -2290,7 +2789,7 @@ export interface UserUpdateInput {
   photoId?: Maybe<String>;
   gender?: Maybe<String>;
   birthDate?: Maybe<DateTimeInput>;
-  plans?: Maybe<PlanUpdateManyWithoutUserInput>;
+  prescriptions?: Maybe<PrescriptionUpdateManyWithoutUserInput>;
   visits?: Maybe<VisitUpdateManyWithoutUserInput>;
   currVisit?: Maybe<Json>;
   resetToken?: Maybe<String>;
@@ -2315,13 +2814,13 @@ export interface UserUpdateManyMutationInput {
 
 export interface VisitUpdateInput {
   user?: Maybe<UserUpdateOneWithoutVisitsInput>;
-  type?: Maybe<PlanType>;
+  type?: Maybe<PrescriptionType>;
   questionnaire?: Maybe<Json>;
   status?: Maybe<VisitStatus>;
 }
 
 export interface VisitUpdateManyMutationInput {
-  type?: Maybe<PlanType>;
+  type?: Maybe<PrescriptionType>;
   questionnaire?: Maybe<Json>;
   status?: Maybe<VisitStatus>;
 }
@@ -2365,15 +2864,47 @@ export interface MessageSubscriptionWhereInput {
   NOT?: Maybe<MessageSubscriptionWhereInput[] | MessageSubscriptionWhereInput>;
 }
 
-export interface PlanSubscriptionWhereInput {
+export interface PrescriptionSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
   updatedFields_contains_every?: Maybe<String[] | String>;
   updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<PlanWhereInput>;
-  AND?: Maybe<PlanSubscriptionWhereInput[] | PlanSubscriptionWhereInput>;
-  OR?: Maybe<PlanSubscriptionWhereInput[] | PlanSubscriptionWhereInput>;
-  NOT?: Maybe<PlanSubscriptionWhereInput[] | PlanSubscriptionWhereInput>;
+  node?: Maybe<PrescriptionWhereInput>;
+  AND?: Maybe<
+    PrescriptionSubscriptionWhereInput[] | PrescriptionSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    PrescriptionSubscriptionWhereInput[] | PrescriptionSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    PrescriptionSubscriptionWhereInput[] | PrescriptionSubscriptionWhereInput
+  >;
+}
+
+export interface ProductSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ProductWhereInput>;
+  AND?: Maybe<ProductSubscriptionWhereInput[] | ProductSubscriptionWhereInput>;
+  OR?: Maybe<ProductSubscriptionWhereInput[] | ProductSubscriptionWhereInput>;
+  NOT?: Maybe<ProductSubscriptionWhereInput[] | ProductSubscriptionWhereInput>;
+}
+
+export interface ShipmentSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ShipmentWhereInput>;
+  AND?: Maybe<
+    ShipmentSubscriptionWhereInput[] | ShipmentSubscriptionWhereInput
+  >;
+  OR?: Maybe<ShipmentSubscriptionWhereInput[] | ShipmentSubscriptionWhereInput>;
+  NOT?: Maybe<
+    ShipmentSubscriptionWhereInput[] | ShipmentSubscriptionWhereInput
+  >;
 }
 
 export interface UserSubscriptionWhereInput {
@@ -2509,9 +3040,9 @@ export interface UserPromise extends Promise<User>, Fragmentable {
   photoId: () => Promise<String>;
   gender: () => Promise<String>;
   birthDate: () => Promise<DateTimeOutput>;
-  plans: <T = FragmentableArray<Plan>>(args?: {
-    where?: PlanWhereInput;
-    orderBy?: PlanOrderByInput;
+  prescriptions: <T = FragmentableArray<Prescription>>(args?: {
+    where?: PrescriptionWhereInput;
+    orderBy?: PrescriptionOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -2565,9 +3096,9 @@ export interface UserSubscription
   photoId: () => Promise<AsyncIterator<String>>;
   gender: () => Promise<AsyncIterator<String>>;
   birthDate: () => Promise<AsyncIterator<DateTimeOutput>>;
-  plans: <T = Promise<AsyncIterator<PlanSubscription>>>(args?: {
-    where?: PlanWhereInput;
-    orderBy?: PlanOrderByInput;
+  prescriptions: <T = Promise<AsyncIterator<PrescriptionSubscription>>>(args?: {
+    where?: PrescriptionWhereInput;
+    orderBy?: PrescriptionOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -2621,9 +3152,9 @@ export interface UserNullablePromise
   photoId: () => Promise<String>;
   gender: () => Promise<String>;
   birthDate: () => Promise<DateTimeOutput>;
-  plans: <T = FragmentableArray<Plan>>(args?: {
-    where?: PlanWhereInput;
-    orderBy?: PlanOrderByInput;
+  prescriptions: <T = FragmentableArray<Prescription>>(args?: {
+    where?: PrescriptionWhereInput;
+    orderBy?: PrescriptionOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -2696,18 +3227,17 @@ export interface CreditCardNullablePromise
   ccExpire: () => Promise<String>;
 }
 
-export interface Plan {
+export interface Prescription {
   id: ID_Output;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
-  status: PlanStatus;
-  type: PlanType;
-  drugName: String;
-  strength?: String;
+  status: PrescriptionStatus;
+  type: PrescriptionType;
   timesPerMonth: Int;
-  addonName?: String;
-  startDate: DateTimeOutput;
-  expireDate: DateTimeOutput;
+  addonTimesPerMonth?: Int;
+  approvedDate?: DateTimeOutput;
+  startDate?: DateTimeOutput;
+  expireDate?: DateTimeOutput;
   totalRefills: Int;
   refillsRemaining: Int;
   nextDelivery?: DateTimeOutput;
@@ -2715,18 +3245,21 @@ export interface Plan {
   amountDue: Int;
 }
 
-export interface PlanPromise extends Promise<Plan>, Fragmentable {
+export interface PrescriptionPromise
+  extends Promise<Prescription>,
+    Fragmentable {
   id: () => Promise<ID_Output>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
-  status: () => Promise<PlanStatus>;
+  status: () => Promise<PrescriptionStatus>;
   user: <T = UserPromise>() => T;
   visit: <T = VisitPromise>() => T;
-  type: () => Promise<PlanType>;
-  drugName: () => Promise<String>;
-  strength: () => Promise<String>;
+  type: () => Promise<PrescriptionType>;
+  product: <T = ProductPromise>() => T;
   timesPerMonth: () => Promise<Int>;
-  addonName: () => Promise<String>;
+  addon: <T = ProductPromise>() => T;
+  addonTimesPerMonth: () => Promise<Int>;
+  approvedDate: () => Promise<DateTimeOutput>;
   startDate: () => Promise<DateTimeOutput>;
   expireDate: () => Promise<DateTimeOutput>;
   totalRefills: () => Promise<Int>;
@@ -2736,20 +3269,21 @@ export interface PlanPromise extends Promise<Plan>, Fragmentable {
   amountDue: () => Promise<Int>;
 }
 
-export interface PlanSubscription
-  extends Promise<AsyncIterator<Plan>>,
+export interface PrescriptionSubscription
+  extends Promise<AsyncIterator<Prescription>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  status: () => Promise<AsyncIterator<PlanStatus>>;
+  status: () => Promise<AsyncIterator<PrescriptionStatus>>;
   user: <T = UserSubscription>() => T;
   visit: <T = VisitSubscription>() => T;
-  type: () => Promise<AsyncIterator<PlanType>>;
-  drugName: () => Promise<AsyncIterator<String>>;
-  strength: () => Promise<AsyncIterator<String>>;
+  type: () => Promise<AsyncIterator<PrescriptionType>>;
+  product: <T = ProductSubscription>() => T;
   timesPerMonth: () => Promise<AsyncIterator<Int>>;
-  addonName: () => Promise<AsyncIterator<String>>;
+  addon: <T = ProductSubscription>() => T;
+  addonTimesPerMonth: () => Promise<AsyncIterator<Int>>;
+  approvedDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   startDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   expireDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   totalRefills: () => Promise<AsyncIterator<Int>>;
@@ -2759,20 +3293,21 @@ export interface PlanSubscription
   amountDue: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface PlanNullablePromise
-  extends Promise<Plan | null>,
+export interface PrescriptionNullablePromise
+  extends Promise<Prescription | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
-  status: () => Promise<PlanStatus>;
+  status: () => Promise<PrescriptionStatus>;
   user: <T = UserPromise>() => T;
   visit: <T = VisitPromise>() => T;
-  type: () => Promise<PlanType>;
-  drugName: () => Promise<String>;
-  strength: () => Promise<String>;
+  type: () => Promise<PrescriptionType>;
+  product: <T = ProductPromise>() => T;
   timesPerMonth: () => Promise<Int>;
-  addonName: () => Promise<String>;
+  addon: <T = ProductPromise>() => T;
+  addonTimesPerMonth: () => Promise<Int>;
+  approvedDate: () => Promise<DateTimeOutput>;
   startDate: () => Promise<DateTimeOutput>;
   expireDate: () => Promise<DateTimeOutput>;
   totalRefills: () => Promise<Int>;
@@ -2786,7 +3321,7 @@ export interface Visit {
   id: ID_Output;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
-  type: PlanType;
+  type: PrescriptionType;
   questionnaire: Json;
   status: VisitStatus;
 }
@@ -2796,7 +3331,7 @@ export interface VisitPromise extends Promise<Visit>, Fragmentable {
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   user: <T = UserPromise>() => T;
-  type: () => Promise<PlanType>;
+  type: () => Promise<PrescriptionType>;
   questionnaire: () => Promise<Json>;
   status: () => Promise<VisitStatus>;
 }
@@ -2808,7 +3343,7 @@ export interface VisitSubscription
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   user: <T = UserSubscription>() => T;
-  type: () => Promise<AsyncIterator<PlanType>>;
+  type: () => Promise<AsyncIterator<PrescriptionType>>;
   questionnaire: () => Promise<AsyncIterator<Json>>;
   status: () => Promise<AsyncIterator<VisitStatus>>;
 }
@@ -2820,9 +3355,73 @@ export interface VisitNullablePromise
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   user: <T = UserPromise>() => T;
-  type: () => Promise<PlanType>;
+  type: () => Promise<PrescriptionType>;
   questionnaire: () => Promise<Json>;
   status: () => Promise<VisitStatus>;
+}
+
+export interface Product {
+  id: ID_Output;
+  productId: String;
+  type: PrescriptionType;
+  category: String;
+  productName: String;
+  display: String;
+  default: Boolean;
+  doseDisplay?: String;
+  subTitle?: String;
+  monthlyPrice: Int;
+  twoMonthPrice: Int;
+  threeMonthPrice: Int;
+}
+
+export interface ProductPromise extends Promise<Product>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  productId: () => Promise<String>;
+  type: () => Promise<PrescriptionType>;
+  category: () => Promise<String>;
+  productName: () => Promise<String>;
+  display: () => Promise<String>;
+  default: () => Promise<Boolean>;
+  doseDisplay: () => Promise<String>;
+  subTitle: () => Promise<String>;
+  monthlyPrice: () => Promise<Int>;
+  twoMonthPrice: () => Promise<Int>;
+  threeMonthPrice: () => Promise<Int>;
+}
+
+export interface ProductSubscription
+  extends Promise<AsyncIterator<Product>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  productId: () => Promise<AsyncIterator<String>>;
+  type: () => Promise<AsyncIterator<PrescriptionType>>;
+  category: () => Promise<AsyncIterator<String>>;
+  productName: () => Promise<AsyncIterator<String>>;
+  display: () => Promise<AsyncIterator<String>>;
+  default: () => Promise<AsyncIterator<Boolean>>;
+  doseDisplay: () => Promise<AsyncIterator<String>>;
+  subTitle: () => Promise<AsyncIterator<String>>;
+  monthlyPrice: () => Promise<AsyncIterator<Int>>;
+  twoMonthPrice: () => Promise<AsyncIterator<Int>>;
+  threeMonthPrice: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ProductNullablePromise
+  extends Promise<Product | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  productId: () => Promise<String>;
+  type: () => Promise<PrescriptionType>;
+  category: () => Promise<String>;
+  productName: () => Promise<String>;
+  display: () => Promise<String>;
+  default: () => Promise<Boolean>;
+  doseDisplay: () => Promise<String>;
+  subTitle: () => Promise<String>;
+  monthlyPrice: () => Promise<Int>;
+  twoMonthPrice: () => Promise<Int>;
+  threeMonthPrice: () => Promise<Int>;
 }
 
 export interface AddressConnection {
@@ -3061,56 +3660,216 @@ export interface AggregateMessageSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface PlanConnection {
+export interface PrescriptionConnection {
   pageInfo: PageInfo;
-  edges: PlanEdge[];
+  edges: PrescriptionEdge[];
 }
 
-export interface PlanConnectionPromise
-  extends Promise<PlanConnection>,
+export interface PrescriptionConnectionPromise
+  extends Promise<PrescriptionConnection>,
     Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<PlanEdge>>() => T;
-  aggregate: <T = AggregatePlanPromise>() => T;
+  edges: <T = FragmentableArray<PrescriptionEdge>>() => T;
+  aggregate: <T = AggregatePrescriptionPromise>() => T;
 }
 
-export interface PlanConnectionSubscription
-  extends Promise<AsyncIterator<PlanConnection>>,
+export interface PrescriptionConnectionSubscription
+  extends Promise<AsyncIterator<PrescriptionConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<PlanEdgeSubscription>>>() => T;
-  aggregate: <T = AggregatePlanSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<PrescriptionEdgeSubscription>>>() => T;
+  aggregate: <T = AggregatePrescriptionSubscription>() => T;
 }
 
-export interface PlanEdge {
-  node: Plan;
+export interface PrescriptionEdge {
+  node: Prescription;
   cursor: String;
 }
 
-export interface PlanEdgePromise extends Promise<PlanEdge>, Fragmentable {
-  node: <T = PlanPromise>() => T;
+export interface PrescriptionEdgePromise
+  extends Promise<PrescriptionEdge>,
+    Fragmentable {
+  node: <T = PrescriptionPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface PlanEdgeSubscription
-  extends Promise<AsyncIterator<PlanEdge>>,
+export interface PrescriptionEdgeSubscription
+  extends Promise<AsyncIterator<PrescriptionEdge>>,
     Fragmentable {
-  node: <T = PlanSubscription>() => T;
+  node: <T = PrescriptionSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AggregatePlan {
+export interface AggregatePrescription {
   count: Int;
 }
 
-export interface AggregatePlanPromise
-  extends Promise<AggregatePlan>,
+export interface AggregatePrescriptionPromise
+  extends Promise<AggregatePrescription>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregatePlanSubscription
-  extends Promise<AsyncIterator<AggregatePlan>>,
+export interface AggregatePrescriptionSubscription
+  extends Promise<AsyncIterator<AggregatePrescription>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ProductConnection {
+  pageInfo: PageInfo;
+  edges: ProductEdge[];
+}
+
+export interface ProductConnectionPromise
+  extends Promise<ProductConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ProductEdge>>() => T;
+  aggregate: <T = AggregateProductPromise>() => T;
+}
+
+export interface ProductConnectionSubscription
+  extends Promise<AsyncIterator<ProductConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<ProductEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateProductSubscription>() => T;
+}
+
+export interface ProductEdge {
+  node: Product;
+  cursor: String;
+}
+
+export interface ProductEdgePromise extends Promise<ProductEdge>, Fragmentable {
+  node: <T = ProductPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ProductEdgeSubscription
+  extends Promise<AsyncIterator<ProductEdge>>,
+    Fragmentable {
+  node: <T = ProductSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateProduct {
+  count: Int;
+}
+
+export interface AggregateProductPromise
+  extends Promise<AggregateProduct>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateProductSubscription
+  extends Promise<AsyncIterator<AggregateProduct>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface Shipment {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  shipDate?: DateTimeOutput;
+  trackingNumber?: String;
+}
+
+export interface ShipmentPromise extends Promise<Shipment>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  user: <T = UserPromise>() => T;
+  address: <T = AddressPromise>() => T;
+  prescription: <T = PrescriptionPromise>() => T;
+  shipDate: () => Promise<DateTimeOutput>;
+  trackingNumber: () => Promise<String>;
+  creditCard: <T = CreditCardPromise>() => T;
+}
+
+export interface ShipmentSubscription
+  extends Promise<AsyncIterator<Shipment>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  user: <T = UserSubscription>() => T;
+  address: <T = AddressSubscription>() => T;
+  prescription: <T = PrescriptionSubscription>() => T;
+  shipDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  trackingNumber: () => Promise<AsyncIterator<String>>;
+  creditCard: <T = CreditCardSubscription>() => T;
+}
+
+export interface ShipmentNullablePromise
+  extends Promise<Shipment | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  user: <T = UserPromise>() => T;
+  address: <T = AddressPromise>() => T;
+  prescription: <T = PrescriptionPromise>() => T;
+  shipDate: () => Promise<DateTimeOutput>;
+  trackingNumber: () => Promise<String>;
+  creditCard: <T = CreditCardPromise>() => T;
+}
+
+export interface ShipmentConnection {
+  pageInfo: PageInfo;
+  edges: ShipmentEdge[];
+}
+
+export interface ShipmentConnectionPromise
+  extends Promise<ShipmentConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ShipmentEdge>>() => T;
+  aggregate: <T = AggregateShipmentPromise>() => T;
+}
+
+export interface ShipmentConnectionSubscription
+  extends Promise<AsyncIterator<ShipmentConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<ShipmentEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateShipmentSubscription>() => T;
+}
+
+export interface ShipmentEdge {
+  node: Shipment;
+  cursor: String;
+}
+
+export interface ShipmentEdgePromise
+  extends Promise<ShipmentEdge>,
+    Fragmentable {
+  node: <T = ShipmentPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ShipmentEdgeSubscription
+  extends Promise<AsyncIterator<ShipmentEdge>>,
+    Fragmentable {
+  node: <T = ShipmentSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateShipment {
+  count: Int;
+}
+
+export interface AggregateShipmentPromise
+  extends Promise<AggregateShipment>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateShipmentSubscription
+  extends Promise<AsyncIterator<AggregateShipment>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -3425,43 +4184,42 @@ export interface MessagePreviousValuesSubscription
   text: () => Promise<AsyncIterator<String>>;
 }
 
-export interface PlanSubscriptionPayload {
+export interface PrescriptionSubscriptionPayload {
   mutation: MutationType;
-  node: Plan;
+  node: Prescription;
   updatedFields: String[];
-  previousValues: PlanPreviousValues;
+  previousValues: PrescriptionPreviousValues;
 }
 
-export interface PlanSubscriptionPayloadPromise
-  extends Promise<PlanSubscriptionPayload>,
+export interface PrescriptionSubscriptionPayloadPromise
+  extends Promise<PrescriptionSubscriptionPayload>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = PlanPromise>() => T;
+  node: <T = PrescriptionPromise>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = PlanPreviousValuesPromise>() => T;
+  previousValues: <T = PrescriptionPreviousValuesPromise>() => T;
 }
 
-export interface PlanSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<PlanSubscriptionPayload>>,
+export interface PrescriptionSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<PrescriptionSubscriptionPayload>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = PlanSubscription>() => T;
+  node: <T = PrescriptionSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = PlanPreviousValuesSubscription>() => T;
+  previousValues: <T = PrescriptionPreviousValuesSubscription>() => T;
 }
 
-export interface PlanPreviousValues {
+export interface PrescriptionPreviousValues {
   id: ID_Output;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
-  status: PlanStatus;
-  type: PlanType;
-  drugName: String;
-  strength?: String;
+  status: PrescriptionStatus;
+  type: PrescriptionType;
   timesPerMonth: Int;
-  addonName?: String;
-  startDate: DateTimeOutput;
-  expireDate: DateTimeOutput;
+  addonTimesPerMonth?: Int;
+  approvedDate?: DateTimeOutput;
+  startDate?: DateTimeOutput;
+  expireDate?: DateTimeOutput;
   totalRefills: Int;
   refillsRemaining: Int;
   nextDelivery?: DateTimeOutput;
@@ -3469,18 +4227,17 @@ export interface PlanPreviousValues {
   amountDue: Int;
 }
 
-export interface PlanPreviousValuesPromise
-  extends Promise<PlanPreviousValues>,
+export interface PrescriptionPreviousValuesPromise
+  extends Promise<PrescriptionPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
-  status: () => Promise<PlanStatus>;
-  type: () => Promise<PlanType>;
-  drugName: () => Promise<String>;
-  strength: () => Promise<String>;
+  status: () => Promise<PrescriptionStatus>;
+  type: () => Promise<PrescriptionType>;
   timesPerMonth: () => Promise<Int>;
-  addonName: () => Promise<String>;
+  addonTimesPerMonth: () => Promise<Int>;
+  approvedDate: () => Promise<DateTimeOutput>;
   startDate: () => Promise<DateTimeOutput>;
   expireDate: () => Promise<DateTimeOutput>;
   totalRefills: () => Promise<Int>;
@@ -3490,18 +4247,17 @@ export interface PlanPreviousValuesPromise
   amountDue: () => Promise<Int>;
 }
 
-export interface PlanPreviousValuesSubscription
-  extends Promise<AsyncIterator<PlanPreviousValues>>,
+export interface PrescriptionPreviousValuesSubscription
+  extends Promise<AsyncIterator<PrescriptionPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  status: () => Promise<AsyncIterator<PlanStatus>>;
-  type: () => Promise<AsyncIterator<PlanType>>;
-  drugName: () => Promise<AsyncIterator<String>>;
-  strength: () => Promise<AsyncIterator<String>>;
+  status: () => Promise<AsyncIterator<PrescriptionStatus>>;
+  type: () => Promise<AsyncIterator<PrescriptionType>>;
   timesPerMonth: () => Promise<AsyncIterator<Int>>;
-  addonName: () => Promise<AsyncIterator<String>>;
+  addonTimesPerMonth: () => Promise<AsyncIterator<Int>>;
+  approvedDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   startDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   expireDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   totalRefills: () => Promise<AsyncIterator<Int>>;
@@ -3509,6 +4265,133 @@ export interface PlanPreviousValuesSubscription
   nextDelivery: () => Promise<AsyncIterator<DateTimeOutput>>;
   shippingInterval: () => Promise<AsyncIterator<Int>>;
   amountDue: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ProductSubscriptionPayload {
+  mutation: MutationType;
+  node: Product;
+  updatedFields: String[];
+  previousValues: ProductPreviousValues;
+}
+
+export interface ProductSubscriptionPayloadPromise
+  extends Promise<ProductSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ProductPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ProductPreviousValuesPromise>() => T;
+}
+
+export interface ProductSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ProductSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ProductSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ProductPreviousValuesSubscription>() => T;
+}
+
+export interface ProductPreviousValues {
+  id: ID_Output;
+  productId: String;
+  type: PrescriptionType;
+  category: String;
+  productName: String;
+  display: String;
+  default: Boolean;
+  doseDisplay?: String;
+  subTitle?: String;
+  monthlyPrice: Int;
+  twoMonthPrice: Int;
+  threeMonthPrice: Int;
+}
+
+export interface ProductPreviousValuesPromise
+  extends Promise<ProductPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  productId: () => Promise<String>;
+  type: () => Promise<PrescriptionType>;
+  category: () => Promise<String>;
+  productName: () => Promise<String>;
+  display: () => Promise<String>;
+  default: () => Promise<Boolean>;
+  doseDisplay: () => Promise<String>;
+  subTitle: () => Promise<String>;
+  monthlyPrice: () => Promise<Int>;
+  twoMonthPrice: () => Promise<Int>;
+  threeMonthPrice: () => Promise<Int>;
+}
+
+export interface ProductPreviousValuesSubscription
+  extends Promise<AsyncIterator<ProductPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  productId: () => Promise<AsyncIterator<String>>;
+  type: () => Promise<AsyncIterator<PrescriptionType>>;
+  category: () => Promise<AsyncIterator<String>>;
+  productName: () => Promise<AsyncIterator<String>>;
+  display: () => Promise<AsyncIterator<String>>;
+  default: () => Promise<AsyncIterator<Boolean>>;
+  doseDisplay: () => Promise<AsyncIterator<String>>;
+  subTitle: () => Promise<AsyncIterator<String>>;
+  monthlyPrice: () => Promise<AsyncIterator<Int>>;
+  twoMonthPrice: () => Promise<AsyncIterator<Int>>;
+  threeMonthPrice: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ShipmentSubscriptionPayload {
+  mutation: MutationType;
+  node: Shipment;
+  updatedFields: String[];
+  previousValues: ShipmentPreviousValues;
+}
+
+export interface ShipmentSubscriptionPayloadPromise
+  extends Promise<ShipmentSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ShipmentPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ShipmentPreviousValuesPromise>() => T;
+}
+
+export interface ShipmentSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ShipmentSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ShipmentSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ShipmentPreviousValuesSubscription>() => T;
+}
+
+export interface ShipmentPreviousValues {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  shipDate?: DateTimeOutput;
+  trackingNumber?: String;
+}
+
+export interface ShipmentPreviousValuesPromise
+  extends Promise<ShipmentPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  shipDate: () => Promise<DateTimeOutput>;
+  trackingNumber: () => Promise<String>;
+}
+
+export interface ShipmentPreviousValuesSubscription
+  extends Promise<AsyncIterator<ShipmentPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  shipDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  trackingNumber: () => Promise<AsyncIterator<String>>;
 }
 
 export interface UserSubscriptionPayload {
@@ -3623,7 +4506,7 @@ export interface VisitPreviousValues {
   id: ID_Output;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
-  type: PlanType;
+  type: PrescriptionType;
   questionnaire: Json;
   status: VisitStatus;
 }
@@ -3634,7 +4517,7 @@ export interface VisitPreviousValuesPromise
   id: () => Promise<ID_Output>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
-  type: () => Promise<PlanType>;
+  type: () => Promise<PrescriptionType>;
   questionnaire: () => Promise<Json>;
   status: () => Promise<VisitStatus>;
 }
@@ -3645,7 +4528,7 @@ export interface VisitPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  type: () => Promise<AsyncIterator<PlanType>>;
+  type: () => Promise<AsyncIterator<PrescriptionType>>;
   questionnaire: () => Promise<AsyncIterator<Json>>;
   status: () => Promise<AsyncIterator<VisitStatus>>;
 }
@@ -3704,11 +4587,11 @@ export const models: Model[] = [
     embedded: false
   },
   {
-    name: "PlanStatus",
+    name: "PrescriptionStatus",
     embedded: false
   },
   {
-    name: "PlanType",
+    name: "PrescriptionType",
     embedded: false
   },
   {
@@ -3724,7 +4607,15 @@ export const models: Model[] = [
     embedded: false
   },
   {
-    name: "Plan",
+    name: "Product",
+    embedded: false
+  },
+  {
+    name: "Prescription",
+    embedded: false
+  },
+  {
+    name: "Shipment",
     embedded: false
   },
   {

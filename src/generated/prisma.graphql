@@ -35,6 +35,11 @@ input AddressCreateManyWithoutUserInput {
   connect: [AddressWhereUniqueInput!]
 }
 
+input AddressCreateOneInput {
+  create: AddressCreateInput
+  connect: AddressWhereUniqueInput
+}
+
 input AddressCreateWithoutUserInput {
   id: ID
   active: Boolean
@@ -227,6 +232,17 @@ input AddressSubscriptionWhereInput {
   NOT: [AddressSubscriptionWhereInput!]
 }
 
+input AddressUpdateDataInput {
+  user: UserUpdateOneRequiredWithoutAddressesInput
+  active: Boolean
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  telephone: String
+}
+
 input AddressUpdateInput {
   user: UserUpdateOneRequiredWithoutAddressesInput
   active: Boolean
@@ -275,6 +291,13 @@ input AddressUpdateManyWithWhereNestedInput {
   data: AddressUpdateManyDataInput!
 }
 
+input AddressUpdateOneRequiredInput {
+  create: AddressCreateInput
+  update: AddressUpdateDataInput
+  upsert: AddressUpsertNestedInput
+  connect: AddressWhereUniqueInput
+}
+
 input AddressUpdateWithoutUserDataInput {
   active: Boolean
   addressOne: String
@@ -288,6 +311,11 @@ input AddressUpdateWithoutUserDataInput {
 input AddressUpdateWithWhereUniqueWithoutUserInput {
   where: AddressWhereUniqueInput!
   data: AddressUpdateWithoutUserDataInput!
+}
+
+input AddressUpsertNestedInput {
+  update: AddressUpdateDataInput!
+  create: AddressCreateInput!
 }
 
 input AddressUpsertWithWhereUniqueWithoutUserInput {
@@ -435,7 +463,15 @@ type AggregateMessage {
   count: Int!
 }
 
-type AggregatePlan {
+type AggregatePrescription {
+  count: Int!
+}
+
+type AggregateProduct {
+  count: Int!
+}
+
+type AggregateShipment {
   count: Int!
 }
 
@@ -482,6 +518,11 @@ input CreditCardCreateInput {
 input CreditCardCreateManyWithoutUserInput {
   create: [CreditCardCreateWithoutUserInput!]
   connect: [CreditCardWhereUniqueInput!]
+}
+
+input CreditCardCreateOneInput {
+  create: CreditCardCreateInput
+  connect: CreditCardWhereUniqueInput
 }
 
 input CreditCardCreateWithoutUserInput {
@@ -640,6 +681,15 @@ input CreditCardSubscriptionWhereInput {
   NOT: [CreditCardSubscriptionWhereInput!]
 }
 
+input CreditCardUpdateDataInput {
+  active: Boolean
+  user: UserUpdateOneRequiredWithoutCreditCardsInput
+  ccToken: String
+  ccType: String
+  ccNumber: String
+  ccExpire: String
+}
+
 input CreditCardUpdateInput {
   active: Boolean
   user: UserUpdateOneRequiredWithoutCreditCardsInput
@@ -682,6 +732,15 @@ input CreditCardUpdateManyWithWhereNestedInput {
   data: CreditCardUpdateManyDataInput!
 }
 
+input CreditCardUpdateOneInput {
+  create: CreditCardCreateInput
+  update: CreditCardUpdateDataInput
+  upsert: CreditCardUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: CreditCardWhereUniqueInput
+}
+
 input CreditCardUpdateWithoutUserDataInput {
   active: Boolean
   ccToken: String
@@ -693,6 +752,11 @@ input CreditCardUpdateWithoutUserDataInput {
 input CreditCardUpdateWithWhereUniqueWithoutUserInput {
   where: CreditCardWhereUniqueInput!
   data: CreditCardUpdateWithoutUserDataInput!
+}
+
+input CreditCardUpsertNestedInput {
+  update: CreditCardUpdateDataInput!
+  create: CreditCardCreateInput!
 }
 
 input CreditCardUpsertWithWhereUniqueWithoutUserInput {
@@ -976,12 +1040,24 @@ type Mutation {
   upsertMessage(where: MessageWhereUniqueInput!, create: MessageCreateInput!, update: MessageUpdateInput!): Message!
   deleteMessage(where: MessageWhereUniqueInput!): Message
   deleteManyMessages(where: MessageWhereInput): BatchPayload!
-  createPlan(data: PlanCreateInput!): Plan!
-  updatePlan(data: PlanUpdateInput!, where: PlanWhereUniqueInput!): Plan
-  updateManyPlans(data: PlanUpdateManyMutationInput!, where: PlanWhereInput): BatchPayload!
-  upsertPlan(where: PlanWhereUniqueInput!, create: PlanCreateInput!, update: PlanUpdateInput!): Plan!
-  deletePlan(where: PlanWhereUniqueInput!): Plan
-  deleteManyPlans(where: PlanWhereInput): BatchPayload!
+  createPrescription(data: PrescriptionCreateInput!): Prescription!
+  updatePrescription(data: PrescriptionUpdateInput!, where: PrescriptionWhereUniqueInput!): Prescription
+  updateManyPrescriptions(data: PrescriptionUpdateManyMutationInput!, where: PrescriptionWhereInput): BatchPayload!
+  upsertPrescription(where: PrescriptionWhereUniqueInput!, create: PrescriptionCreateInput!, update: PrescriptionUpdateInput!): Prescription!
+  deletePrescription(where: PrescriptionWhereUniqueInput!): Prescription
+  deleteManyPrescriptions(where: PrescriptionWhereInput): BatchPayload!
+  createProduct(data: ProductCreateInput!): Product!
+  updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
+  updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
+  upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
+  deleteProduct(where: ProductWhereUniqueInput!): Product
+  deleteManyProducts(where: ProductWhereInput): BatchPayload!
+  createShipment(data: ShipmentCreateInput!): Shipment!
+  updateShipment(data: ShipmentUpdateInput!, where: ShipmentWhereUniqueInput!): Shipment
+  updateManyShipments(data: ShipmentUpdateManyMutationInput!, where: ShipmentWhereInput): BatchPayload!
+  upsertShipment(where: ShipmentWhereUniqueInput!, create: ShipmentCreateInput!, update: ShipmentUpdateInput!): Shipment!
+  deleteShipment(where: ShipmentWhereUniqueInput!): Shipment
+  deleteManyShipments(where: ShipmentWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
@@ -1013,20 +1089,21 @@ type PageInfo {
   endCursor: String
 }
 
-type Plan {
+type Prescription {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  status: PlanStatus!
+  status: PrescriptionStatus!
   user: User!
   visit: Visit!
-  type: PlanType!
-  drugName: String!
-  strength: String
+  type: PrescriptionType!
+  product: Product!
   timesPerMonth: Int!
-  addonName: String
-  startDate: DateTime!
-  expireDate: DateTime!
+  addon: Product
+  addonTimesPerMonth: Int
+  approvedDate: DateTime
+  startDate: DateTime
+  expireDate: DateTime
   totalRefills: Int!
   refillsRemaining: Int!
   nextDelivery: DateTime
@@ -1034,24 +1111,25 @@ type Plan {
   amountDue: Int!
 }
 
-type PlanConnection {
+type PrescriptionConnection {
   pageInfo: PageInfo!
-  edges: [PlanEdge]!
-  aggregate: AggregatePlan!
+  edges: [PrescriptionEdge]!
+  aggregate: AggregatePrescription!
 }
 
-input PlanCreateInput {
+input PrescriptionCreateInput {
   id: ID
-  status: PlanStatus
-  user: UserCreateOneWithoutPlansInput!
+  status: PrescriptionStatus
+  user: UserCreateOneWithoutPrescriptionsInput!
   visit: VisitCreateOneInput!
-  type: PlanType!
-  drugName: String!
-  strength: String
+  type: PrescriptionType!
+  product: ProductCreateOneInput!
   timesPerMonth: Int!
-  addonName: String
-  startDate: DateTime!
-  expireDate: DateTime!
+  addon: ProductCreateOneInput
+  addonTimesPerMonth: Int
+  approvedDate: DateTime
+  startDate: DateTime
+  expireDate: DateTime
   totalRefills: Int!
   refillsRemaining: Int!
   nextDelivery: DateTime
@@ -1059,22 +1137,28 @@ input PlanCreateInput {
   amountDue: Int!
 }
 
-input PlanCreateManyWithoutUserInput {
-  create: [PlanCreateWithoutUserInput!]
-  connect: [PlanWhereUniqueInput!]
+input PrescriptionCreateManyWithoutUserInput {
+  create: [PrescriptionCreateWithoutUserInput!]
+  connect: [PrescriptionWhereUniqueInput!]
 }
 
-input PlanCreateWithoutUserInput {
+input PrescriptionCreateOneInput {
+  create: PrescriptionCreateInput
+  connect: PrescriptionWhereUniqueInput
+}
+
+input PrescriptionCreateWithoutUserInput {
   id: ID
-  status: PlanStatus
+  status: PrescriptionStatus
   visit: VisitCreateOneInput!
-  type: PlanType!
-  drugName: String!
-  strength: String
+  type: PrescriptionType!
+  product: ProductCreateOneInput!
   timesPerMonth: Int!
-  addonName: String
-  startDate: DateTime!
-  expireDate: DateTime!
+  addon: ProductCreateOneInput
+  addonTimesPerMonth: Int
+  approvedDate: DateTime
+  startDate: DateTime
+  expireDate: DateTime
   totalRefills: Int!
   refillsRemaining: Int!
   nextDelivery: DateTime
@@ -1082,12 +1166,12 @@ input PlanCreateWithoutUserInput {
   amountDue: Int!
 }
 
-type PlanEdge {
-  node: Plan!
+type PrescriptionEdge {
+  node: Prescription!
   cursor: String!
 }
 
-enum PlanOrderByInput {
+enum PrescriptionOrderByInput {
   id_ASC
   id_DESC
   createdAt_ASC
@@ -1098,14 +1182,12 @@ enum PlanOrderByInput {
   status_DESC
   type_ASC
   type_DESC
-  drugName_ASC
-  drugName_DESC
-  strength_ASC
-  strength_DESC
   timesPerMonth_ASC
   timesPerMonth_DESC
-  addonName_ASC
-  addonName_DESC
+  addonTimesPerMonth_ASC
+  addonTimesPerMonth_DESC
+  approvedDate_ASC
+  approvedDate_DESC
   startDate_ASC
   startDate_DESC
   expireDate_ASC
@@ -1122,18 +1204,17 @@ enum PlanOrderByInput {
   amountDue_DESC
 }
 
-type PlanPreviousValues {
+type PrescriptionPreviousValues {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  status: PlanStatus!
-  type: PlanType!
-  drugName: String!
-  strength: String
+  status: PrescriptionStatus!
+  type: PrescriptionType!
   timesPerMonth: Int!
-  addonName: String
-  startDate: DateTime!
-  expireDate: DateTime!
+  addonTimesPerMonth: Int
+  approvedDate: DateTime
+  startDate: DateTime
+  expireDate: DateTime
   totalRefills: Int!
   refillsRemaining: Int!
   nextDelivery: DateTime
@@ -1141,7 +1222,7 @@ type PlanPreviousValues {
   amountDue: Int!
 }
 
-input PlanScalarWhereInput {
+input PrescriptionScalarWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -1172,42 +1253,14 @@ input PlanScalarWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  status: PlanStatus
-  status_not: PlanStatus
-  status_in: [PlanStatus!]
-  status_not_in: [PlanStatus!]
-  type: PlanType
-  type_not: PlanType
-  type_in: [PlanType!]
-  type_not_in: [PlanType!]
-  drugName: String
-  drugName_not: String
-  drugName_in: [String!]
-  drugName_not_in: [String!]
-  drugName_lt: String
-  drugName_lte: String
-  drugName_gt: String
-  drugName_gte: String
-  drugName_contains: String
-  drugName_not_contains: String
-  drugName_starts_with: String
-  drugName_not_starts_with: String
-  drugName_ends_with: String
-  drugName_not_ends_with: String
-  strength: String
-  strength_not: String
-  strength_in: [String!]
-  strength_not_in: [String!]
-  strength_lt: String
-  strength_lte: String
-  strength_gt: String
-  strength_gte: String
-  strength_contains: String
-  strength_not_contains: String
-  strength_starts_with: String
-  strength_not_starts_with: String
-  strength_ends_with: String
-  strength_not_ends_with: String
+  status: PrescriptionStatus
+  status_not: PrescriptionStatus
+  status_in: [PrescriptionStatus!]
+  status_not_in: [PrescriptionStatus!]
+  type: PrescriptionType
+  type_not: PrescriptionType
+  type_in: [PrescriptionType!]
+  type_not_in: [PrescriptionType!]
   timesPerMonth: Int
   timesPerMonth_not: Int
   timesPerMonth_in: [Int!]
@@ -1216,20 +1269,22 @@ input PlanScalarWhereInput {
   timesPerMonth_lte: Int
   timesPerMonth_gt: Int
   timesPerMonth_gte: Int
-  addonName: String
-  addonName_not: String
-  addonName_in: [String!]
-  addonName_not_in: [String!]
-  addonName_lt: String
-  addonName_lte: String
-  addonName_gt: String
-  addonName_gte: String
-  addonName_contains: String
-  addonName_not_contains: String
-  addonName_starts_with: String
-  addonName_not_starts_with: String
-  addonName_ends_with: String
-  addonName_not_ends_with: String
+  addonTimesPerMonth: Int
+  addonTimesPerMonth_not: Int
+  addonTimesPerMonth_in: [Int!]
+  addonTimesPerMonth_not_in: [Int!]
+  addonTimesPerMonth_lt: Int
+  addonTimesPerMonth_lte: Int
+  addonTimesPerMonth_gt: Int
+  addonTimesPerMonth_gte: Int
+  approvedDate: DateTime
+  approvedDate_not: DateTime
+  approvedDate_in: [DateTime!]
+  approvedDate_not_in: [DateTime!]
+  approvedDate_lt: DateTime
+  approvedDate_lte: DateTime
+  approvedDate_gt: DateTime
+  approvedDate_gte: DateTime
   startDate: DateTime
   startDate_not: DateTime
   startDate_in: [DateTime!]
@@ -1286,38 +1341,42 @@ input PlanScalarWhereInput {
   amountDue_lte: Int
   amountDue_gt: Int
   amountDue_gte: Int
-  AND: [PlanScalarWhereInput!]
-  OR: [PlanScalarWhereInput!]
-  NOT: [PlanScalarWhereInput!]
+  AND: [PrescriptionScalarWhereInput!]
+  OR: [PrescriptionScalarWhereInput!]
+  NOT: [PrescriptionScalarWhereInput!]
 }
 
-enum PlanStatus {
+enum PrescriptionStatus {
   PENDING
-  ACTIVE
+  DENIED
+  NEW
+  REFILL
+  UNFILLED
+  SHIPPED
+  PAYMENT_DENIED
   ONDEMAND
   CLOSED
-  DENIED
 }
 
-type PlanSubscriptionPayload {
+type PrescriptionSubscriptionPayload {
   mutation: MutationType!
-  node: Plan
+  node: Prescription
   updatedFields: [String!]
-  previousValues: PlanPreviousValues
+  previousValues: PrescriptionPreviousValues
 }
 
-input PlanSubscriptionWhereInput {
+input PrescriptionSubscriptionWhereInput {
   mutation_in: [MutationType!]
   updatedFields_contains: String
   updatedFields_contains_every: [String!]
   updatedFields_contains_some: [String!]
-  node: PlanWhereInput
-  AND: [PlanSubscriptionWhereInput!]
-  OR: [PlanSubscriptionWhereInput!]
-  NOT: [PlanSubscriptionWhereInput!]
+  node: PrescriptionWhereInput
+  AND: [PrescriptionSubscriptionWhereInput!]
+  OR: [PrescriptionSubscriptionWhereInput!]
+  NOT: [PrescriptionSubscriptionWhereInput!]
 }
 
-enum PlanType {
+enum PrescriptionType {
   ED
   HAIR
   SLEEP
@@ -1326,15 +1385,16 @@ enum PlanType {
   WEIGHT
 }
 
-input PlanUpdateInput {
-  status: PlanStatus
-  user: UserUpdateOneRequiredWithoutPlansInput
+input PrescriptionUpdateDataInput {
+  status: PrescriptionStatus
+  user: UserUpdateOneRequiredWithoutPrescriptionsInput
   visit: VisitUpdateOneRequiredInput
-  type: PlanType
-  drugName: String
-  strength: String
+  type: PrescriptionType
+  product: ProductUpdateOneRequiredInput
   timesPerMonth: Int
-  addonName: String
+  addon: ProductUpdateOneInput
+  addonTimesPerMonth: Int
+  approvedDate: DateTime
   startDate: DateTime
   expireDate: DateTime
   totalRefills: Int
@@ -1344,63 +1404,16 @@ input PlanUpdateInput {
   amountDue: Int
 }
 
-input PlanUpdateManyDataInput {
-  status: PlanStatus
-  type: PlanType
-  drugName: String
-  strength: String
-  timesPerMonth: Int
-  addonName: String
-  startDate: DateTime
-  expireDate: DateTime
-  totalRefills: Int
-  refillsRemaining: Int
-  nextDelivery: DateTime
-  shippingInterval: Int
-  amountDue: Int
-}
-
-input PlanUpdateManyMutationInput {
-  status: PlanStatus
-  type: PlanType
-  drugName: String
-  strength: String
-  timesPerMonth: Int
-  addonName: String
-  startDate: DateTime
-  expireDate: DateTime
-  totalRefills: Int
-  refillsRemaining: Int
-  nextDelivery: DateTime
-  shippingInterval: Int
-  amountDue: Int
-}
-
-input PlanUpdateManyWithoutUserInput {
-  create: [PlanCreateWithoutUserInput!]
-  delete: [PlanWhereUniqueInput!]
-  connect: [PlanWhereUniqueInput!]
-  set: [PlanWhereUniqueInput!]
-  disconnect: [PlanWhereUniqueInput!]
-  update: [PlanUpdateWithWhereUniqueWithoutUserInput!]
-  upsert: [PlanUpsertWithWhereUniqueWithoutUserInput!]
-  deleteMany: [PlanScalarWhereInput!]
-  updateMany: [PlanUpdateManyWithWhereNestedInput!]
-}
-
-input PlanUpdateManyWithWhereNestedInput {
-  where: PlanScalarWhereInput!
-  data: PlanUpdateManyDataInput!
-}
-
-input PlanUpdateWithoutUserDataInput {
-  status: PlanStatus
+input PrescriptionUpdateInput {
+  status: PrescriptionStatus
+  user: UserUpdateOneRequiredWithoutPrescriptionsInput
   visit: VisitUpdateOneRequiredInput
-  type: PlanType
-  drugName: String
-  strength: String
+  type: PrescriptionType
+  product: ProductUpdateOneRequiredInput
   timesPerMonth: Int
-  addonName: String
+  addon: ProductUpdateOneInput
+  addonTimesPerMonth: Int
+  approvedDate: DateTime
   startDate: DateTime
   expireDate: DateTime
   totalRefills: Int
@@ -1410,18 +1423,95 @@ input PlanUpdateWithoutUserDataInput {
   amountDue: Int
 }
 
-input PlanUpdateWithWhereUniqueWithoutUserInput {
-  where: PlanWhereUniqueInput!
-  data: PlanUpdateWithoutUserDataInput!
+input PrescriptionUpdateManyDataInput {
+  status: PrescriptionStatus
+  type: PrescriptionType
+  timesPerMonth: Int
+  addonTimesPerMonth: Int
+  approvedDate: DateTime
+  startDate: DateTime
+  expireDate: DateTime
+  totalRefills: Int
+  refillsRemaining: Int
+  nextDelivery: DateTime
+  shippingInterval: Int
+  amountDue: Int
 }
 
-input PlanUpsertWithWhereUniqueWithoutUserInput {
-  where: PlanWhereUniqueInput!
-  update: PlanUpdateWithoutUserDataInput!
-  create: PlanCreateWithoutUserInput!
+input PrescriptionUpdateManyMutationInput {
+  status: PrescriptionStatus
+  type: PrescriptionType
+  timesPerMonth: Int
+  addonTimesPerMonth: Int
+  approvedDate: DateTime
+  startDate: DateTime
+  expireDate: DateTime
+  totalRefills: Int
+  refillsRemaining: Int
+  nextDelivery: DateTime
+  shippingInterval: Int
+  amountDue: Int
 }
 
-input PlanWhereInput {
+input PrescriptionUpdateManyWithoutUserInput {
+  create: [PrescriptionCreateWithoutUserInput!]
+  delete: [PrescriptionWhereUniqueInput!]
+  connect: [PrescriptionWhereUniqueInput!]
+  set: [PrescriptionWhereUniqueInput!]
+  disconnect: [PrescriptionWhereUniqueInput!]
+  update: [PrescriptionUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [PrescriptionUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [PrescriptionScalarWhereInput!]
+  updateMany: [PrescriptionUpdateManyWithWhereNestedInput!]
+}
+
+input PrescriptionUpdateManyWithWhereNestedInput {
+  where: PrescriptionScalarWhereInput!
+  data: PrescriptionUpdateManyDataInput!
+}
+
+input PrescriptionUpdateOneRequiredInput {
+  create: PrescriptionCreateInput
+  update: PrescriptionUpdateDataInput
+  upsert: PrescriptionUpsertNestedInput
+  connect: PrescriptionWhereUniqueInput
+}
+
+input PrescriptionUpdateWithoutUserDataInput {
+  status: PrescriptionStatus
+  visit: VisitUpdateOneRequiredInput
+  type: PrescriptionType
+  product: ProductUpdateOneRequiredInput
+  timesPerMonth: Int
+  addon: ProductUpdateOneInput
+  addonTimesPerMonth: Int
+  approvedDate: DateTime
+  startDate: DateTime
+  expireDate: DateTime
+  totalRefills: Int
+  refillsRemaining: Int
+  nextDelivery: DateTime
+  shippingInterval: Int
+  amountDue: Int
+}
+
+input PrescriptionUpdateWithWhereUniqueWithoutUserInput {
+  where: PrescriptionWhereUniqueInput!
+  data: PrescriptionUpdateWithoutUserDataInput!
+}
+
+input PrescriptionUpsertNestedInput {
+  update: PrescriptionUpdateDataInput!
+  create: PrescriptionCreateInput!
+}
+
+input PrescriptionUpsertWithWhereUniqueWithoutUserInput {
+  where: PrescriptionWhereUniqueInput!
+  update: PrescriptionUpdateWithoutUserDataInput!
+  create: PrescriptionCreateWithoutUserInput!
+}
+
+input PrescriptionWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -1452,44 +1542,17 @@ input PlanWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  status: PlanStatus
-  status_not: PlanStatus
-  status_in: [PlanStatus!]
-  status_not_in: [PlanStatus!]
+  status: PrescriptionStatus
+  status_not: PrescriptionStatus
+  status_in: [PrescriptionStatus!]
+  status_not_in: [PrescriptionStatus!]
   user: UserWhereInput
   visit: VisitWhereInput
-  type: PlanType
-  type_not: PlanType
-  type_in: [PlanType!]
-  type_not_in: [PlanType!]
-  drugName: String
-  drugName_not: String
-  drugName_in: [String!]
-  drugName_not_in: [String!]
-  drugName_lt: String
-  drugName_lte: String
-  drugName_gt: String
-  drugName_gte: String
-  drugName_contains: String
-  drugName_not_contains: String
-  drugName_starts_with: String
-  drugName_not_starts_with: String
-  drugName_ends_with: String
-  drugName_not_ends_with: String
-  strength: String
-  strength_not: String
-  strength_in: [String!]
-  strength_not_in: [String!]
-  strength_lt: String
-  strength_lte: String
-  strength_gt: String
-  strength_gte: String
-  strength_contains: String
-  strength_not_contains: String
-  strength_starts_with: String
-  strength_not_starts_with: String
-  strength_ends_with: String
-  strength_not_ends_with: String
+  type: PrescriptionType
+  type_not: PrescriptionType
+  type_in: [PrescriptionType!]
+  type_not_in: [PrescriptionType!]
+  product: ProductWhereInput
   timesPerMonth: Int
   timesPerMonth_not: Int
   timesPerMonth_in: [Int!]
@@ -1498,20 +1561,23 @@ input PlanWhereInput {
   timesPerMonth_lte: Int
   timesPerMonth_gt: Int
   timesPerMonth_gte: Int
-  addonName: String
-  addonName_not: String
-  addonName_in: [String!]
-  addonName_not_in: [String!]
-  addonName_lt: String
-  addonName_lte: String
-  addonName_gt: String
-  addonName_gte: String
-  addonName_contains: String
-  addonName_not_contains: String
-  addonName_starts_with: String
-  addonName_not_starts_with: String
-  addonName_ends_with: String
-  addonName_not_ends_with: String
+  addon: ProductWhereInput
+  addonTimesPerMonth: Int
+  addonTimesPerMonth_not: Int
+  addonTimesPerMonth_in: [Int!]
+  addonTimesPerMonth_not_in: [Int!]
+  addonTimesPerMonth_lt: Int
+  addonTimesPerMonth_lte: Int
+  addonTimesPerMonth_gt: Int
+  addonTimesPerMonth_gte: Int
+  approvedDate: DateTime
+  approvedDate_not: DateTime
+  approvedDate_in: [DateTime!]
+  approvedDate_not_in: [DateTime!]
+  approvedDate_lt: DateTime
+  approvedDate_lte: DateTime
+  approvedDate_gt: DateTime
+  approvedDate_gte: DateTime
   startDate: DateTime
   startDate_not: DateTime
   startDate_in: [DateTime!]
@@ -1568,13 +1634,321 @@ input PlanWhereInput {
   amountDue_lte: Int
   amountDue_gt: Int
   amountDue_gte: Int
-  AND: [PlanWhereInput!]
-  OR: [PlanWhereInput!]
-  NOT: [PlanWhereInput!]
+  AND: [PrescriptionWhereInput!]
+  OR: [PrescriptionWhereInput!]
+  NOT: [PrescriptionWhereInput!]
 }
 
-input PlanWhereUniqueInput {
+input PrescriptionWhereUniqueInput {
   id: ID
+}
+
+type Product {
+  id: ID!
+  productId: String!
+  type: PrescriptionType!
+  category: String!
+  productName: String!
+  display: String!
+  default: Boolean!
+  doseDisplay: String
+  subTitle: String
+  monthlyPrice: Int!
+  twoMonthPrice: Int!
+  threeMonthPrice: Int!
+}
+
+type ProductConnection {
+  pageInfo: PageInfo!
+  edges: [ProductEdge]!
+  aggregate: AggregateProduct!
+}
+
+input ProductCreateInput {
+  id: ID
+  productId: String!
+  type: PrescriptionType!
+  category: String!
+  productName: String!
+  display: String!
+  default: Boolean
+  doseDisplay: String
+  subTitle: String
+  monthlyPrice: Int!
+  twoMonthPrice: Int!
+  threeMonthPrice: Int!
+}
+
+input ProductCreateOneInput {
+  create: ProductCreateInput
+  connect: ProductWhereUniqueInput
+}
+
+type ProductEdge {
+  node: Product!
+  cursor: String!
+}
+
+enum ProductOrderByInput {
+  id_ASC
+  id_DESC
+  productId_ASC
+  productId_DESC
+  type_ASC
+  type_DESC
+  category_ASC
+  category_DESC
+  productName_ASC
+  productName_DESC
+  display_ASC
+  display_DESC
+  default_ASC
+  default_DESC
+  doseDisplay_ASC
+  doseDisplay_DESC
+  subTitle_ASC
+  subTitle_DESC
+  monthlyPrice_ASC
+  monthlyPrice_DESC
+  twoMonthPrice_ASC
+  twoMonthPrice_DESC
+  threeMonthPrice_ASC
+  threeMonthPrice_DESC
+}
+
+type ProductPreviousValues {
+  id: ID!
+  productId: String!
+  type: PrescriptionType!
+  category: String!
+  productName: String!
+  display: String!
+  default: Boolean!
+  doseDisplay: String
+  subTitle: String
+  monthlyPrice: Int!
+  twoMonthPrice: Int!
+  threeMonthPrice: Int!
+}
+
+type ProductSubscriptionPayload {
+  mutation: MutationType!
+  node: Product
+  updatedFields: [String!]
+  previousValues: ProductPreviousValues
+}
+
+input ProductSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ProductWhereInput
+  AND: [ProductSubscriptionWhereInput!]
+  OR: [ProductSubscriptionWhereInput!]
+  NOT: [ProductSubscriptionWhereInput!]
+}
+
+input ProductUpdateDataInput {
+  productId: String
+  type: PrescriptionType
+  category: String
+  productName: String
+  display: String
+  default: Boolean
+  doseDisplay: String
+  subTitle: String
+  monthlyPrice: Int
+  twoMonthPrice: Int
+  threeMonthPrice: Int
+}
+
+input ProductUpdateInput {
+  productId: String
+  type: PrescriptionType
+  category: String
+  productName: String
+  display: String
+  default: Boolean
+  doseDisplay: String
+  subTitle: String
+  monthlyPrice: Int
+  twoMonthPrice: Int
+  threeMonthPrice: Int
+}
+
+input ProductUpdateManyMutationInput {
+  productId: String
+  type: PrescriptionType
+  category: String
+  productName: String
+  display: String
+  default: Boolean
+  doseDisplay: String
+  subTitle: String
+  monthlyPrice: Int
+  twoMonthPrice: Int
+  threeMonthPrice: Int
+}
+
+input ProductUpdateOneInput {
+  create: ProductCreateInput
+  update: ProductUpdateDataInput
+  upsert: ProductUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ProductWhereUniqueInput
+}
+
+input ProductUpdateOneRequiredInput {
+  create: ProductCreateInput
+  update: ProductUpdateDataInput
+  upsert: ProductUpsertNestedInput
+  connect: ProductWhereUniqueInput
+}
+
+input ProductUpsertNestedInput {
+  update: ProductUpdateDataInput!
+  create: ProductCreateInput!
+}
+
+input ProductWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  productId: String
+  productId_not: String
+  productId_in: [String!]
+  productId_not_in: [String!]
+  productId_lt: String
+  productId_lte: String
+  productId_gt: String
+  productId_gte: String
+  productId_contains: String
+  productId_not_contains: String
+  productId_starts_with: String
+  productId_not_starts_with: String
+  productId_ends_with: String
+  productId_not_ends_with: String
+  type: PrescriptionType
+  type_not: PrescriptionType
+  type_in: [PrescriptionType!]
+  type_not_in: [PrescriptionType!]
+  category: String
+  category_not: String
+  category_in: [String!]
+  category_not_in: [String!]
+  category_lt: String
+  category_lte: String
+  category_gt: String
+  category_gte: String
+  category_contains: String
+  category_not_contains: String
+  category_starts_with: String
+  category_not_starts_with: String
+  category_ends_with: String
+  category_not_ends_with: String
+  productName: String
+  productName_not: String
+  productName_in: [String!]
+  productName_not_in: [String!]
+  productName_lt: String
+  productName_lte: String
+  productName_gt: String
+  productName_gte: String
+  productName_contains: String
+  productName_not_contains: String
+  productName_starts_with: String
+  productName_not_starts_with: String
+  productName_ends_with: String
+  productName_not_ends_with: String
+  display: String
+  display_not: String
+  display_in: [String!]
+  display_not_in: [String!]
+  display_lt: String
+  display_lte: String
+  display_gt: String
+  display_gte: String
+  display_contains: String
+  display_not_contains: String
+  display_starts_with: String
+  display_not_starts_with: String
+  display_ends_with: String
+  display_not_ends_with: String
+  default: Boolean
+  default_not: Boolean
+  doseDisplay: String
+  doseDisplay_not: String
+  doseDisplay_in: [String!]
+  doseDisplay_not_in: [String!]
+  doseDisplay_lt: String
+  doseDisplay_lte: String
+  doseDisplay_gt: String
+  doseDisplay_gte: String
+  doseDisplay_contains: String
+  doseDisplay_not_contains: String
+  doseDisplay_starts_with: String
+  doseDisplay_not_starts_with: String
+  doseDisplay_ends_with: String
+  doseDisplay_not_ends_with: String
+  subTitle: String
+  subTitle_not: String
+  subTitle_in: [String!]
+  subTitle_not_in: [String!]
+  subTitle_lt: String
+  subTitle_lte: String
+  subTitle_gt: String
+  subTitle_gte: String
+  subTitle_contains: String
+  subTitle_not_contains: String
+  subTitle_starts_with: String
+  subTitle_not_starts_with: String
+  subTitle_ends_with: String
+  subTitle_not_ends_with: String
+  monthlyPrice: Int
+  monthlyPrice_not: Int
+  monthlyPrice_in: [Int!]
+  monthlyPrice_not_in: [Int!]
+  monthlyPrice_lt: Int
+  monthlyPrice_lte: Int
+  monthlyPrice_gt: Int
+  monthlyPrice_gte: Int
+  twoMonthPrice: Int
+  twoMonthPrice_not: Int
+  twoMonthPrice_in: [Int!]
+  twoMonthPrice_not_in: [Int!]
+  twoMonthPrice_lt: Int
+  twoMonthPrice_lte: Int
+  twoMonthPrice_gt: Int
+  twoMonthPrice_gte: Int
+  threeMonthPrice: Int
+  threeMonthPrice_not: Int
+  threeMonthPrice_in: [Int!]
+  threeMonthPrice_not_in: [Int!]
+  threeMonthPrice_lt: Int
+  threeMonthPrice_lte: Int
+  threeMonthPrice_gt: Int
+  threeMonthPrice_gte: Int
+  AND: [ProductWhereInput!]
+  OR: [ProductWhereInput!]
+  NOT: [ProductWhereInput!]
+}
+
+input ProductWhereUniqueInput {
+  id: ID
+  productId: String
 }
 
 type Query {
@@ -1587,9 +1961,15 @@ type Query {
   message(where: MessageWhereUniqueInput!): Message
   messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message]!
   messagesConnection(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): MessageConnection!
-  plan(where: PlanWhereUniqueInput!): Plan
-  plans(where: PlanWhereInput, orderBy: PlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Plan]!
-  plansConnection(where: PlanWhereInput, orderBy: PlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PlanConnection!
+  prescription(where: PrescriptionWhereUniqueInput!): Prescription
+  prescriptions(where: PrescriptionWhereInput, orderBy: PrescriptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Prescription]!
+  prescriptionsConnection(where: PrescriptionWhereInput, orderBy: PrescriptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PrescriptionConnection!
+  product(where: ProductWhereUniqueInput!): Product
+  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
+  productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
+  shipment(where: ShipmentWhereUniqueInput!): Shipment
+  shipments(where: ShipmentWhereInput, orderBy: ShipmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Shipment]!
+  shipmentsConnection(where: ShipmentWhereInput, orderBy: ShipmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShipmentConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
@@ -1606,11 +1986,165 @@ enum Role {
   VISITOR
 }
 
+type Shipment {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  user: User!
+  address: Address!
+  prescription: Prescription!
+  shipDate: DateTime
+  trackingNumber: String
+  creditCard: CreditCard
+}
+
+type ShipmentConnection {
+  pageInfo: PageInfo!
+  edges: [ShipmentEdge]!
+  aggregate: AggregateShipment!
+}
+
+input ShipmentCreateInput {
+  id: ID
+  user: UserCreateOneInput!
+  address: AddressCreateOneInput!
+  prescription: PrescriptionCreateOneInput!
+  shipDate: DateTime
+  trackingNumber: String
+  creditCard: CreditCardCreateOneInput
+}
+
+type ShipmentEdge {
+  node: Shipment!
+  cursor: String!
+}
+
+enum ShipmentOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  shipDate_ASC
+  shipDate_DESC
+  trackingNumber_ASC
+  trackingNumber_DESC
+}
+
+type ShipmentPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  shipDate: DateTime
+  trackingNumber: String
+}
+
+type ShipmentSubscriptionPayload {
+  mutation: MutationType!
+  node: Shipment
+  updatedFields: [String!]
+  previousValues: ShipmentPreviousValues
+}
+
+input ShipmentSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ShipmentWhereInput
+  AND: [ShipmentSubscriptionWhereInput!]
+  OR: [ShipmentSubscriptionWhereInput!]
+  NOT: [ShipmentSubscriptionWhereInput!]
+}
+
+input ShipmentUpdateInput {
+  user: UserUpdateOneRequiredInput
+  address: AddressUpdateOneRequiredInput
+  prescription: PrescriptionUpdateOneRequiredInput
+  shipDate: DateTime
+  trackingNumber: String
+  creditCard: CreditCardUpdateOneInput
+}
+
+input ShipmentUpdateManyMutationInput {
+  shipDate: DateTime
+  trackingNumber: String
+}
+
+input ShipmentWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  user: UserWhereInput
+  address: AddressWhereInput
+  prescription: PrescriptionWhereInput
+  shipDate: DateTime
+  shipDate_not: DateTime
+  shipDate_in: [DateTime!]
+  shipDate_not_in: [DateTime!]
+  shipDate_lt: DateTime
+  shipDate_lte: DateTime
+  shipDate_gt: DateTime
+  shipDate_gte: DateTime
+  trackingNumber: String
+  trackingNumber_not: String
+  trackingNumber_in: [String!]
+  trackingNumber_not_in: [String!]
+  trackingNumber_lt: String
+  trackingNumber_lte: String
+  trackingNumber_gt: String
+  trackingNumber_gte: String
+  trackingNumber_contains: String
+  trackingNumber_not_contains: String
+  trackingNumber_starts_with: String
+  trackingNumber_not_starts_with: String
+  trackingNumber_ends_with: String
+  trackingNumber_not_ends_with: String
+  creditCard: CreditCardWhereInput
+  AND: [ShipmentWhereInput!]
+  OR: [ShipmentWhereInput!]
+  NOT: [ShipmentWhereInput!]
+}
+
+input ShipmentWhereUniqueInput {
+  id: ID
+}
+
 type Subscription {
   address(where: AddressSubscriptionWhereInput): AddressSubscriptionPayload
   creditCard(where: CreditCardSubscriptionWhereInput): CreditCardSubscriptionPayload
   message(where: MessageSubscriptionWhereInput): MessageSubscriptionPayload
-  plan(where: PlanSubscriptionWhereInput): PlanSubscriptionPayload
+  prescription(where: PrescriptionSubscriptionWhereInput): PrescriptionSubscriptionPayload
+  product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
+  shipment(where: ShipmentSubscriptionWhereInput): ShipmentSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   visit(where: VisitSubscriptionWhereInput): VisitSubscriptionPayload
 }
@@ -1629,7 +2163,7 @@ type User {
   photoId: String
   gender: String
   birthDate: DateTime
-  plans(where: PlanWhereInput, orderBy: PlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Plan!]
+  prescriptions(where: PrescriptionWhereInput, orderBy: PrescriptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Prescription!]
   visits(where: VisitWhereInput, orderBy: VisitOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Visit!]
   currVisit: Json
   resetToken: String
@@ -1655,7 +2189,7 @@ input UserCreateInput {
   photoId: String
   gender: String
   birthDate: DateTime
-  plans: PlanCreateManyWithoutUserInput
+  prescriptions: PrescriptionCreateManyWithoutUserInput
   visits: VisitCreateManyWithoutUserInput
   currVisit: Json
   resetToken: String
@@ -1678,8 +2212,8 @@ input UserCreateOneWithoutCreditCardsInput {
   connect: UserWhereUniqueInput
 }
 
-input UserCreateOneWithoutPlansInput {
-  create: UserCreateWithoutPlansInput
+input UserCreateOneWithoutPrescriptionsInput {
+  create: UserCreateWithoutPrescriptionsInput
   connect: UserWhereUniqueInput
 }
 
@@ -1699,7 +2233,7 @@ input UserCreateWithoutAddressesInput {
   photoId: String
   gender: String
   birthDate: DateTime
-  plans: PlanCreateManyWithoutUserInput
+  prescriptions: PrescriptionCreateManyWithoutUserInput
   visits: VisitCreateManyWithoutUserInput
   currVisit: Json
   resetToken: String
@@ -1718,7 +2252,7 @@ input UserCreateWithoutCreditCardsInput {
   photoId: String
   gender: String
   birthDate: DateTime
-  plans: PlanCreateManyWithoutUserInput
+  prescriptions: PrescriptionCreateManyWithoutUserInput
   visits: VisitCreateManyWithoutUserInput
   currVisit: Json
   resetToken: String
@@ -1726,7 +2260,7 @@ input UserCreateWithoutCreditCardsInput {
   tokenVersion: Int
 }
 
-input UserCreateWithoutPlansInput {
+input UserCreateWithoutPrescriptionsInput {
   id: ID
   role: Role
   firstName: String!
@@ -1757,7 +2291,7 @@ input UserCreateWithoutVisitsInput {
   photoId: String
   gender: String
   birthDate: DateTime
-  plans: PlanCreateManyWithoutUserInput
+  prescriptions: PrescriptionCreateManyWithoutUserInput
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
@@ -1849,7 +2383,7 @@ input UserUpdateDataInput {
   photoId: String
   gender: String
   birthDate: DateTime
-  plans: PlanUpdateManyWithoutUserInput
+  prescriptions: PrescriptionUpdateManyWithoutUserInput
   visits: VisitUpdateManyWithoutUserInput
   currVisit: Json
   resetToken: String
@@ -1868,7 +2402,7 @@ input UserUpdateInput {
   photoId: String
   gender: String
   birthDate: DateTime
-  plans: PlanUpdateManyWithoutUserInput
+  prescriptions: PrescriptionUpdateManyWithoutUserInput
   visits: VisitUpdateManyWithoutUserInput
   currVisit: Json
   resetToken: String
@@ -1921,10 +2455,10 @@ input UserUpdateOneRequiredWithoutCreditCardsInput {
   connect: UserWhereUniqueInput
 }
 
-input UserUpdateOneRequiredWithoutPlansInput {
-  create: UserCreateWithoutPlansInput
-  update: UserUpdateWithoutPlansDataInput
-  upsert: UserUpsertWithoutPlansInput
+input UserUpdateOneRequiredWithoutPrescriptionsInput {
+  create: UserCreateWithoutPrescriptionsInput
+  update: UserUpdateWithoutPrescriptionsDataInput
+  upsert: UserUpsertWithoutPrescriptionsInput
   connect: UserWhereUniqueInput
 }
 
@@ -1947,7 +2481,7 @@ input UserUpdateWithoutAddressesDataInput {
   photoId: String
   gender: String
   birthDate: DateTime
-  plans: PlanUpdateManyWithoutUserInput
+  prescriptions: PrescriptionUpdateManyWithoutUserInput
   visits: VisitUpdateManyWithoutUserInput
   currVisit: Json
   resetToken: String
@@ -1965,7 +2499,7 @@ input UserUpdateWithoutCreditCardsDataInput {
   photoId: String
   gender: String
   birthDate: DateTime
-  plans: PlanUpdateManyWithoutUserInput
+  prescriptions: PrescriptionUpdateManyWithoutUserInput
   visits: VisitUpdateManyWithoutUserInput
   currVisit: Json
   resetToken: String
@@ -1973,7 +2507,7 @@ input UserUpdateWithoutCreditCardsDataInput {
   tokenVersion: Int
 }
 
-input UserUpdateWithoutPlansDataInput {
+input UserUpdateWithoutPrescriptionsDataInput {
   role: Role
   firstName: String
   lastName: String
@@ -2002,7 +2536,7 @@ input UserUpdateWithoutVisitsDataInput {
   photoId: String
   gender: String
   birthDate: DateTime
-  plans: PlanUpdateManyWithoutUserInput
+  prescriptions: PrescriptionUpdateManyWithoutUserInput
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
@@ -2024,9 +2558,9 @@ input UserUpsertWithoutCreditCardsInput {
   create: UserCreateWithoutCreditCardsInput!
 }
 
-input UserUpsertWithoutPlansInput {
-  update: UserUpdateWithoutPlansDataInput!
-  create: UserCreateWithoutPlansInput!
+input UserUpsertWithoutPrescriptionsInput {
+  update: UserUpdateWithoutPrescriptionsDataInput!
+  create: UserCreateWithoutPrescriptionsInput!
 }
 
 input UserUpsertWithoutVisitsInput {
@@ -2167,9 +2701,9 @@ input UserWhereInput {
   birthDate_lte: DateTime
   birthDate_gt: DateTime
   birthDate_gte: DateTime
-  plans_every: PlanWhereInput
-  plans_some: PlanWhereInput
-  plans_none: PlanWhereInput
+  prescriptions_every: PrescriptionWhereInput
+  prescriptions_some: PrescriptionWhereInput
+  prescriptions_none: PrescriptionWhereInput
   visits_every: VisitWhereInput
   visits_some: VisitWhereInput
   visits_none: VisitWhereInput
@@ -2218,7 +2752,7 @@ type Visit {
   createdAt: DateTime!
   updatedAt: DateTime!
   user: User
-  type: PlanType!
+  type: PrescriptionType!
   questionnaire: Json!
   status: VisitStatus!
 }
@@ -2232,7 +2766,7 @@ type VisitConnection {
 input VisitCreateInput {
   id: ID
   user: UserCreateOneWithoutVisitsInput
-  type: PlanType
+  type: PrescriptionType
   questionnaire: Json!
   status: VisitStatus
 }
@@ -2249,7 +2783,7 @@ input VisitCreateOneInput {
 
 input VisitCreateWithoutUserInput {
   id: ID
-  type: PlanType
+  type: PrescriptionType
   questionnaire: Json!
   status: VisitStatus
 }
@@ -2278,7 +2812,7 @@ type VisitPreviousValues {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  type: PlanType!
+  type: PrescriptionType!
   questionnaire: Json!
   status: VisitStatus!
 }
@@ -2314,10 +2848,10 @@ input VisitScalarWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  type: PlanType
-  type_not: PlanType
-  type_in: [PlanType!]
-  type_not_in: [PlanType!]
+  type: PrescriptionType
+  type_not: PrescriptionType
+  type_in: [PrescriptionType!]
+  type_not_in: [PrescriptionType!]
   status: VisitStatus
   status_not: VisitStatus
   status_in: [VisitStatus!]
@@ -2354,26 +2888,26 @@ input VisitSubscriptionWhereInput {
 
 input VisitUpdateDataInput {
   user: UserUpdateOneWithoutVisitsInput
-  type: PlanType
+  type: PrescriptionType
   questionnaire: Json
   status: VisitStatus
 }
 
 input VisitUpdateInput {
   user: UserUpdateOneWithoutVisitsInput
-  type: PlanType
+  type: PrescriptionType
   questionnaire: Json
   status: VisitStatus
 }
 
 input VisitUpdateManyDataInput {
-  type: PlanType
+  type: PrescriptionType
   questionnaire: Json
   status: VisitStatus
 }
 
 input VisitUpdateManyMutationInput {
-  type: PlanType
+  type: PrescriptionType
   questionnaire: Json
   status: VisitStatus
 }
@@ -2403,7 +2937,7 @@ input VisitUpdateOneRequiredInput {
 }
 
 input VisitUpdateWithoutUserDataInput {
-  type: PlanType
+  type: PrescriptionType
   questionnaire: Json
   status: VisitStatus
 }
@@ -2456,10 +2990,10 @@ input VisitWhereInput {
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
   user: UserWhereInput
-  type: PlanType
-  type_not: PlanType
-  type_in: [PlanType!]
-  type_not_in: [PlanType!]
+  type: PrescriptionType
+  type_not: PrescriptionType
+  type_in: [PrescriptionType!]
+  type_not_in: [PrescriptionType!]
   status: VisitStatus
   status_not: VisitStatus
   status_in: [VisitStatus!]

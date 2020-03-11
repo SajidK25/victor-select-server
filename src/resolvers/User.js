@@ -11,8 +11,8 @@ const User = {
   creditCards: ({ id }, args, context) => {
     return context.prisma.user({ id }).creditCards();
   },
-  visits: ({ id }, args, context) => {
-    return context.prisma.user({ id }).visits();
+  prescriptions: ({ id }, args, context) => {
+    return context.prisma.user({ id }).prescriptions();
   }
 };
 

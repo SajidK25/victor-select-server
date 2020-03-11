@@ -36,7 +36,7 @@ input SaveAddressInput {
 }
 
 input SaveVisitInput {
-  type: PlanType
+  type: PrescriptionType
   pageIndex: String
   questionnaire: Json!
 }
@@ -86,6 +86,7 @@ type Mutation {
   saveAddress(input: SaveAddressInput!): Address!
   saveNewVisit(input: Json!): SuccessMessage!
   updateVisit(id: String!, status: String): SuccessMessage!
+  updatePrescription(id: String!, status: String): SuccessMessage!
 }
 
 type Query {
@@ -96,6 +97,12 @@ type Query {
   creditCards: [CreditCard]!
   userExists(email: String!): Boolean!
   hello: SuccessMessage
+  prescription(id: String!): Prescription
+  prescriptions(
+    pageSize: Int
+    after: String
+    status: String
+  ): PrescriptionConnection!
   validZipCode(zipcode: String!): Boolean!
   visit(id: String!): Visit
   visitsCount: Int!
@@ -115,38 +122,8 @@ type User {
   photoId: String
   addresses: [Address]!
   creditCards: [CreditCard]!
-  visits: [Visit]!
+  prescriptions: [Prescription]!
   currVisit: Json
   resetToken: String
   resetTokenExpiry: Float
 }
-
-# type CreditCard {
-#   id: ID!
-#   user: User!
-#   ccToken: String!
-#   ccType: String!
-#   ccNumber: String!
-#   ccExpire: String!
-# }
-
-# type Address {
-#   id: ID!
-#   user: User!
-#   addressOne: String!
-#   addressTwo: String
-#   city: String!
-#   state: String!
-#   zipcode: String!
-#   telephone: String
-#   updatedAt: DateTime! @updatedAt
-#   createdAt: DateTime! @createdAt
-# }
-
-# type Visit {
-#   id: ID!
-#   user: User!
-#   type: PlanType!
-#   questionnaire: Json!
-#   status: VisitStatus!
-# }

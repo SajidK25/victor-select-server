@@ -13,11 +13,11 @@ var models = [
     embedded: false
   },
   {
-    name: "PlanStatus",
+    name: "PrescriptionStatus",
     embedded: false
   },
   {
-    name: "PlanType",
+    name: "PrescriptionType",
     embedded: false
   },
   {
@@ -33,7 +33,15 @@ var models = [
     embedded: false
   },
   {
-    name: "Plan",
+    name: "Product",
+    embedded: false
+  },
+  {
+    name: "Prescription",
+    embedded: false
+  },
+  {
+    name: "Shipment",
     embedded: false
   },
   {

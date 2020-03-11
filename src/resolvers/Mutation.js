@@ -4,6 +4,7 @@ const { promisify } = require("util");
 const { sendResetMail, sendWelcomeMail } = require("../mail");
 const { saveCreditCard } = require("../usaepay/usaepay");
 const { sendRefreshToken } = require("../sendRefreshToken");
+const { setPricing } = require("../utils");
 const {
   createRefreshToken,
   createAccessToken,
@@ -291,6 +292,16 @@ const Mutation = {
     return { message: "OK" };
   },
 
+  updatePrescription: async (_, { id, status = "NEW" }, { prisma }) => {
+    await prisma.updatePrescription({
+      data: {
+        status: status
+      },
+      where: { id: id }
+    });
+    return { message: "OK" };
+  },
+
   saveNewVisit: async (_, args, { req, prisma }) => {
     console.log("Save New Visit!");
     const payload = await validateUser(req);
@@ -383,11 +394,28 @@ const Mutation = {
     const gender = input.personal.gender;
     const photoId = input.personal.licenseImage;
 
+    // Save Prescription Information
+
+    const pInput = {};
+    const s = input.subscription;
+    const pricing = await setPricing(s, prisma);
+
+    pInput.type = input.type;
+    pInput.timesPerMonth = parseInt(s.dosesPerMonth);
+    const productId = s.drugId + s.doseOption;
+    const addonId = s.addOnId;
+    pInput.addonTimesPerMonth = s.addOnId ? 30 : 0;
+    pInput.totalRefills = 12;
+    pInput.refillsRemaining = 12;
+    pInput.shippingInterval = pricing.shippingInterval;
+    pInput.amountDue = pricing.amountDue;
+
     // Isolate the questionnaire
     const questionaire = input;
     delete questionaire.page;
     delete questionaire.personal;
     delete questionaire.payment;
+    delete questionaire.subscription;
 
     const visit = await prisma.createVisit({
       type: input.type,
@@ -399,6 +427,17 @@ const Mutation = {
       }
     });
     console.log("Visit", visit);
+
+    // Create Prescription
+    const prescription = await prisma.createPrescription({
+      ...pInput,
+      user: { connect: { id: userId } },
+      visit: { connect: { id: visit.id } },
+      product: { connect: { productId: productId } },
+      addon: { connect: { productId: addonId } }
+    });
+    console.log("Prescription:", prescription);
+
     // Update user
     const updateUser = await prisma.updateUser({
       data: {

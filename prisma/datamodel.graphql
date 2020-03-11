@@ -12,15 +12,19 @@ enum VisitStatus {
   TEMPORARY
 }
 
-enum PlanStatus {
+enum PrescriptionStatus {
   PENDING
-  ACTIVE
+  DENIED
+  NEW
+  REFILL
+  UNFILLED
+  SHIPPED
+  PAYMENT_DENIED
   ONDEMAND
   CLOSED
-  DENIED
 }
 
-enum PlanType {
+enum PrescriptionType {
   ED
   HAIR
   SLEEP
@@ -43,7 +47,7 @@ type User {
   photoId: String
   gender: String
   birthDate: DateTime
-  plans: [Plan]!
+  prescriptions: [Prescription]!
   visits: [Visit]!
   currVisit: Json
   resetToken: String
@@ -56,7 +60,7 @@ type Visit {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   user: User
-  type: PlanType! @default(value: ED)
+  type: PrescriptionType! @default(value: ED)
   questionnaire: Json!
   status: VisitStatus! @default(value: PENDING)
 }
@@ -75,25 +79,53 @@ type Address {
   telephone: String!
 }
 
-type Plan {
+type Product @pgTable(name: "product") {
+  id: ID! @id
+  productId: String! @unique
+  type: PrescriptionType!
+  category: String!
+  productName: String!
+  display: String!
+  default: Boolean! @default(value: false)
+  doseDisplay: String
+  subTitle: String
+  monthlyPrice: Int!
+  twoMonthPrice: Int!
+  threeMonthPrice: Int!
+}
+
+type Prescription {
   id: ID! @id
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  status: PlanStatus! @default(value: PENDING)
+  status: PrescriptionStatus! @default(value: PENDING)
   user: User!
   visit: Visit!
-  type: PlanType!
-  drugName: String!
-  strength: String
+  type: PrescriptionType!
+  product: Product! @relation(name: "ProductById")
   timesPerMonth: Int!
-  addonName: String
-  startDate: DateTime!
-  expireDate: DateTime!
+  addon: Product @relation(name: "AddonById")
+  addonTimesPerMonth: Int
+  approvedDate: DateTime
+  startDate: DateTime
+  expireDate: DateTime
   totalRefills: Int!
   refillsRemaining: Int!
   nextDelivery: DateTime
   shippingInterval: Int!
   amountDue: Int!
+}
+
+type Shipment {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  user: User!
+  address: Address!
+  prescription: Prescription!
+  shipDate: DateTime
+  trackingNumber: String
+  creditCard: CreditCard
 }
 
 type CreditCard {
