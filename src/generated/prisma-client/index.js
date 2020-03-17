@@ -17,6 +17,10 @@ var models = [
     embedded: false
   },
   {
+    name: "OrderStatus",
+    embedded: false
+  },
+  {
     name: "PrescriptionType",
     embedded: false
   },
@@ -41,7 +45,7 @@ var models = [
     embedded: false
   },
   {
-    name: "Shipment",
+    name: "Order",
     embedded: false
   },
   {

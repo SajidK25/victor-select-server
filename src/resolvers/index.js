@@ -6,6 +6,7 @@ const { Address } = require("./Address");
 const { CreditCard } = require("./CreditCard");
 const { Message } = require("./Message");
 const { Prescription } = require("./Prescription");
+const { Order } = require("./Order");
 
 const resolvers = {
   Mutation,
@@ -15,7 +16,8 @@ const resolvers = {
   Address,
   CreditCard,
   Prescription,
-  Message
+  Message,
+  Order
 };
 
 module.exports = { resolvers };

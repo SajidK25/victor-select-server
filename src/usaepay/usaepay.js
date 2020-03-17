@@ -21,7 +21,7 @@ const usaepayAPI = got.extend({
   resolveBodyOnly: true
 });
 
-// This will save a card and run a sale for $1.00
+// This will save a card and run a authorization for $1.00
 const saveCreditCard = async input => {
   console.log("input", input);
   validateArgument(input, "input");
@@ -64,8 +64,35 @@ const saveCreditCard = async input => {
   if (!body.savedcard || !body.savedcard.cardnumber) {
     throw new Error("Card could not be saved");
   }
+  // Release authorization
+  const result = await releaseAuthorization({ input: { refnum: body.refnum } });
+  console.log("Release result", result);
 
   return body.savedcard;
+};
+
+const releaseAuthorization = async input => {
+  console.log("input", input);
+  validateArgument(input, "input");
+  validateArgument(input.refnum, "input.refnum");
+
+  var data = {
+    command: "cc:void:release",
+    refnum: input.refnum
+  };
+
+  console.log("Data:", data);
+  const body = await usaepayAPI.post("transactions", {
+    json: data
+  });
+
+  console.log("Body:", body);
+  console.log("Code", body.result_code);
+  // if (!body || body.result_code !== "A") {
+  //   throw new Error("Auth not released");
+  // }
+
+  return body;
 };
 
 const makePayment = async input => {
@@ -464,4 +491,4 @@ const makePayment = async input => {
 //     return self;
 // };
 
-module.exports = { saveCreditCard };
+module.exports = { saveCreditCard, releaseAuthorization };

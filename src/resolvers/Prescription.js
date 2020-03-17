@@ -10,6 +10,9 @@ const Prescription = {
   },
   addon: (parent, _, { prisma }) => {
     return prisma.prescription({ id: parent.id }).addon();
+  },
+  orders: (parent, _, { prisma }) => {
+    return prisma.prescription({ id: parent.id }).orders();
   }
 };
 

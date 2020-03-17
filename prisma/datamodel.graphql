@@ -16,12 +16,16 @@ enum PrescriptionStatus {
   PENDING
   DENIED
   NEW
-  REFILL
-  UNFILLED
-  SHIPPED
-  PAYMENT_DENIED
+  ACTIVE
+  PAYMENT_DECLINED
   ONDEMAND
   CLOSED
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
 }
 
 enum PrescriptionType {
@@ -62,7 +66,6 @@ type Visit {
   user: User
   type: PrescriptionType! @default(value: ED)
   questionnaire: Json!
-  status: VisitStatus! @default(value: PENDING)
 }
 
 type Address {
@@ -99,6 +102,8 @@ type Prescription {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   status: PrescriptionStatus! @default(value: PENDING)
+  creditcard: CreditCard
+  refnum: String
   user: User!
   visit: Visit!
   type: PrescriptionType!
@@ -114,10 +119,12 @@ type Prescription {
   nextDelivery: DateTime
   shippingInterval: Int!
   amountDue: Int!
+  orders: [Order]!
 }
 
-type Shipment {
+type Order {
   id: ID! @id
+  status: OrderStatus! @default(value: PENDING)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   user: User!
@@ -126,6 +133,10 @@ type Shipment {
   shipDate: DateTime
   trackingNumber: String
   creditCard: CreditCard
+  new: Boolean! @default(value: false)
+  refills: Int!
+  amount: Int!
+  refnum: String!
 }
 
 type CreditCard {

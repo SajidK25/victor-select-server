@@ -40,7 +40,34 @@ const Query = {
   },
 
   prescription: async (_, { id }, { prisma }) => {
-    return await prisma.prescription({ id: id });
+    const prescription = await prisma.prescription({ id: id });
+    console.log("Prescription:", prescription);
+    return prescription;
+  },
+
+  order: async (_, { id }, { prisma }) => {
+    const order = await prisma.order({ id: id });
+    console.log("Order:", order);
+    return order;
+  },
+
+  orders: async (
+    _,
+    { pageSize = 20, after, status = "PENDING" },
+    { prisma, req },
+    info
+  ) => {
+    await validateUser(req, true);
+    let variables = {
+      orderBy: "createdAt_ASC",
+      first: pageSize,
+      after: after,
+      where: { status: status }
+    };
+
+    console.log("Variables:", variables);
+
+    return await prisma.ordersConnection(variables);
   },
 
   prescriptions: async (

@@ -2,9 +2,15 @@ const bcrypt = require("bcryptjs");
 const { randomBytes } = require("crypto");
 const { promisify } = require("util");
 const { sendResetMail, sendWelcomeMail } = require("../mail");
-const { saveCreditCard } = require("../usaepay/usaepay");
 const { sendRefreshToken } = require("../sendRefreshToken");
 const { setPricing } = require("../utils");
+const moment = require("moment");
+const {
+  getCurrentCreditCard,
+  updateAddress,
+  updateCreditCard,
+  getCurrentAddress
+} = require("./Helpers");
 const {
   createRefreshToken,
   createAccessToken,
@@ -302,6 +308,58 @@ const Mutation = {
     return { message: "OK" };
   },
 
+  approvePrescription: async (_, args, { req, prisma }) => {
+    const payload = await validateUser(req, true);
+
+    const { id } = args;
+
+    // Get Prescription
+    const prescription = await prisma.prescription({ id: id });
+    const user = await prisma.prescription({ id: id }).user();
+    const creditcard = await getCurrentCreditCard(user.id, prisma);
+    const address = await getCurrentAddress(user.id, prisma);
+    console.log("Token=", creditcard);
+
+    // Make payment...
+
+    // Create Order
+    const order = await prisma.createOrder({
+      amount: prescription.amountDue,
+      refnum: "ccRefnum",
+      new: true,
+      refills: prescription.shippingInterval - 1,
+      user: { connect: { id: user.id } },
+      prescription: { connect: { id: prescription.id } },
+      creditCard: { connect: { id: creditcard.id } },
+      address: { connect: { id: address.id } }
+    });
+
+    const refillsRemaining =
+      prescription.refillsRemaining - prescription.shippingInterval;
+    const approvedDate = moment();
+    const expireDate = moment(approvedDate)
+      .add(1, "year")
+      .format();
+    console.log("ExpireDate", expireDate);
+
+    console.log("Order:", order);
+    await prisma.updatePrescription({
+      data: {
+        refillsRemaining: refillsRemaining,
+        status: "ACTIVE",
+        approvedDate: approvedDate.format(),
+        startDate: approvedDate.format(),
+        expireDate: expireDate
+      },
+      where: { id: id }
+    });
+
+    // Create message
+    // Send email...
+
+    return { message: "OK" };
+  },
+
   saveNewVisit: async (_, args, { req, prisma }) => {
     console.log("Save New Visit!");
     const payload = await validateUser(req);
@@ -325,27 +383,8 @@ const Mutation = {
       address: input.personal.addressOne
     };
 
-    const savedCard = await saveCreditCard(cardInput);
-    if (savedCard) {
-      // Update all current user credit cards to inactive
-      await prisma.updateManyCreditCards({
-        where: { user: { id: userId }, active: true },
-        data: { active: false }
-      });
-      // Save new active card
-      const newCC = await prisma.createCreditCard({
-        ccType: savedCard.type,
-        ccToken: savedCard.key,
-        ccNumber: savedCard.cardnumber,
-        ccExpire: cardInput.cardExpiry,
-        active: true,
-        user: {
-          connect: {
-            id: userId
-          }
-        }
-      });
-    }
+    const newCC = updateCreditCard(userId, cardInput, prisma);
+    console.log("NewCC", newCC);
 
     // Next add address
     addressInput = {
@@ -357,37 +396,9 @@ const Mutation = {
       telephone: input.personal.telephone
     };
 
-    await prisma.updateManyAddresses({
-      where: { user: { id: userId }, active: true },
-      data: { active: false }
-    });
+    const address = updateAddress(userId, addressInput, prisma);
+    console.log("Address", address);
 
-    // See if there is a matching address
-    const [tmpAddress] = await prisma.addresses({
-      where: {
-        user: { id: userId },
-        ...addressInput
-      }
-    });
-
-    if (!tmpAddress) {
-      await prisma.createAddress({
-        ...addressInput,
-        active: true,
-        user: {
-          connect: {
-            id: userId
-          }
-        }
-      });
-    } else {
-      await prisma.updateAddress({
-        where: { id: tmpAddress.id },
-        data: {
-          active: true
-        }
-      });
-    }
     // Save new visit
     const birthDate = new Date(input.personal.birthDate);
     console.log("BirthDate", birthDate);

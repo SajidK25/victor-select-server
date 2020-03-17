@@ -86,6 +86,7 @@ type Mutation {
   saveAddress(input: SaveAddressInput!): Address!
   saveNewVisit(input: Json!): SuccessMessage!
   updateVisit(id: String!, status: String): SuccessMessage!
+  approvePrescription(id: String!): SuccessMessage!
   updatePrescription(id: String!, status: String): SuccessMessage!
 }
 
@@ -103,6 +104,8 @@ type Query {
     after: String
     status: String
   ): PrescriptionConnection!
+  order(id: String!): Order
+  orders(pageSize: Int, after: String, status: String): OrderConnection!
   validZipCode(zipcode: String!): Boolean!
   visit(id: String!): Visit
   visitsCount: Int!

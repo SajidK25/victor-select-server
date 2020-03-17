@@ -17,16 +17,22 @@ const { prisma } = require("./generated/prisma-client");
 var whitelist = [
   "http://localhost:3005",
   "http://localhost:3000",
+  "http://localhost:4444",
   "https://physician-select.herokuapp.com",
   "https://victory-select.herokuapp.com"
 ];
 
 let corsOptions = {
   origin: function(origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
+    if (!origin) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      if (whitelist.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        console.log("Origin:", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
     }
   },
   credentials: true // <-- REQUIRED backend setting
