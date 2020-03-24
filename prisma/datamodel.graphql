@@ -15,10 +15,7 @@ enum VisitStatus {
 enum PrescriptionStatus {
   PENDING
   DENIED
-  NEW
   ACTIVE
-  PAYMENT_DECLINED
-  ONDEMAND
   CLOSED
 }
 
@@ -26,6 +23,7 @@ enum OrderStatus {
   PENDING
   PROCESSING
   SHIPPED
+  PAYMENT_DECLINED
 }
 
 enum PrescriptionType {
@@ -91,10 +89,12 @@ type Product @pgTable(name: "product") {
   display: String!
   default: Boolean! @default(value: false)
   doseDisplay: String
+  pillsPerDose: Int! @default(value: 1)
   subTitle: String
   monthlyPrice: Int!
   twoMonthPrice: Int!
   threeMonthPrice: Int!
+  directions: String
 }
 
 type Prescription {
@@ -155,7 +155,7 @@ type Message {
   id: ID! @id
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  visit: Visit!
+  prescription: Prescription!
   private: Boolean! @default(value: true)
   read: Boolean! @default(value: false)
   physician: User @relation(name: "MessagePhysician")

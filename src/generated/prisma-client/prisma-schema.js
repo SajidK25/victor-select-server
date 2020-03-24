@@ -879,7 +879,7 @@ type Message {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  visit: Visit!
+  prescription: Prescription!
   private: Boolean!
   read: Boolean!
   physician: User
@@ -895,7 +895,7 @@ type MessageConnection {
 
 input MessageCreateInput {
   id: ID
-  visit: VisitCreateOneInput!
+  prescription: PrescriptionCreateOneInput!
   private: Boolean
   read: Boolean
   physician: UserCreateOneInput
@@ -951,7 +951,7 @@ input MessageSubscriptionWhereInput {
 }
 
 input MessageUpdateInput {
-  visit: VisitUpdateOneRequiredInput
+  prescription: PrescriptionUpdateOneRequiredInput
   private: Boolean
   read: Boolean
   physician: UserUpdateOneInput
@@ -996,7 +996,7 @@ input MessageWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  visit: VisitWhereInput
+  prescription: PrescriptionWhereInput
   private: Boolean
   private_not: Boolean
   read: Boolean
@@ -1283,6 +1283,7 @@ enum OrderStatus {
   PENDING
   PROCESSING
   SHIPPED
+  PAYMENT_DECLINED
 }
 
 type OrderSubscriptionPayload {
@@ -1546,6 +1547,11 @@ input PrescriptionCreateManyWithoutUserInput {
   connect: [PrescriptionWhereUniqueInput!]
 }
 
+input PrescriptionCreateOneInput {
+  create: PrescriptionCreateInput
+  connect: PrescriptionWhereUniqueInput
+}
+
 input PrescriptionCreateOneWithoutOrdersInput {
   create: PrescriptionCreateWithoutOrdersInput
   connect: PrescriptionWhereUniqueInput
@@ -1795,10 +1801,7 @@ input PrescriptionScalarWhereInput {
 enum PrescriptionStatus {
   PENDING
   DENIED
-  NEW
   ACTIVE
-  PAYMENT_DECLINED
-  ONDEMAND
   CLOSED
 }
 
@@ -1827,6 +1830,28 @@ enum PrescriptionType {
   JOY
   ALLERGY
   WEIGHT
+}
+
+input PrescriptionUpdateDataInput {
+  status: PrescriptionStatus
+  creditcard: CreditCardUpdateOneInput
+  refnum: String
+  user: UserUpdateOneRequiredWithoutPrescriptionsInput
+  visit: VisitUpdateOneRequiredInput
+  type: PrescriptionType
+  product: ProductUpdateOneRequiredInput
+  timesPerMonth: Int
+  addon: ProductUpdateOneInput
+  addonTimesPerMonth: Int
+  approvedDate: DateTime
+  startDate: DateTime
+  expireDate: DateTime
+  totalRefills: Int
+  refillsRemaining: Int
+  nextDelivery: DateTime
+  shippingInterval: Int
+  amountDue: Int
+  orders: OrderUpdateManyWithoutPrescriptionInput
 }
 
 input PrescriptionUpdateInput {
@@ -1900,6 +1925,13 @@ input PrescriptionUpdateManyWithWhereNestedInput {
   data: PrescriptionUpdateManyDataInput!
 }
 
+input PrescriptionUpdateOneRequiredInput {
+  create: PrescriptionCreateInput
+  update: PrescriptionUpdateDataInput
+  upsert: PrescriptionUpsertNestedInput
+  connect: PrescriptionWhereUniqueInput
+}
+
 input PrescriptionUpdateOneRequiredWithoutOrdersInput {
   create: PrescriptionCreateWithoutOrdersInput
   update: PrescriptionUpdateWithoutOrdersDataInput
@@ -1952,6 +1984,11 @@ input PrescriptionUpdateWithoutUserDataInput {
 input PrescriptionUpdateWithWhereUniqueWithoutUserInput {
   where: PrescriptionWhereUniqueInput!
   data: PrescriptionUpdateWithoutUserDataInput!
+}
+
+input PrescriptionUpsertNestedInput {
+  update: PrescriptionUpdateDataInput!
+  create: PrescriptionCreateInput!
 }
 
 input PrescriptionUpsertWithoutOrdersInput {
@@ -2124,10 +2161,12 @@ type Product {
   display: String!
   default: Boolean!
   doseDisplay: String
+  pillsPerDose: Int!
   subTitle: String
   monthlyPrice: Int!
   twoMonthPrice: Int!
   threeMonthPrice: Int!
+  directions: String
 }
 
 type ProductConnection {
@@ -2145,10 +2184,12 @@ input ProductCreateInput {
   display: String!
   default: Boolean
   doseDisplay: String
+  pillsPerDose: Int
   subTitle: String
   monthlyPrice: Int!
   twoMonthPrice: Int!
   threeMonthPrice: Int!
+  directions: String
 }
 
 input ProductCreateOneInput {
@@ -2178,6 +2219,8 @@ enum ProductOrderByInput {
   default_DESC
   doseDisplay_ASC
   doseDisplay_DESC
+  pillsPerDose_ASC
+  pillsPerDose_DESC
   subTitle_ASC
   subTitle_DESC
   monthlyPrice_ASC
@@ -2186,6 +2229,8 @@ enum ProductOrderByInput {
   twoMonthPrice_DESC
   threeMonthPrice_ASC
   threeMonthPrice_DESC
+  directions_ASC
+  directions_DESC
 }
 
 type ProductPreviousValues {
@@ -2197,10 +2242,12 @@ type ProductPreviousValues {
   display: String!
   default: Boolean!
   doseDisplay: String
+  pillsPerDose: Int!
   subTitle: String
   monthlyPrice: Int!
   twoMonthPrice: Int!
   threeMonthPrice: Int!
+  directions: String
 }
 
 type ProductSubscriptionPayload {
@@ -2229,10 +2276,12 @@ input ProductUpdateDataInput {
   display: String
   default: Boolean
   doseDisplay: String
+  pillsPerDose: Int
   subTitle: String
   monthlyPrice: Int
   twoMonthPrice: Int
   threeMonthPrice: Int
+  directions: String
 }
 
 input ProductUpdateInput {
@@ -2243,10 +2292,12 @@ input ProductUpdateInput {
   display: String
   default: Boolean
   doseDisplay: String
+  pillsPerDose: Int
   subTitle: String
   monthlyPrice: Int
   twoMonthPrice: Int
   threeMonthPrice: Int
+  directions: String
 }
 
 input ProductUpdateManyMutationInput {
@@ -2257,10 +2308,12 @@ input ProductUpdateManyMutationInput {
   display: String
   default: Boolean
   doseDisplay: String
+  pillsPerDose: Int
   subTitle: String
   monthlyPrice: Int
   twoMonthPrice: Int
   threeMonthPrice: Int
+  directions: String
 }
 
 input ProductUpdateOneInput {
@@ -2375,6 +2428,14 @@ input ProductWhereInput {
   doseDisplay_not_starts_with: String
   doseDisplay_ends_with: String
   doseDisplay_not_ends_with: String
+  pillsPerDose: Int
+  pillsPerDose_not: Int
+  pillsPerDose_in: [Int!]
+  pillsPerDose_not_in: [Int!]
+  pillsPerDose_lt: Int
+  pillsPerDose_lte: Int
+  pillsPerDose_gt: Int
+  pillsPerDose_gte: Int
   subTitle: String
   subTitle_not: String
   subTitle_in: [String!]
@@ -2413,6 +2474,20 @@ input ProductWhereInput {
   threeMonthPrice_lte: Int
   threeMonthPrice_gt: Int
   threeMonthPrice_gte: Int
+  directions: String
+  directions_not: String
+  directions_in: [String!]
+  directions_not_in: [String!]
+  directions_lt: String
+  directions_lte: String
+  directions_gt: String
+  directions_gte: String
+  directions_contains: String
+  directions_not_contains: String
+  directions_starts_with: String
+  directions_not_starts_with: String
+  directions_ends_with: String
+  directions_not_ends_with: String
   AND: [ProductWhereInput!]
   OR: [ProductWhereInput!]
   NOT: [ProductWhereInput!]

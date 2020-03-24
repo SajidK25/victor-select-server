@@ -8,6 +8,3 @@ generate:
   - generator: graphql-schema
     output: ../src/generated/prisma.graphql
 secret: ${env:PRISMA_SECRET}
-hooks:
-  post-deploy:
-    - prisma generate

@@ -56,6 +56,7 @@ const updateAddress = async (userId, addressInput, prisma) => {
       ...addressInput
     }
   });
+  console.log("TmpAddress", tmpAddress);
 
   let address = null;
   if (!tmpAddress) {
@@ -80,9 +81,49 @@ const updateAddress = async (userId, addressInput, prisma) => {
   return address;
 };
 
+const setPricing = async (subscription, prisma) => {
+  const product = await prisma.product({
+    productId: subscription.drugId + subscription.doseOption
+  });
+  let addon = null;
+  if (subscription.addOnId !== "NO_ADDON") {
+    addon = await prisma.product({
+      productId: subscription.addOnId + "ADDON"
+    });
+  }
+
+  let shippingInterval = 0;
+  let price = 0;
+
+  switch (subscription.shippingInterval) {
+    case "everyThree":
+      shippingInterval = 3;
+      if (product) price = product.threeMonthPrice * subscription.dosesPerMonth;
+      if (addon) price += addon.threeMonthPrice * 30;
+      break;
+
+    case "everyTwo":
+      shippingInterval = 2;
+      if (product) price = product.twoMonthPrice * subscription.dosesPerMonth;
+      if (addon) price += addon.twoMonthPrice * 30;
+      break;
+
+    case "monthly":
+      shippingInterval = 1;
+      if (product) price = product.monthlyPrice * subscription.dosesPerMonth;
+      if (addon) price += addon.monthlyPrice * 30;
+      break;
+
+    default:
+  }
+  const amountDue = shippingInterval * price;
+  return { shippingInterval, amountDue };
+};
+
 module.exports = {
   getCurrentCreditCard,
   updateAddress,
   updateCreditCard,
-  getCurrentAddress
+  getCurrentAddress,
+  setPricing
 };

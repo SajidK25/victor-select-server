@@ -65,6 +65,11 @@ type RegisterMessage {
   user: User
 }
 
+type PaymentMessage {
+  resultCode: String!
+  refnum: String
+}
+
 type SuccessMessage {
   message: String
 }
@@ -86,8 +91,12 @@ type Mutation {
   saveAddress(input: SaveAddressInput!): Address!
   saveNewVisit(input: Json!): SuccessMessage!
   updateVisit(id: String!, status: String): SuccessMessage!
+  denyPrescription(id: String!): SuccessMessage!
   approvePrescription(id: String!): SuccessMessage!
   updatePrescription(id: String!, status: String): SuccessMessage!
+  processOrders(idList: [String]!): SuccessMessage!
+  shipOrders(idList: [String]!): SuccessMessage!
+  makePayment(amount: Int!, token: String!): PaymentMessage!
 }
 
 type Query {
@@ -99,6 +108,7 @@ type Query {
   userExists(email: String!): Boolean!
   hello: SuccessMessage
   prescription(id: String!): Prescription
+  pendingPrescriptions: [Prescription!]
   prescriptions(
     pageSize: Int
     after: String

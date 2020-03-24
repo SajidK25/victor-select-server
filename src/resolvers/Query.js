@@ -65,9 +65,17 @@ const Query = {
       where: { status: status }
     };
 
-    console.log("Variables:", variables);
-
     return await prisma.ordersConnection(variables);
+  },
+
+  pendingPrescriptions: async (_, __, { prisma, req }) => {
+    await validateUser(req, true);
+    const variables = {
+      orderBy: "createdAt_ASC",
+      where: { status: "PENDING" }
+    };
+
+    return await prisma.prescriptions(variables);
   },
 
   prescriptions: async (
@@ -83,8 +91,6 @@ const Query = {
       after: after,
       where: { status: status }
     };
-
-    console.log("Variables:", variables);
 
     return await prisma.prescriptionsConnection(variables);
   },
@@ -102,8 +108,6 @@ const Query = {
       after: after,
       where: { status: status }
     };
-
-    console.log("Variables:", variables);
 
     return await prisma.visitsConnection(variables);
   },

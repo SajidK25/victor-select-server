@@ -24,7 +24,7 @@ const sendResetMail = ({ email, name, url }) => {
       name: "Victory Select"
     },
     reply_to: {
-      email: "info@victoryselect.com",
+      email: "careteam@victoryselect.com",
       name: "Victory Select"
     },
     personalizations: [
@@ -44,6 +44,64 @@ const sendResetMail = ({ email, name, url }) => {
     template_id: "d-025df4ee89e4452889bfea7f1f2a173a"
   };
   sendMail(msg);
+};
+
+const sendDeniedMail = ({ email, name }) => {
+  const msg = {
+    from: {
+      email: "brian@bbaker.net",
+      name: "Victory Select"
+    },
+    reply_to: {
+      email: "careteam@victoryselect.com",
+      name: "Victory Select"
+    },
+    personalizations: [
+      {
+        to: [
+          {
+            email: email
+          }
+        ],
+        dynamic_template_data: {
+          name: name
+        },
+        subject: "Important Message from VictorySelect"
+      }
+    ],
+    template_id: "d-c7f1491219d447d4ae641d8a2555be66"
+  };
+  sendMail(msg);
+};
+
+const sendShippedMail = async ({ email }) => {
+  const msg = {
+    from: {
+      email: "brian@bbaker.net",
+      name: "Victory Select"
+    },
+    reply_to: {
+      email: "info@victoryselect.com",
+      name: "Victory Select"
+    },
+    personalizations: [
+      {
+        to: [
+          {
+            email: email
+          }
+        ],
+        dynamic_template_data: {
+          order_number: "VS-E10923544",
+          tracking_number: "1Z00W3Y80299999",
+          tracking_url: ""
+        },
+        subject: "Your shipment from VictorySelect is on its way"
+      }
+    ],
+    template_id: "d-98a420cabf1f49e8a22465c739807b84"
+  };
+  await sendMail(msg);
 };
 
 const sendWelcomeMail = ({ email, name }) => {
@@ -89,4 +147,9 @@ const makeANiceEmail = text => `
 `;
 
 // exports.transport = transport
-module.exports = { sendResetMail, sendWelcomeMail };
+module.exports = {
+  sendResetMail,
+  sendWelcomeMail,
+  sendDeniedMail,
+  sendShippedMail
+};

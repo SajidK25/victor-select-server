@@ -13,6 +13,11 @@ const { importSchema } = require("graphql-import");
 const { resolvers } = require("./resolvers");
 const { directiveResolvers } = require("./directives");
 const { prisma } = require("./generated/prisma-client");
+const Sentry = require("@sentry/node");
+
+Sentry.init({
+  dsn: "https://595b407caeb64d4bb27945994a417a3e@sentry.io/5171137"
+});
 
 var whitelist = [
   "http://localhost:3005",
@@ -76,6 +81,7 @@ let corsOptions = {
 
   app.post("/refresh_token", async (req, res) => {
     const token = req.cookies.jid;
+
     if (!token) {
       return res.send({ ok: false, accessTokens: "" });
     }
@@ -89,7 +95,7 @@ let corsOptions = {
     }
     // token is valid and
     // we can send back an access token
-    const user = await prisma.user({ where: { id: payload.userId } });
+    const user = await prisma.user({ id: payload.userId });
 
     if (!user) {
       return res.send({ ok: false, accessToken: "" });

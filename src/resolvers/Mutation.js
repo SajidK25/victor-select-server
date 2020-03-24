@@ -1,15 +1,21 @@
 const bcrypt = require("bcryptjs");
 const { randomBytes } = require("crypto");
 const { promisify } = require("util");
-const { sendResetMail, sendWelcomeMail } = require("../mail");
+const {
+  sendResetMail,
+  sendWelcomeMail,
+  sendDeniedMail,
+  sendShippedMail
+} = require("../mail");
 const { sendRefreshToken } = require("../sendRefreshToken");
-const { setPricing } = require("../utils");
 const moment = require("moment");
+const { makePayment } = require("../usaepay/usaepay");
 const {
   getCurrentCreditCard,
   updateAddress,
   updateCreditCard,
-  getCurrentAddress
+  getCurrentAddress,
+  setPricing
 } = require("./Helpers");
 const {
   createRefreshToken,
@@ -308,8 +314,37 @@ const Mutation = {
     return { message: "OK" };
   },
 
+  makePayment: async (_, args, { req, prisma }) => {
+    const { token, amount } = args;
+    console.log(token, amount);
+
+    const result = await makePayment({
+      ccToken: token,
+      amount: amount,
+      email: "bakerman59@gmail.com",
+      cardholder: "Brian Baker"
+    });
+
+    return result;
+  },
+
+  denyPrescription: async (_, { id }, { req, prisma }) => {
+    const payload = await validateUser(req, true);
+    await prisma.updatePrescription({
+      data: {
+        status: "DENIED"
+      },
+      where: { id: id }
+    });
+    const user = await prisma.prescription({ id: id }).user();
+    // send denied email
+    sendDeniedMail({ email: user.email, name: user.firstName });
+    return { message: "OK" };
+  },
+
   approvePrescription: async (_, args, { req, prisma }) => {
     const payload = await validateUser(req, true);
+    const physicianId = payload.userId;
 
     const { id } = args;
 
@@ -319,13 +354,27 @@ const Mutation = {
     const creditcard = await getCurrentCreditCard(user.id, prisma);
     const address = await getCurrentAddress(user.id, prisma);
     console.log("Token=", creditcard);
+    console.log("Prescription:", prescription);
 
+    var paymentResult = {};
+    try {
+      paymentResult = await makePayment({
+        ccToken: creditcard.ccToken,
+        amount: prescription.amountDue,
+        cardholder: user.firstName + " " + user.lastName,
+        email: user.email
+      });
+    } catch (err) {
+      paymentResult = { resultCode: "D", refnum: "" };
+      console.log(err);
+    }
     // Make payment...
 
     // Create Order
     const order = await prisma.createOrder({
       amount: prescription.amountDue,
-      refnum: "ccRefnum",
+      refnum: paymentResult.refnum,
+      status: paymentResult.resultCode === "A" ? "PENDING" : "PAYMENT_DECLINED",
       new: true,
       refills: prescription.shippingInterval - 1,
       user: { connect: { id: user.id } },
@@ -355,7 +404,18 @@ const Mutation = {
     });
 
     // Create message
-    // Send email...
+    const message = await prisma.createMessage({
+      private: false,
+      read: false,
+      physician: { connect: { id: physicianId } },
+      user: { connect: { id: user.id } },
+      prescription: { connect: { id: prescription.id } },
+      text: "New patient message!"
+    });
+    console.log("Message", message);
+
+    // Send approved email...
+    // Send new private message email...
 
     return { message: "OK" };
   },
@@ -383,7 +443,7 @@ const Mutation = {
       address: input.personal.addressOne
     };
 
-    const newCC = updateCreditCard(userId, cardInput, prisma);
+    const newCC = await updateCreditCard(userId, cardInput, prisma);
     console.log("NewCC", newCC);
 
     // Next add address
@@ -396,7 +456,7 @@ const Mutation = {
       telephone: input.personal.telephone
     };
 
-    const address = updateAddress(userId, addressInput, prisma);
+    const address = await updateAddress(userId, addressInput, prisma);
     console.log("Address", address);
 
     // Save new visit
@@ -409,6 +469,7 @@ const Mutation = {
 
     const pInput = {};
     const s = input.subscription;
+    if (s.addOnId === "NO_ADDON") s.addOnId = "";
     const pricing = await setPricing(s, prisma);
 
     pInput.type = input.type;
@@ -445,14 +506,16 @@ const Mutation = {
       user: { connect: { id: userId } },
       visit: { connect: { id: visit.id } },
       product: { connect: { productId: productId } },
-      addon: { connect: { productId: addonId } }
+      addon: addonId ? { connect: { productId: addonId } } : {}
     });
     console.log("Prescription:", prescription);
 
+    const userRole = user.role === "VISITOR" ? "PATIENT" : user.role;
     // Update user
     const updateUser = await prisma.updateUser({
       data: {
         currVisit: null,
+        role: userRole,
         gender: gender,
         birthDate: birthDate,
         photoId: photoId
@@ -460,6 +523,50 @@ const Mutation = {
       where: { id: userId }
     });
     sendWelcomeMail({ email: updateUser.email, name: updateUser.firstName });
+
+    return { message: "OK" };
+  },
+
+  processOrders: async (_, { idList }, { req, prisma }) => {
+    const payload = await validateUser(req, true);
+
+    console.log("idList: ", idList);
+
+    idList.forEach(async i => {
+      console.log("id", i);
+      await prisma.updateOrder({
+        data: {
+          status: "PROCESSING"
+        },
+        where: { id: i }
+      });
+    });
+
+    return { message: "OK" };
+  },
+
+  shipOrders: async (_, { idList }, { req, prisma }) => {
+    const payload = await validateUser(req, true);
+
+    console.log("idList: ", idList);
+    let user = null;
+
+    idList.forEach(async i => {
+      console.log("id", i);
+      //      await createShipment()
+      await prisma.updateOrder({
+        data: {
+          status: "SHIPPED",
+          shipDate: moment().format(),
+          trackingNumber: "TRACKING_NUMBER"
+        },
+        where: { id: i }
+      });
+
+      user = await prisma.order({ id: i }).user();
+      console.log("User: ", user);
+      if (user) await sendShippedMail({ email: user.email });
+    });
 
     return { message: "OK" };
   }

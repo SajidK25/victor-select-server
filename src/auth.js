@@ -5,7 +5,7 @@ const createAccessToken = user => {
     { userId: user.id, userRole: user.role },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: "15min"
+      expiresIn: "120min"
     }
   );
 };
@@ -43,7 +43,6 @@ const validateUser = async (req, isAdmin = false) => {
     throw new Error("You must be logged in to do this");
   }
 
-  console.log("Payload:", payload.userRole);
   if (
     isAdmin &&
     !(payload.userRole === "PHYSICIAN" || payload.userRole === "ADMIN")
