@@ -1,17 +1,5 @@
 const sgMail = require("@sendgrid/mail");
 
-const sendAnEmail = async ({ email, html, text }) => {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  const msg = {
-    to: { email },
-    from: "info@victoryselect.com",
-    subject: "Sending with Twilio SendGrid is Fun",
-    text: "and easy to do anywhere, even with Node.js",
-    html: "<strong>and easy to do anywhere, even with Node.js</strong>"
-  };
-  sgMail.send(msg);
-};
-
 const sendMail = async msg => {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
   res = await sgMail.send(msg);

@@ -6,10 +6,10 @@ const {
   sendWelcomeMail,
   sendDeniedMail,
   sendShippedMail
-} = require("../mail");
+} = require("../services/mail");
 const { sendRefreshToken } = require("../sendRefreshToken");
 const moment = require("moment");
-const { makePayment } = require("../usaepay/usaepay");
+const { makePayment } = require("../services/usaepay");
 const {
   getCurrentCreditCard,
   updateAddress,
@@ -22,6 +22,7 @@ const {
   createAccessToken,
   validateUser
 } = require("../auth");
+const { validateAddress } = require("../services/shippo");
 
 const Mutation = {
   logout: async (_, __, { res }) => {
@@ -510,7 +511,7 @@ const Mutation = {
     });
     console.log("Prescription:", prescription);
 
-    const userRole = user.role === "VISITOR" ? "PATIENT" : user.role;
+    // const userRole = user.role === "VISITOR" ? "PATIENT" : user.role;
     // Update user
     const updateUser = await prisma.updateUser({
       data: {
@@ -551,6 +552,10 @@ const Mutation = {
     console.log("idList: ", idList);
     let user = null;
 
+    // Create Shippo Batch and process it
+
+    // Update orders to shipped
+
     idList.forEach(async i => {
       console.log("id", i);
       //      await createShipment()
@@ -567,6 +572,23 @@ const Mutation = {
       console.log("User: ", user);
       if (user) await sendShippedMail({ email: user.email });
     });
+
+    return { message: "OK" };
+  },
+
+  validateAddress: async (_, __, { req, prisma }) => {
+    const input = {
+      name: "Brian Baker",
+      addressOne: "3521 Ambroise",
+      addressTwo: "",
+      city: "Newport Coast",
+      state: "CA",
+      zipcode: "78901",
+      email: "brian@bbaker.net"
+    };
+
+    const address = await validateAddress(input);
+    console.log("Address", address);
 
     return { message: "OK" };
   }

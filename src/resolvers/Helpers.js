@@ -1,4 +1,4 @@
-const { saveCreditCard } = require("../usaepay/usaepay");
+const { saveCreditCard } = require("../services/usaepay");
 
 const getCurrentCreditCard = async (userId, prisma) => {
   const creditcards = await prisma

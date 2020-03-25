@@ -418,7 +418,9 @@ export type AddressOrderByInput =
   | "zipcode_ASC"
   | "zipcode_DESC"
   | "telephone_ASC"
-  | "telephone_DESC";
+  | "telephone_DESC"
+  | "shippoId_ASC"
+  | "shippoId_DESC";
 
 export type CreditCardOrderByInput =
   | "id_ASC"
@@ -706,6 +708,20 @@ export interface AddressWhereInput {
   telephone_not_starts_with?: Maybe<String>;
   telephone_ends_with?: Maybe<String>;
   telephone_not_ends_with?: Maybe<String>;
+  shippoId?: Maybe<String>;
+  shippoId_not?: Maybe<String>;
+  shippoId_in?: Maybe<String[] | String>;
+  shippoId_not_in?: Maybe<String[] | String>;
+  shippoId_lt?: Maybe<String>;
+  shippoId_lte?: Maybe<String>;
+  shippoId_gt?: Maybe<String>;
+  shippoId_gte?: Maybe<String>;
+  shippoId_contains?: Maybe<String>;
+  shippoId_not_contains?: Maybe<String>;
+  shippoId_starts_with?: Maybe<String>;
+  shippoId_not_starts_with?: Maybe<String>;
+  shippoId_ends_with?: Maybe<String>;
+  shippoId_not_ends_with?: Maybe<String>;
   AND?: Maybe<AddressWhereInput[] | AddressWhereInput>;
   OR?: Maybe<AddressWhereInput[] | AddressWhereInput>;
   NOT?: Maybe<AddressWhereInput[] | AddressWhereInput>;
@@ -1518,6 +1534,7 @@ export interface AddressCreateInput {
   state: String;
   zipcode: String;
   telephone: String;
+  shippoId?: Maybe<String>;
 }
 
 export interface UserCreateOneWithoutAddressesInput {
@@ -1646,6 +1663,7 @@ export interface AddressCreateWithoutUserInput {
   state: String;
   zipcode: String;
   telephone: String;
+  shippoId?: Maybe<String>;
 }
 
 export interface VisitCreateManyWithoutUserInput {
@@ -1777,6 +1795,7 @@ export interface AddressUpdateInput {
   state?: Maybe<String>;
   zipcode?: Maybe<String>;
   telephone?: Maybe<String>;
+  shippoId?: Maybe<String>;
 }
 
 export interface UserUpdateOneRequiredWithoutAddressesInput {
@@ -2087,6 +2106,7 @@ export interface AddressUpdateWithoutUserDataInput {
   state?: Maybe<String>;
   zipcode?: Maybe<String>;
   telephone?: Maybe<String>;
+  shippoId?: Maybe<String>;
 }
 
 export interface AddressUpsertWithWhereUniqueWithoutUserInput {
@@ -2212,6 +2232,20 @@ export interface AddressScalarWhereInput {
   telephone_not_starts_with?: Maybe<String>;
   telephone_ends_with?: Maybe<String>;
   telephone_not_ends_with?: Maybe<String>;
+  shippoId?: Maybe<String>;
+  shippoId_not?: Maybe<String>;
+  shippoId_in?: Maybe<String[] | String>;
+  shippoId_not_in?: Maybe<String[] | String>;
+  shippoId_lt?: Maybe<String>;
+  shippoId_lte?: Maybe<String>;
+  shippoId_gt?: Maybe<String>;
+  shippoId_gte?: Maybe<String>;
+  shippoId_contains?: Maybe<String>;
+  shippoId_not_contains?: Maybe<String>;
+  shippoId_starts_with?: Maybe<String>;
+  shippoId_not_starts_with?: Maybe<String>;
+  shippoId_ends_with?: Maybe<String>;
+  shippoId_not_ends_with?: Maybe<String>;
   AND?: Maybe<AddressScalarWhereInput[] | AddressScalarWhereInput>;
   OR?: Maybe<AddressScalarWhereInput[] | AddressScalarWhereInput>;
   NOT?: Maybe<AddressScalarWhereInput[] | AddressScalarWhereInput>;
@@ -2230,6 +2264,7 @@ export interface AddressUpdateManyDataInput {
   state?: Maybe<String>;
   zipcode?: Maybe<String>;
   telephone?: Maybe<String>;
+  shippoId?: Maybe<String>;
 }
 
 export interface VisitUpdateManyWithoutUserInput {
@@ -2502,6 +2537,7 @@ export interface AddressUpdateDataInput {
   state?: Maybe<String>;
   zipcode?: Maybe<String>;
   telephone?: Maybe<String>;
+  shippoId?: Maybe<String>;
 }
 
 export interface AddressUpsertNestedInput {
@@ -2802,6 +2838,7 @@ export interface AddressUpdateManyMutationInput {
   state?: Maybe<String>;
   zipcode?: Maybe<String>;
   telephone?: Maybe<String>;
+  shippoId?: Maybe<String>;
 }
 
 export interface CreditCardUpdateInput {
@@ -3300,6 +3337,7 @@ export interface Address {
   state: String;
   zipcode: String;
   telephone: String;
+  shippoId: String;
 }
 
 export interface AddressPromise extends Promise<Address>, Fragmentable {
@@ -3314,6 +3352,7 @@ export interface AddressPromise extends Promise<Address>, Fragmentable {
   state: () => Promise<String>;
   zipcode: () => Promise<String>;
   telephone: () => Promise<String>;
+  shippoId: () => Promise<String>;
 }
 
 export interface AddressSubscription
@@ -3330,6 +3369,7 @@ export interface AddressSubscription
   state: () => Promise<AsyncIterator<String>>;
   zipcode: () => Promise<AsyncIterator<String>>;
   telephone: () => Promise<AsyncIterator<String>>;
+  shippoId: () => Promise<AsyncIterator<String>>;
 }
 
 export interface AddressNullablePromise
@@ -3346,6 +3386,7 @@ export interface AddressNullablePromise
   state: () => Promise<String>;
   zipcode: () => Promise<String>;
   telephone: () => Promise<String>;
+  shippoId: () => Promise<String>;
 }
 
 export interface User {
@@ -4446,6 +4487,7 @@ export interface AddressPreviousValues {
   state: String;
   zipcode: String;
   telephone: String;
+  shippoId: String;
 }
 
 export interface AddressPreviousValuesPromise
@@ -4461,6 +4503,7 @@ export interface AddressPreviousValuesPromise
   state: () => Promise<String>;
   zipcode: () => Promise<String>;
   telephone: () => Promise<String>;
+  shippoId: () => Promise<String>;
 }
 
 export interface AddressPreviousValuesSubscription
@@ -4476,6 +4519,7 @@ export interface AddressPreviousValuesSubscription
   state: () => Promise<AsyncIterator<String>>;
   zipcode: () => Promise<AsyncIterator<String>>;
   telephone: () => Promise<AsyncIterator<String>>;
+  shippoId: () => Promise<AsyncIterator<String>>;
 }
 
 export interface CreditCardSubscriptionPayload {

@@ -15,6 +15,7 @@ module.exports = {
   state: String!
   zipcode: String!
   telephone: String!
+  shippoId: String!
 }
 
 type AddressConnection {
@@ -33,6 +34,7 @@ input AddressCreateInput {
   state: String!
   zipcode: String!
   telephone: String!
+  shippoId: String
 }
 
 input AddressCreateManyWithoutUserInput {
@@ -54,6 +56,7 @@ input AddressCreateWithoutUserInput {
   state: String!
   zipcode: String!
   telephone: String!
+  shippoId: String
 }
 
 type AddressEdge {
@@ -82,6 +85,8 @@ enum AddressOrderByInput {
   zipcode_DESC
   telephone_ASC
   telephone_DESC
+  shippoId_ASC
+  shippoId_DESC
 }
 
 type AddressPreviousValues {
@@ -95,6 +100,7 @@ type AddressPreviousValues {
   state: String!
   zipcode: String!
   telephone: String!
+  shippoId: String!
 }
 
 input AddressScalarWhereInput {
@@ -214,6 +220,20 @@ input AddressScalarWhereInput {
   telephone_not_starts_with: String
   telephone_ends_with: String
   telephone_not_ends_with: String
+  shippoId: String
+  shippoId_not: String
+  shippoId_in: [String!]
+  shippoId_not_in: [String!]
+  shippoId_lt: String
+  shippoId_lte: String
+  shippoId_gt: String
+  shippoId_gte: String
+  shippoId_contains: String
+  shippoId_not_contains: String
+  shippoId_starts_with: String
+  shippoId_not_starts_with: String
+  shippoId_ends_with: String
+  shippoId_not_ends_with: String
   AND: [AddressScalarWhereInput!]
   OR: [AddressScalarWhereInput!]
   NOT: [AddressScalarWhereInput!]
@@ -246,6 +266,7 @@ input AddressUpdateDataInput {
   state: String
   zipcode: String
   telephone: String
+  shippoId: String
 }
 
 input AddressUpdateInput {
@@ -257,6 +278,7 @@ input AddressUpdateInput {
   state: String
   zipcode: String
   telephone: String
+  shippoId: String
 }
 
 input AddressUpdateManyDataInput {
@@ -267,6 +289,7 @@ input AddressUpdateManyDataInput {
   state: String
   zipcode: String
   telephone: String
+  shippoId: String
 }
 
 input AddressUpdateManyMutationInput {
@@ -277,6 +300,7 @@ input AddressUpdateManyMutationInput {
   state: String
   zipcode: String
   telephone: String
+  shippoId: String
 }
 
 input AddressUpdateManyWithoutUserInput {
@@ -311,6 +335,7 @@ input AddressUpdateWithoutUserDataInput {
   state: String
   zipcode: String
   telephone: String
+  shippoId: String
 }
 
 input AddressUpdateWithWhereUniqueWithoutUserInput {
@@ -447,6 +472,20 @@ input AddressWhereInput {
   telephone_not_starts_with: String
   telephone_ends_with: String
   telephone_not_ends_with: String
+  shippoId: String
+  shippoId_not: String
+  shippoId_in: [String!]
+  shippoId_not_in: [String!]
+  shippoId_lt: String
+  shippoId_lte: String
+  shippoId_gt: String
+  shippoId_gte: String
+  shippoId_contains: String
+  shippoId_not_contains: String
+  shippoId_starts_with: String
+  shippoId_not_starts_with: String
+  shippoId_ends_with: String
+  shippoId_not_ends_with: String
   AND: [AddressWhereInput!]
   OR: [AddressWhereInput!]
   NOT: [AddressWhereInput!]

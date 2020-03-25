@@ -78,6 +78,7 @@ type Address {
   state: String!
   zipcode: String!
   telephone: String!
+  shippoId: String! @default(value: "")
 }
 
 type Product @pgTable(name: "product") {

@@ -1,16 +1,23 @@
-/**
- * Modules from the community: package.json
- */
 const got = require("got");
+const sha256 = require("sha256");
+const { validateArgument } = require("./utils");
 
-const {
-  usaepayHeaders,
-  validateArgument,
-  throwInvalidDataError
-} = require("./utils");
+const production = "https://usaepay.com/api/v2/";
+const sandbox = "https://sandbox.usaepay.com/api/v2/";
 
-var production = "https://usaepay.com/api/v2/";
-var sandbox = "https://sandbox.usaepay.com/api/v2/";
+const prehash =
+  process.env.USAEPAY_APIKEY +
+  process.env.USAEPAY_SEED +
+  process.env.USAEPAY_PIN;
+const apihash = "s2/" + process.env.USAEPAY_SEED + "/" + sha256(prehash);
+const authKey = new Buffer.from(
+  process.env.USAEPAY_APIKEY + ":" + apihash
+).toString("base64");
+
+const usaepayHeaders = {
+  Authorization: "Basic " + authKey,
+  "Content-Type": "application/json"
+};
 
 const usaepayAPI = got.extend({
   headers: usaepayHeaders,
@@ -21,7 +28,7 @@ const usaepayAPI = got.extend({
   resolveBodyOnly: true
 });
 
-// This will save a card and run a authorization for $1.00
+// This will save a card and return a token
 const saveCreditCard = async input => {
   console.log("input", input);
   validateArgument(input, "input");

@@ -1,7 +1,7 @@
 const { hasPermission } = require("../utils");
 const { validateZipcode } = require("../helpers/validateZipcode");
 const { getAuthorizedUserId, validateUser } = require("../auth");
-const { getCustomerProfile } = require("../authorizenet/Customer");
+const moment = require("moment");
 
 const Query = {
   me: async (_, __, { req, prisma }) => {
@@ -51,21 +51,14 @@ const Query = {
     return order;
   },
 
-  orders: async (
-    _,
-    { pageSize = 20, after, status = "PENDING" },
-    { prisma, req },
-    info
-  ) => {
+  orders: async (_, { status = "PENDING" }, { prisma, req }) => {
     await validateUser(req, true);
     let variables = {
       orderBy: "createdAt_ASC",
-      first: pageSize,
-      after: after,
       where: { status: status }
     };
 
-    return await prisma.ordersConnection(variables);
+    return await prisma.orders(variables);
   },
 
   pendingPrescriptions: async (_, __, { prisma, req }) => {
@@ -78,11 +71,32 @@ const Query = {
     return await prisma.prescriptions(variables);
   },
 
+  physicianListPrescriptions: async (_, __, { prisma, req }) => {
+    const variables = {
+      where: {
+        OR: [
+          { status: "PENDING" },
+          {
+            AND: [
+              { status_in: ["DENIED", "ACTIVE"] },
+              {
+                approvedDate_gt: moment()
+                  .subtract(3, "days")
+                  .format()
+              }
+            ]
+          }
+        ]
+      }
+    };
+
+    return await prisma.prescriptions(variables);
+  },
+
   prescriptions: async (
     _,
     { pageSize = 20, after, status = "PENDING" },
-    { prisma, req },
-    info
+    { prisma, req }
   ) => {
     await validateUser(req, true);
     let variables = {
