@@ -516,7 +516,7 @@ const Mutation = {
     const updateUser = await prisma.updateUser({
       data: {
         currVisit: null,
-        role: userRole,
+        //        role: userRole,
         gender: gender,
         birthDate: birthDate,
         photoId: photoId
