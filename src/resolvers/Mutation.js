@@ -199,26 +199,28 @@ const Mutation = {
   //  async makePayment(_, { input }, { req, prisma }) {
   //    await validateUser(req.userId, prisma);
   //  },
-  async addMessage(_, { input }, { req, prisma }) {
+  async newMessage(_, { input }, { req, prisma }) {
     const payload = await validateUser(req);
     const { userId, userRole } = payload;
 
-    const visitUser = await prisma.visit({ id: input.visitId }).user();
-    if (!visitUser) {
-      throw new Error("Unable to find visit record");
+    const prescriptionUser = await prisma
+      .visit({ id: input.prescriptionId })
+      .user();
+    if (!prescriptionUser) {
+      throw new Error("Unable to find prescription record");
     }
     console.log("Visit User:", visitUser);
 
     const msgInput = {
-      visit: {
+      prescription: {
         connect: {
-          id: input.visitId
+          id: input.prescriptionId
         }
       },
       text: input.text,
       user: {
         connect: {
-          id: visitUser.id
+          id: prescriptionUser.id
         }
       },
       private: input.private
@@ -232,11 +234,11 @@ const Mutation = {
       };
     }
 
-    const message = await prisma.createMessage({
+    await prisma.createMessage({
       ...msgInput
     });
 
-    return message;
+    return { message: "OK" };
   },
 
   async saveAddress(_, { input }, { req, prisma }) {

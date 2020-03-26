@@ -1,13 +1,13 @@
 const Message = {
-  physician: ({ id }, _, { prisma }) => {
-    return prisma.message({ id }).physician();
-  },
-  user: ({ id }, _, { prisma }) => {
-    return prisma.message({ id }).user();
-  },
-  prescription: ({ id }, _, { prisma }) => {
-    return prisma.message({ id }).prescription();
-  }
+  //  physician: (parent, _, { prisma }) => {
+  //    return prisma.message({ id: parent.id }).physician();
+  //  },
+  //  user: (parent, _, { prisma }) => {
+  //    return prisma.message({ id: parent.id }).user();
+  //  },
+  //  prescription: (parent, _, { prisma }) => {
+  //    return prisma.message({ id: parent.id }).prescription();
+  //  }
 };
 
 module.exports = { Message };

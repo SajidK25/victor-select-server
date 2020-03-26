@@ -11,12 +11,12 @@ const { Order } = require("./Order");
 const resolvers = {
   Mutation,
   Query,
+  Message,
   User,
   Visit,
   Address,
   CreditCard,
   Prescription,
-  Message,
   Order
 };
 

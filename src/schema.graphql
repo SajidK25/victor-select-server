@@ -48,8 +48,8 @@ input RegisterInput {
   lastName: String!
 }
 
-input AddMessageInput {
-  visitId: String!
+input CreateMessageInput {
+  prescriptionId: String!
   text: String!
   private: Boolean
 }
@@ -84,7 +84,7 @@ type Mutation {
     confirmPassword: String!
   ): User!
   logout: Boolean!
-  addMessage(input: AddMessageInput!): Message!
+  newMessage(input: CreateMessageInput!): SuccessMessage!
   revokeRefreshTokensForUser(userId: String!): Boolean!
   updateCurrVisit(input: Json): SuccessMessage!
   saveCard(input: SaveCardInput!): CreditCard!
