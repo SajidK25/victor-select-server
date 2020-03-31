@@ -22,7 +22,7 @@ const {
   createAccessToken,
   validateUser
 } = require("../auth");
-const { validateAddress } = require("../services/shippo");
+const { validateAddress, createShipment } = require("../services/shippo");
 
 const Mutation = {
   logout: async (_, __, { res }) => {
@@ -64,6 +64,7 @@ const Mutation = {
       user: newUser
     };
   },
+
   login: async (_, { email, password }, { res, prisma }) => {
     console.log("email:", email);
 
@@ -241,45 +242,13 @@ const Mutation = {
     return { message: "OK" };
   },
 
-  async saveAddress(_, { input }, { req, prisma }) {
+  saveAddress: async (_, { input }, { req, prisma }) => {
     const payload = await validateUser(req);
     const { userId } = payload;
 
-    // Update all current user addresses to inactive
-    await prisma.updateManyAddresses({
-      where: { user: { id: userId }, active: true },
-      data: { active: false }
-    });
+    const user = await prisma.user({ id: userId });
 
-    // See if there is a matching address
-    const [tmpAddress] = await prisma.addresses({
-      where: {
-        user: { id: userId },
-        ...input
-      }
-    });
-
-    var address;
-    if (!tmpAddress) {
-      address = await prisma.createAddress({
-        ...input,
-        active: true,
-        user: {
-          connect: {
-            id: userId
-          }
-        }
-      });
-    } else {
-      address = await prisma.updateAddress({
-        where: { id: tmpAddress.id },
-        data: {
-          active: true
-        }
-      });
-    }
-
-    // Update all other address to active == false
+    const address = await updateAddress(user, input, prisma);
 
     return address;
   },
@@ -335,7 +304,8 @@ const Mutation = {
     const payload = await validateUser(req, true);
     await prisma.updatePrescription({
       data: {
-        status: "DENIED"
+        status: "DENIED",
+        approvedDate: moment().format()
       },
       where: { id: id }
     });
@@ -383,7 +353,12 @@ const Mutation = {
       user: { connect: { id: user.id } },
       prescription: { connect: { id: prescription.id } },
       creditCard: { connect: { id: creditcard.id } },
-      address: { connect: { id: address.id } }
+      addressOne: address.addressOne,
+      addressTwo: address.addressTwo,
+      city: address.city,
+      state: address.state,
+      zipcode: address.zipcode,
+      shippoAddressId: address.shippoId
     });
 
     const refillsRemaining =
@@ -456,10 +431,11 @@ const Mutation = {
       city: input.personal.city,
       state: input.personal.state,
       zipcode: input.personal.zipCode,
-      telephone: input.personal.telephone
+      telephone: input.personal.telephone,
+      email: input.personal.email
     };
 
-    const address = await updateAddress(userId, addressInput, prisma);
+    const address = await updateAddress(user, addressInput, prisma);
     console.log("Address", address);
 
     // Save new visit
@@ -553,44 +529,81 @@ const Mutation = {
 
     console.log("idList: ", idList);
     let user = null;
-
     // Create Shippo Batch and process it
-
     // Update orders to shipped
 
+    var shipments = [];
+    let order = null;
+    // Create Shipments
     idList.forEach(async i => {
       console.log("id", i);
-      //      await createShipment()
-      await prisma.updateOrder({
-        data: {
-          status: "SHIPPED",
-          shipDate: moment().format(),
-          trackingNumber: "TRACKING_NUMBER"
-        },
-        where: { id: i }
-      });
 
-      user = await prisma.order({ id: i }).user();
-      console.log("User: ", user);
-      if (user) await sendShippedMail({ email: user.email });
+      order = await prisma.order({ id: i });
+      console.log("AddressId", order.shippoAddressId);
+      shipmentId = await createShipment(order.shippoAddressId);
+      shipments.push({ orderId: i, shipmentId: shipmentId });
+      //      await createShipment()
+      //      await prisma.updateOrder({
+      //        data: {
+      //          status: "SHIPPED",
+      //          shipDate: moment().format(),
+      //          trackingNumber: "TRACKING_NUMBER"
+      //        },
+      //        where: { id: i }
+      //      });
+
+      //     user = await prisma.order({ id: i }).user();
+      //      console.log("User: ", user);
+      //      if (user) await sendShippedMail({ email: user.email });
+    });
+    console.log(shipments);
+    //
+    // const batch = createBatch(shipments);
+    // for each
+
+    return { message: "OK" };
+  },
+
+  validateAddresses: async (_, __, { prisma }) => {
+    const addresses = await prisma.addresses();
+    let user = null;
+    let input = null;
+    let updateRet = null;
+    addresses.forEach(async address => {
+      console.log(address);
+      if (!address.shippoId || !address.email) {
+        user = await prisma.address({ id: address.id }).user();
+        input = {
+          city: address.city,
+          zipcode: address.zipcode,
+          email: user.email,
+          state: address.state,
+          addressOne: address.addressOne,
+          telephone: address.telephone,
+          addressTwo: ""
+        };
+        updateRet = await updateAddress(user, input, prisma);
+        console.log(updateRet);
+      }
     });
 
     return { message: "OK" };
   },
 
-  validateAddress: async (_, __, { req, prisma }) => {
+  validateUserAddress: async (_, __, { req, prisma }) => {
     const input = {
       name: "Brian Baker",
-      addressOne: "3521 Ambroise",
+      addressOne: "352 Ambroise",
       addressTwo: "",
       city: "Newport Coast",
       state: "CA",
-      zipcode: "78901",
-      email: "brian@bbaker.net"
+      zipcode: "92657",
+      phoneNumber: "9494138239",
+      email: "brianbbaker.net"
     };
 
-    const address = await validateAddress(input);
-    console.log("Address", address);
+    const ret = await validateAddress(input);
+    console.log("Address", ret);
 
     return { message: "OK" };
   }

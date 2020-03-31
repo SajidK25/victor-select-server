@@ -78,7 +78,8 @@ type Address {
   state: String!
   zipcode: String!
   telephone: String!
-  shippoId: String! @default(value: "")
+  email: String
+  shippoId: String
 }
 
 type Product @pgTable(name: "product") {
@@ -125,18 +126,27 @@ type Prescription {
 
 type Order {
   id: ID! @id
+  orderId: String
   status: OrderStatus! @default(value: PENDING)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   user: User!
-  address: Address!
-  prescription: Prescription!
-  shipDate: DateTime
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  shippoAddressId: String
+  shippoShipmentId: String
+  shippoBatchId: String
   trackingNumber: String
+  shipDate: DateTime
+  prescription: Prescription!
   creditCard: CreditCard
   new: Boolean! @default(value: false)
   refills: Int!
   amount: Int!
+  ccRefNum: String
   refnum: String!
 }
 

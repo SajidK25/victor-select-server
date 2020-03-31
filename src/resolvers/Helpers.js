@@ -1,4 +1,5 @@
 const { saveCreditCard } = require("../services/usaepay");
+const { validateAddress } = require("../services/shippo");
 
 const getCurrentCreditCard = async (userId, prisma) => {
   const creditcards = await prisma
@@ -40,40 +41,45 @@ const getCurrentAddress = async (userId, prisma) => {
     .user({ id: userId })
     .addresses({ where: { active: true } });
 
-  return addresses[0];
+  if (addresses.length) return addresses[0];
+
+  return null;
 };
 
-const updateAddress = async (userId, addressInput, prisma) => {
-  await prisma.updateManyAddresses({
-    where: { user: { id: userId }, active: true },
-    data: { active: false }
-  });
+const updateAddress = async (user, addressInput, prisma) => {
+  let address = await getCurrentAddress(user.id, prisma);
 
-  // See if there is a matching address
-  const [tmpAddress] = await prisma.addresses({
-    where: {
-      user: { id: userId },
-      ...addressInput
-    }
-  });
-  console.log("TmpAddress", tmpAddress);
+  const shippoInput = {
+    name: user.firstName + " " + user.lastName,
+    ...addressInput
+  };
 
-  let address = null;
-  if (!tmpAddress) {
-    address = await prisma.createAddress({
-      ...addressInput,
-      active: true,
-      user: {
-        connect: {
-          id: userId
-        }
+  let shippoId = "";
+  const shippoRet = await validateAddress(shippoInput);
+  if (shippoRet) {
+    shippoId = shippoRet.shippoId;
+  }
+
+  const newAddressInput = {
+    ...addressInput,
+    active: true,
+    shippoId: shippoId,
+    user: {
+      connect: {
+        id: user.id
       }
+    }
+  };
+
+  if (!address) {
+    address = await prisma.createAddress({
+      ...newAddressInput
     });
   } else {
     address = await prisma.updateAddress({
-      where: { id: tmpAddress.id },
+      where: { id: address.id },
       data: {
-        active: true
+        ...newAddressInput
       }
     });
   }

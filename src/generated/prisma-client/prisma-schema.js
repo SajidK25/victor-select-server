@@ -15,7 +15,8 @@ module.exports = {
   state: String!
   zipcode: String!
   telephone: String!
-  shippoId: String!
+  email: String
+  shippoId: String
 }
 
 type AddressConnection {
@@ -34,17 +35,13 @@ input AddressCreateInput {
   state: String!
   zipcode: String!
   telephone: String!
+  email: String
   shippoId: String
 }
 
 input AddressCreateManyWithoutUserInput {
   create: [AddressCreateWithoutUserInput!]
   connect: [AddressWhereUniqueInput!]
-}
-
-input AddressCreateOneInput {
-  create: AddressCreateInput
-  connect: AddressWhereUniqueInput
 }
 
 input AddressCreateWithoutUserInput {
@@ -56,6 +53,7 @@ input AddressCreateWithoutUserInput {
   state: String!
   zipcode: String!
   telephone: String!
+  email: String
   shippoId: String
 }
 
@@ -85,6 +83,8 @@ enum AddressOrderByInput {
   zipcode_DESC
   telephone_ASC
   telephone_DESC
+  email_ASC
+  email_DESC
   shippoId_ASC
   shippoId_DESC
 }
@@ -100,7 +100,8 @@ type AddressPreviousValues {
   state: String!
   zipcode: String!
   telephone: String!
-  shippoId: String!
+  email: String
+  shippoId: String
 }
 
 input AddressScalarWhereInput {
@@ -220,6 +221,20 @@ input AddressScalarWhereInput {
   telephone_not_starts_with: String
   telephone_ends_with: String
   telephone_not_ends_with: String
+  email: String
+  email_not: String
+  email_in: [String!]
+  email_not_in: [String!]
+  email_lt: String
+  email_lte: String
+  email_gt: String
+  email_gte: String
+  email_contains: String
+  email_not_contains: String
+  email_starts_with: String
+  email_not_starts_with: String
+  email_ends_with: String
+  email_not_ends_with: String
   shippoId: String
   shippoId_not: String
   shippoId_in: [String!]
@@ -257,18 +272,6 @@ input AddressSubscriptionWhereInput {
   NOT: [AddressSubscriptionWhereInput!]
 }
 
-input AddressUpdateDataInput {
-  user: UserUpdateOneRequiredWithoutAddressesInput
-  active: Boolean
-  addressOne: String
-  addressTwo: String
-  city: String
-  state: String
-  zipcode: String
-  telephone: String
-  shippoId: String
-}
-
 input AddressUpdateInput {
   user: UserUpdateOneRequiredWithoutAddressesInput
   active: Boolean
@@ -278,6 +281,7 @@ input AddressUpdateInput {
   state: String
   zipcode: String
   telephone: String
+  email: String
   shippoId: String
 }
 
@@ -289,6 +293,7 @@ input AddressUpdateManyDataInput {
   state: String
   zipcode: String
   telephone: String
+  email: String
   shippoId: String
 }
 
@@ -300,6 +305,7 @@ input AddressUpdateManyMutationInput {
   state: String
   zipcode: String
   telephone: String
+  email: String
   shippoId: String
 }
 
@@ -320,13 +326,6 @@ input AddressUpdateManyWithWhereNestedInput {
   data: AddressUpdateManyDataInput!
 }
 
-input AddressUpdateOneRequiredInput {
-  create: AddressCreateInput
-  update: AddressUpdateDataInput
-  upsert: AddressUpsertNestedInput
-  connect: AddressWhereUniqueInput
-}
-
 input AddressUpdateWithoutUserDataInput {
   active: Boolean
   addressOne: String
@@ -335,17 +334,13 @@ input AddressUpdateWithoutUserDataInput {
   state: String
   zipcode: String
   telephone: String
+  email: String
   shippoId: String
 }
 
 input AddressUpdateWithWhereUniqueWithoutUserInput {
   where: AddressWhereUniqueInput!
   data: AddressUpdateWithoutUserDataInput!
-}
-
-input AddressUpsertNestedInput {
-  update: AddressUpdateDataInput!
-  create: AddressCreateInput!
 }
 
 input AddressUpsertWithWhereUniqueWithoutUserInput {
@@ -472,6 +467,20 @@ input AddressWhereInput {
   telephone_not_starts_with: String
   telephone_ends_with: String
   telephone_not_ends_with: String
+  email: String
+  email_not: String
+  email_in: [String!]
+  email_not_in: [String!]
+  email_lt: String
+  email_lte: String
+  email_gt: String
+  email_gte: String
+  email_contains: String
+  email_not_contains: String
+  email_starts_with: String
+  email_not_starts_with: String
+  email_ends_with: String
+  email_not_ends_with: String
   shippoId: String
   shippoId_not: String
   shippoId_in: [String!]
@@ -1128,18 +1137,27 @@ interface Node {
 
 type Order {
   id: ID!
+  orderId: String
   status: OrderStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
   user: User!
-  address: Address!
-  prescription: Prescription!
-  shipDate: DateTime
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  shippoAddressId: String
+  shippoShipmentId: String
+  shippoBatchId: String
   trackingNumber: String
+  shipDate: DateTime
+  prescription: Prescription!
   creditCard: CreditCard
   new: Boolean!
   refills: Int!
   amount: Int!
+  ccRefNum: String
   refnum: String!
 }
 
@@ -1151,16 +1169,25 @@ type OrderConnection {
 
 input OrderCreateInput {
   id: ID
+  orderId: String
   status: OrderStatus
   user: UserCreateOneInput!
-  address: AddressCreateOneInput!
-  prescription: PrescriptionCreateOneWithoutOrdersInput!
-  shipDate: DateTime
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  shippoAddressId: String
+  shippoShipmentId: String
+  shippoBatchId: String
   trackingNumber: String
+  shipDate: DateTime
+  prescription: PrescriptionCreateOneWithoutOrdersInput!
   creditCard: CreditCardCreateOneInput
   new: Boolean
   refills: Int!
   amount: Int!
+  ccRefNum: String
   refnum: String!
 }
 
@@ -1171,15 +1198,24 @@ input OrderCreateManyWithoutPrescriptionInput {
 
 input OrderCreateWithoutPrescriptionInput {
   id: ID
+  orderId: String
   status: OrderStatus
   user: UserCreateOneInput!
-  address: AddressCreateOneInput!
-  shipDate: DateTime
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  shippoAddressId: String
+  shippoShipmentId: String
+  shippoBatchId: String
   trackingNumber: String
+  shipDate: DateTime
   creditCard: CreditCardCreateOneInput
   new: Boolean
   refills: Int!
   amount: Int!
+  ccRefNum: String
   refnum: String!
 }
 
@@ -1191,36 +1227,66 @@ type OrderEdge {
 enum OrderOrderByInput {
   id_ASC
   id_DESC
+  orderId_ASC
+  orderId_DESC
   status_ASC
   status_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
-  shipDate_ASC
-  shipDate_DESC
+  addressOne_ASC
+  addressOne_DESC
+  addressTwo_ASC
+  addressTwo_DESC
+  city_ASC
+  city_DESC
+  state_ASC
+  state_DESC
+  zipcode_ASC
+  zipcode_DESC
+  shippoAddressId_ASC
+  shippoAddressId_DESC
+  shippoShipmentId_ASC
+  shippoShipmentId_DESC
+  shippoBatchId_ASC
+  shippoBatchId_DESC
   trackingNumber_ASC
   trackingNumber_DESC
+  shipDate_ASC
+  shipDate_DESC
   new_ASC
   new_DESC
   refills_ASC
   refills_DESC
   amount_ASC
   amount_DESC
+  ccRefNum_ASC
+  ccRefNum_DESC
   refnum_ASC
   refnum_DESC
 }
 
 type OrderPreviousValues {
   id: ID!
+  orderId: String
   status: OrderStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
-  shipDate: DateTime
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  shippoAddressId: String
+  shippoShipmentId: String
+  shippoBatchId: String
   trackingNumber: String
+  shipDate: DateTime
   new: Boolean!
   refills: Int!
   amount: Int!
+  ccRefNum: String
   refnum: String!
 }
 
@@ -1239,6 +1305,20 @@ input OrderScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  orderId: String
+  orderId_not: String
+  orderId_in: [String!]
+  orderId_not_in: [String!]
+  orderId_lt: String
+  orderId_lte: String
+  orderId_gt: String
+  orderId_gte: String
+  orderId_contains: String
+  orderId_not_contains: String
+  orderId_starts_with: String
+  orderId_not_starts_with: String
+  orderId_ends_with: String
+  orderId_not_ends_with: String
   status: OrderStatus
   status_not: OrderStatus
   status_in: [OrderStatus!]
@@ -1259,14 +1339,118 @@ input OrderScalarWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  shipDate: DateTime
-  shipDate_not: DateTime
-  shipDate_in: [DateTime!]
-  shipDate_not_in: [DateTime!]
-  shipDate_lt: DateTime
-  shipDate_lte: DateTime
-  shipDate_gt: DateTime
-  shipDate_gte: DateTime
+  addressOne: String
+  addressOne_not: String
+  addressOne_in: [String!]
+  addressOne_not_in: [String!]
+  addressOne_lt: String
+  addressOne_lte: String
+  addressOne_gt: String
+  addressOne_gte: String
+  addressOne_contains: String
+  addressOne_not_contains: String
+  addressOne_starts_with: String
+  addressOne_not_starts_with: String
+  addressOne_ends_with: String
+  addressOne_not_ends_with: String
+  addressTwo: String
+  addressTwo_not: String
+  addressTwo_in: [String!]
+  addressTwo_not_in: [String!]
+  addressTwo_lt: String
+  addressTwo_lte: String
+  addressTwo_gt: String
+  addressTwo_gte: String
+  addressTwo_contains: String
+  addressTwo_not_contains: String
+  addressTwo_starts_with: String
+  addressTwo_not_starts_with: String
+  addressTwo_ends_with: String
+  addressTwo_not_ends_with: String
+  city: String
+  city_not: String
+  city_in: [String!]
+  city_not_in: [String!]
+  city_lt: String
+  city_lte: String
+  city_gt: String
+  city_gte: String
+  city_contains: String
+  city_not_contains: String
+  city_starts_with: String
+  city_not_starts_with: String
+  city_ends_with: String
+  city_not_ends_with: String
+  state: String
+  state_not: String
+  state_in: [String!]
+  state_not_in: [String!]
+  state_lt: String
+  state_lte: String
+  state_gt: String
+  state_gte: String
+  state_contains: String
+  state_not_contains: String
+  state_starts_with: String
+  state_not_starts_with: String
+  state_ends_with: String
+  state_not_ends_with: String
+  zipcode: String
+  zipcode_not: String
+  zipcode_in: [String!]
+  zipcode_not_in: [String!]
+  zipcode_lt: String
+  zipcode_lte: String
+  zipcode_gt: String
+  zipcode_gte: String
+  zipcode_contains: String
+  zipcode_not_contains: String
+  zipcode_starts_with: String
+  zipcode_not_starts_with: String
+  zipcode_ends_with: String
+  zipcode_not_ends_with: String
+  shippoAddressId: String
+  shippoAddressId_not: String
+  shippoAddressId_in: [String!]
+  shippoAddressId_not_in: [String!]
+  shippoAddressId_lt: String
+  shippoAddressId_lte: String
+  shippoAddressId_gt: String
+  shippoAddressId_gte: String
+  shippoAddressId_contains: String
+  shippoAddressId_not_contains: String
+  shippoAddressId_starts_with: String
+  shippoAddressId_not_starts_with: String
+  shippoAddressId_ends_with: String
+  shippoAddressId_not_ends_with: String
+  shippoShipmentId: String
+  shippoShipmentId_not: String
+  shippoShipmentId_in: [String!]
+  shippoShipmentId_not_in: [String!]
+  shippoShipmentId_lt: String
+  shippoShipmentId_lte: String
+  shippoShipmentId_gt: String
+  shippoShipmentId_gte: String
+  shippoShipmentId_contains: String
+  shippoShipmentId_not_contains: String
+  shippoShipmentId_starts_with: String
+  shippoShipmentId_not_starts_with: String
+  shippoShipmentId_ends_with: String
+  shippoShipmentId_not_ends_with: String
+  shippoBatchId: String
+  shippoBatchId_not: String
+  shippoBatchId_in: [String!]
+  shippoBatchId_not_in: [String!]
+  shippoBatchId_lt: String
+  shippoBatchId_lte: String
+  shippoBatchId_gt: String
+  shippoBatchId_gte: String
+  shippoBatchId_contains: String
+  shippoBatchId_not_contains: String
+  shippoBatchId_starts_with: String
+  shippoBatchId_not_starts_with: String
+  shippoBatchId_ends_with: String
+  shippoBatchId_not_ends_with: String
   trackingNumber: String
   trackingNumber_not: String
   trackingNumber_in: [String!]
@@ -1281,6 +1465,14 @@ input OrderScalarWhereInput {
   trackingNumber_not_starts_with: String
   trackingNumber_ends_with: String
   trackingNumber_not_ends_with: String
+  shipDate: DateTime
+  shipDate_not: DateTime
+  shipDate_in: [DateTime!]
+  shipDate_not_in: [DateTime!]
+  shipDate_lt: DateTime
+  shipDate_lte: DateTime
+  shipDate_gt: DateTime
+  shipDate_gte: DateTime
   new: Boolean
   new_not: Boolean
   refills: Int
@@ -1299,6 +1491,20 @@ input OrderScalarWhereInput {
   amount_lte: Int
   amount_gt: Int
   amount_gte: Int
+  ccRefNum: String
+  ccRefNum_not: String
+  ccRefNum_in: [String!]
+  ccRefNum_not_in: [String!]
+  ccRefNum_lt: String
+  ccRefNum_lte: String
+  ccRefNum_gt: String
+  ccRefNum_gte: String
+  ccRefNum_contains: String
+  ccRefNum_not_contains: String
+  ccRefNum_starts_with: String
+  ccRefNum_not_starts_with: String
+  ccRefNum_ends_with: String
+  ccRefNum_not_ends_with: String
   refnum: String
   refnum_not: String
   refnum_in: [String!]
@@ -1344,36 +1550,65 @@ input OrderSubscriptionWhereInput {
 }
 
 input OrderUpdateInput {
+  orderId: String
   status: OrderStatus
   user: UserUpdateOneRequiredInput
-  address: AddressUpdateOneRequiredInput
-  prescription: PrescriptionUpdateOneRequiredWithoutOrdersInput
-  shipDate: DateTime
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  shippoAddressId: String
+  shippoShipmentId: String
+  shippoBatchId: String
   trackingNumber: String
+  shipDate: DateTime
+  prescription: PrescriptionUpdateOneRequiredWithoutOrdersInput
   creditCard: CreditCardUpdateOneInput
   new: Boolean
   refills: Int
   amount: Int
+  ccRefNum: String
   refnum: String
 }
 
 input OrderUpdateManyDataInput {
+  orderId: String
   status: OrderStatus
-  shipDate: DateTime
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  shippoAddressId: String
+  shippoShipmentId: String
+  shippoBatchId: String
   trackingNumber: String
+  shipDate: DateTime
   new: Boolean
   refills: Int
   amount: Int
+  ccRefNum: String
   refnum: String
 }
 
 input OrderUpdateManyMutationInput {
+  orderId: String
   status: OrderStatus
-  shipDate: DateTime
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  shippoAddressId: String
+  shippoShipmentId: String
+  shippoBatchId: String
   trackingNumber: String
+  shipDate: DateTime
   new: Boolean
   refills: Int
   amount: Int
+  ccRefNum: String
   refnum: String
 }
 
@@ -1395,15 +1630,24 @@ input OrderUpdateManyWithWhereNestedInput {
 }
 
 input OrderUpdateWithoutPrescriptionDataInput {
+  orderId: String
   status: OrderStatus
   user: UserUpdateOneRequiredInput
-  address: AddressUpdateOneRequiredInput
-  shipDate: DateTime
+  addressOne: String
+  addressTwo: String
+  city: String
+  state: String
+  zipcode: String
+  shippoAddressId: String
+  shippoShipmentId: String
+  shippoBatchId: String
   trackingNumber: String
+  shipDate: DateTime
   creditCard: CreditCardUpdateOneInput
   new: Boolean
   refills: Int
   amount: Int
+  ccRefNum: String
   refnum: String
 }
 
@@ -1433,6 +1677,20 @@ input OrderWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  orderId: String
+  orderId_not: String
+  orderId_in: [String!]
+  orderId_not_in: [String!]
+  orderId_lt: String
+  orderId_lte: String
+  orderId_gt: String
+  orderId_gte: String
+  orderId_contains: String
+  orderId_not_contains: String
+  orderId_starts_with: String
+  orderId_not_starts_with: String
+  orderId_ends_with: String
+  orderId_not_ends_with: String
   status: OrderStatus
   status_not: OrderStatus
   status_in: [OrderStatus!]
@@ -1454,16 +1712,118 @@ input OrderWhereInput {
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
   user: UserWhereInput
-  address: AddressWhereInput
-  prescription: PrescriptionWhereInput
-  shipDate: DateTime
-  shipDate_not: DateTime
-  shipDate_in: [DateTime!]
-  shipDate_not_in: [DateTime!]
-  shipDate_lt: DateTime
-  shipDate_lte: DateTime
-  shipDate_gt: DateTime
-  shipDate_gte: DateTime
+  addressOne: String
+  addressOne_not: String
+  addressOne_in: [String!]
+  addressOne_not_in: [String!]
+  addressOne_lt: String
+  addressOne_lte: String
+  addressOne_gt: String
+  addressOne_gte: String
+  addressOne_contains: String
+  addressOne_not_contains: String
+  addressOne_starts_with: String
+  addressOne_not_starts_with: String
+  addressOne_ends_with: String
+  addressOne_not_ends_with: String
+  addressTwo: String
+  addressTwo_not: String
+  addressTwo_in: [String!]
+  addressTwo_not_in: [String!]
+  addressTwo_lt: String
+  addressTwo_lte: String
+  addressTwo_gt: String
+  addressTwo_gte: String
+  addressTwo_contains: String
+  addressTwo_not_contains: String
+  addressTwo_starts_with: String
+  addressTwo_not_starts_with: String
+  addressTwo_ends_with: String
+  addressTwo_not_ends_with: String
+  city: String
+  city_not: String
+  city_in: [String!]
+  city_not_in: [String!]
+  city_lt: String
+  city_lte: String
+  city_gt: String
+  city_gte: String
+  city_contains: String
+  city_not_contains: String
+  city_starts_with: String
+  city_not_starts_with: String
+  city_ends_with: String
+  city_not_ends_with: String
+  state: String
+  state_not: String
+  state_in: [String!]
+  state_not_in: [String!]
+  state_lt: String
+  state_lte: String
+  state_gt: String
+  state_gte: String
+  state_contains: String
+  state_not_contains: String
+  state_starts_with: String
+  state_not_starts_with: String
+  state_ends_with: String
+  state_not_ends_with: String
+  zipcode: String
+  zipcode_not: String
+  zipcode_in: [String!]
+  zipcode_not_in: [String!]
+  zipcode_lt: String
+  zipcode_lte: String
+  zipcode_gt: String
+  zipcode_gte: String
+  zipcode_contains: String
+  zipcode_not_contains: String
+  zipcode_starts_with: String
+  zipcode_not_starts_with: String
+  zipcode_ends_with: String
+  zipcode_not_ends_with: String
+  shippoAddressId: String
+  shippoAddressId_not: String
+  shippoAddressId_in: [String!]
+  shippoAddressId_not_in: [String!]
+  shippoAddressId_lt: String
+  shippoAddressId_lte: String
+  shippoAddressId_gt: String
+  shippoAddressId_gte: String
+  shippoAddressId_contains: String
+  shippoAddressId_not_contains: String
+  shippoAddressId_starts_with: String
+  shippoAddressId_not_starts_with: String
+  shippoAddressId_ends_with: String
+  shippoAddressId_not_ends_with: String
+  shippoShipmentId: String
+  shippoShipmentId_not: String
+  shippoShipmentId_in: [String!]
+  shippoShipmentId_not_in: [String!]
+  shippoShipmentId_lt: String
+  shippoShipmentId_lte: String
+  shippoShipmentId_gt: String
+  shippoShipmentId_gte: String
+  shippoShipmentId_contains: String
+  shippoShipmentId_not_contains: String
+  shippoShipmentId_starts_with: String
+  shippoShipmentId_not_starts_with: String
+  shippoShipmentId_ends_with: String
+  shippoShipmentId_not_ends_with: String
+  shippoBatchId: String
+  shippoBatchId_not: String
+  shippoBatchId_in: [String!]
+  shippoBatchId_not_in: [String!]
+  shippoBatchId_lt: String
+  shippoBatchId_lte: String
+  shippoBatchId_gt: String
+  shippoBatchId_gte: String
+  shippoBatchId_contains: String
+  shippoBatchId_not_contains: String
+  shippoBatchId_starts_with: String
+  shippoBatchId_not_starts_with: String
+  shippoBatchId_ends_with: String
+  shippoBatchId_not_ends_with: String
   trackingNumber: String
   trackingNumber_not: String
   trackingNumber_in: [String!]
@@ -1478,6 +1838,15 @@ input OrderWhereInput {
   trackingNumber_not_starts_with: String
   trackingNumber_ends_with: String
   trackingNumber_not_ends_with: String
+  shipDate: DateTime
+  shipDate_not: DateTime
+  shipDate_in: [DateTime!]
+  shipDate_not_in: [DateTime!]
+  shipDate_lt: DateTime
+  shipDate_lte: DateTime
+  shipDate_gt: DateTime
+  shipDate_gte: DateTime
+  prescription: PrescriptionWhereInput
   creditCard: CreditCardWhereInput
   new: Boolean
   new_not: Boolean
@@ -1497,6 +1866,20 @@ input OrderWhereInput {
   amount_lte: Int
   amount_gt: Int
   amount_gte: Int
+  ccRefNum: String
+  ccRefNum_not: String
+  ccRefNum_in: [String!]
+  ccRefNum_not_in: [String!]
+  ccRefNum_lt: String
+  ccRefNum_lte: String
+  ccRefNum_gt: String
+  ccRefNum_gte: String
+  ccRefNum_contains: String
+  ccRefNum_not_contains: String
+  ccRefNum_starts_with: String
+  ccRefNum_not_starts_with: String
+  ccRefNum_ends_with: String
+  ccRefNum_not_ends_with: String
   refnum: String
   refnum_not: String
   refnum_in: [String!]

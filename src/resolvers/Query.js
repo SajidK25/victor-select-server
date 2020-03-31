@@ -1,6 +1,7 @@
 const { hasPermission } = require("../utils");
 const { validateZipcode } = require("../helpers/validateZipcode");
 const { getAuthorizedUserId, validateUser } = require("../auth");
+const { getCurrentCreditCard } = require("./Helpers");
 const moment = require("moment");
 
 const Query = {
@@ -24,6 +25,10 @@ const Query = {
 
   validZipCode: async (_, args) => {
     return validateZipcode(args.zipcode);
+  },
+
+  messages: async (_, args, { prisma, req }) => {
+    return await prisma.messages();
   },
 
   users: async (_, __, { prisma, req }) => {
@@ -64,8 +69,23 @@ const Query = {
   pendingPrescriptions: async (_, __, { prisma, req }) => {
     await validateUser(req, true);
     const variables = {
-      orderBy: "createdAt_ASC",
-      where: { status: "PENDING" }
+      orderBy: "updatedAt_ASC",
+      where: {
+        OR: [
+          { status: "PENDING" },
+          {
+            AND: [
+              { status_in: ["DENIED", "ACTIVE"] },
+              {
+                approvedDate_gt: moment()
+                  .subtract(3, "days")
+                  .format()
+              }
+            ]
+          }
+        ]
+      }
+      //
     };
 
     return await prisma.prescriptions(variables);
@@ -81,7 +101,7 @@ const Query = {
               { status_in: ["DENIED", "ACTIVE"] },
               {
                 approvedDate_gt: moment()
-                  .subtract(3, "days")
+                  .subtract(14, "days")
                   .format()
               }
             ]
@@ -140,6 +160,12 @@ const Query = {
   creditCards: async (_, __, { prisma }) => {
     await validateUser(req, true);
     return prisma.creditCards();
+  },
+
+  getUserCreditCard: async (_, __, { prisma, req }) => {
+    const payload = await validateUser(req);
+
+    return await getCurrentCreditCard(payload.userId, prisma);
   },
 
   userExists: async (_, args, { prisma }) => {

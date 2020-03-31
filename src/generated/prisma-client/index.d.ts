@@ -419,6 +419,8 @@ export type AddressOrderByInput =
   | "zipcode_DESC"
   | "telephone_ASC"
   | "telephone_DESC"
+  | "email_ASC"
+  | "email_DESC"
   | "shippoId_ASC"
   | "shippoId_DESC";
 
@@ -477,22 +479,42 @@ export type PrescriptionOrderByInput =
 export type OrderOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "orderId_ASC"
+  | "orderId_DESC"
   | "status_ASC"
   | "status_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC"
-  | "shipDate_ASC"
-  | "shipDate_DESC"
+  | "addressOne_ASC"
+  | "addressOne_DESC"
+  | "addressTwo_ASC"
+  | "addressTwo_DESC"
+  | "city_ASC"
+  | "city_DESC"
+  | "state_ASC"
+  | "state_DESC"
+  | "zipcode_ASC"
+  | "zipcode_DESC"
+  | "shippoAddressId_ASC"
+  | "shippoAddressId_DESC"
+  | "shippoShipmentId_ASC"
+  | "shippoShipmentId_DESC"
+  | "shippoBatchId_ASC"
+  | "shippoBatchId_DESC"
   | "trackingNumber_ASC"
   | "trackingNumber_DESC"
+  | "shipDate_ASC"
+  | "shipDate_DESC"
   | "new_ASC"
   | "new_DESC"
   | "refills_ASC"
   | "refills_DESC"
   | "amount_ASC"
   | "amount_DESC"
+  | "ccRefNum_ASC"
+  | "ccRefNum_DESC"
   | "refnum_ASC"
   | "refnum_DESC";
 
@@ -708,6 +730,20 @@ export interface AddressWhereInput {
   telephone_not_starts_with?: Maybe<String>;
   telephone_ends_with?: Maybe<String>;
   telephone_not_ends_with?: Maybe<String>;
+  email?: Maybe<String>;
+  email_not?: Maybe<String>;
+  email_in?: Maybe<String[] | String>;
+  email_not_in?: Maybe<String[] | String>;
+  email_lt?: Maybe<String>;
+  email_lte?: Maybe<String>;
+  email_gt?: Maybe<String>;
+  email_gte?: Maybe<String>;
+  email_contains?: Maybe<String>;
+  email_not_contains?: Maybe<String>;
+  email_starts_with?: Maybe<String>;
+  email_not_starts_with?: Maybe<String>;
+  email_ends_with?: Maybe<String>;
+  email_not_ends_with?: Maybe<String>;
   shippoId?: Maybe<String>;
   shippoId_not?: Maybe<String>;
   shippoId_in?: Maybe<String[] | String>;
@@ -1354,6 +1390,20 @@ export interface OrderWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
+  orderId?: Maybe<String>;
+  orderId_not?: Maybe<String>;
+  orderId_in?: Maybe<String[] | String>;
+  orderId_not_in?: Maybe<String[] | String>;
+  orderId_lt?: Maybe<String>;
+  orderId_lte?: Maybe<String>;
+  orderId_gt?: Maybe<String>;
+  orderId_gte?: Maybe<String>;
+  orderId_contains?: Maybe<String>;
+  orderId_not_contains?: Maybe<String>;
+  orderId_starts_with?: Maybe<String>;
+  orderId_not_starts_with?: Maybe<String>;
+  orderId_ends_with?: Maybe<String>;
+  orderId_not_ends_with?: Maybe<String>;
   status?: Maybe<OrderStatus>;
   status_not?: Maybe<OrderStatus>;
   status_in?: Maybe<OrderStatus[] | OrderStatus>;
@@ -1375,16 +1425,118 @@ export interface OrderWhereInput {
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
   user?: Maybe<UserWhereInput>;
-  address?: Maybe<AddressWhereInput>;
-  prescription?: Maybe<PrescriptionWhereInput>;
-  shipDate?: Maybe<DateTimeInput>;
-  shipDate_not?: Maybe<DateTimeInput>;
-  shipDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  shipDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  shipDate_lt?: Maybe<DateTimeInput>;
-  shipDate_lte?: Maybe<DateTimeInput>;
-  shipDate_gt?: Maybe<DateTimeInput>;
-  shipDate_gte?: Maybe<DateTimeInput>;
+  addressOne?: Maybe<String>;
+  addressOne_not?: Maybe<String>;
+  addressOne_in?: Maybe<String[] | String>;
+  addressOne_not_in?: Maybe<String[] | String>;
+  addressOne_lt?: Maybe<String>;
+  addressOne_lte?: Maybe<String>;
+  addressOne_gt?: Maybe<String>;
+  addressOne_gte?: Maybe<String>;
+  addressOne_contains?: Maybe<String>;
+  addressOne_not_contains?: Maybe<String>;
+  addressOne_starts_with?: Maybe<String>;
+  addressOne_not_starts_with?: Maybe<String>;
+  addressOne_ends_with?: Maybe<String>;
+  addressOne_not_ends_with?: Maybe<String>;
+  addressTwo?: Maybe<String>;
+  addressTwo_not?: Maybe<String>;
+  addressTwo_in?: Maybe<String[] | String>;
+  addressTwo_not_in?: Maybe<String[] | String>;
+  addressTwo_lt?: Maybe<String>;
+  addressTwo_lte?: Maybe<String>;
+  addressTwo_gt?: Maybe<String>;
+  addressTwo_gte?: Maybe<String>;
+  addressTwo_contains?: Maybe<String>;
+  addressTwo_not_contains?: Maybe<String>;
+  addressTwo_starts_with?: Maybe<String>;
+  addressTwo_not_starts_with?: Maybe<String>;
+  addressTwo_ends_with?: Maybe<String>;
+  addressTwo_not_ends_with?: Maybe<String>;
+  city?: Maybe<String>;
+  city_not?: Maybe<String>;
+  city_in?: Maybe<String[] | String>;
+  city_not_in?: Maybe<String[] | String>;
+  city_lt?: Maybe<String>;
+  city_lte?: Maybe<String>;
+  city_gt?: Maybe<String>;
+  city_gte?: Maybe<String>;
+  city_contains?: Maybe<String>;
+  city_not_contains?: Maybe<String>;
+  city_starts_with?: Maybe<String>;
+  city_not_starts_with?: Maybe<String>;
+  city_ends_with?: Maybe<String>;
+  city_not_ends_with?: Maybe<String>;
+  state?: Maybe<String>;
+  state_not?: Maybe<String>;
+  state_in?: Maybe<String[] | String>;
+  state_not_in?: Maybe<String[] | String>;
+  state_lt?: Maybe<String>;
+  state_lte?: Maybe<String>;
+  state_gt?: Maybe<String>;
+  state_gte?: Maybe<String>;
+  state_contains?: Maybe<String>;
+  state_not_contains?: Maybe<String>;
+  state_starts_with?: Maybe<String>;
+  state_not_starts_with?: Maybe<String>;
+  state_ends_with?: Maybe<String>;
+  state_not_ends_with?: Maybe<String>;
+  zipcode?: Maybe<String>;
+  zipcode_not?: Maybe<String>;
+  zipcode_in?: Maybe<String[] | String>;
+  zipcode_not_in?: Maybe<String[] | String>;
+  zipcode_lt?: Maybe<String>;
+  zipcode_lte?: Maybe<String>;
+  zipcode_gt?: Maybe<String>;
+  zipcode_gte?: Maybe<String>;
+  zipcode_contains?: Maybe<String>;
+  zipcode_not_contains?: Maybe<String>;
+  zipcode_starts_with?: Maybe<String>;
+  zipcode_not_starts_with?: Maybe<String>;
+  zipcode_ends_with?: Maybe<String>;
+  zipcode_not_ends_with?: Maybe<String>;
+  shippoAddressId?: Maybe<String>;
+  shippoAddressId_not?: Maybe<String>;
+  shippoAddressId_in?: Maybe<String[] | String>;
+  shippoAddressId_not_in?: Maybe<String[] | String>;
+  shippoAddressId_lt?: Maybe<String>;
+  shippoAddressId_lte?: Maybe<String>;
+  shippoAddressId_gt?: Maybe<String>;
+  shippoAddressId_gte?: Maybe<String>;
+  shippoAddressId_contains?: Maybe<String>;
+  shippoAddressId_not_contains?: Maybe<String>;
+  shippoAddressId_starts_with?: Maybe<String>;
+  shippoAddressId_not_starts_with?: Maybe<String>;
+  shippoAddressId_ends_with?: Maybe<String>;
+  shippoAddressId_not_ends_with?: Maybe<String>;
+  shippoShipmentId?: Maybe<String>;
+  shippoShipmentId_not?: Maybe<String>;
+  shippoShipmentId_in?: Maybe<String[] | String>;
+  shippoShipmentId_not_in?: Maybe<String[] | String>;
+  shippoShipmentId_lt?: Maybe<String>;
+  shippoShipmentId_lte?: Maybe<String>;
+  shippoShipmentId_gt?: Maybe<String>;
+  shippoShipmentId_gte?: Maybe<String>;
+  shippoShipmentId_contains?: Maybe<String>;
+  shippoShipmentId_not_contains?: Maybe<String>;
+  shippoShipmentId_starts_with?: Maybe<String>;
+  shippoShipmentId_not_starts_with?: Maybe<String>;
+  shippoShipmentId_ends_with?: Maybe<String>;
+  shippoShipmentId_not_ends_with?: Maybe<String>;
+  shippoBatchId?: Maybe<String>;
+  shippoBatchId_not?: Maybe<String>;
+  shippoBatchId_in?: Maybe<String[] | String>;
+  shippoBatchId_not_in?: Maybe<String[] | String>;
+  shippoBatchId_lt?: Maybe<String>;
+  shippoBatchId_lte?: Maybe<String>;
+  shippoBatchId_gt?: Maybe<String>;
+  shippoBatchId_gte?: Maybe<String>;
+  shippoBatchId_contains?: Maybe<String>;
+  shippoBatchId_not_contains?: Maybe<String>;
+  shippoBatchId_starts_with?: Maybe<String>;
+  shippoBatchId_not_starts_with?: Maybe<String>;
+  shippoBatchId_ends_with?: Maybe<String>;
+  shippoBatchId_not_ends_with?: Maybe<String>;
   trackingNumber?: Maybe<String>;
   trackingNumber_not?: Maybe<String>;
   trackingNumber_in?: Maybe<String[] | String>;
@@ -1399,6 +1551,15 @@ export interface OrderWhereInput {
   trackingNumber_not_starts_with?: Maybe<String>;
   trackingNumber_ends_with?: Maybe<String>;
   trackingNumber_not_ends_with?: Maybe<String>;
+  shipDate?: Maybe<DateTimeInput>;
+  shipDate_not?: Maybe<DateTimeInput>;
+  shipDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  shipDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  shipDate_lt?: Maybe<DateTimeInput>;
+  shipDate_lte?: Maybe<DateTimeInput>;
+  shipDate_gt?: Maybe<DateTimeInput>;
+  shipDate_gte?: Maybe<DateTimeInput>;
+  prescription?: Maybe<PrescriptionWhereInput>;
   creditCard?: Maybe<CreditCardWhereInput>;
   new?: Maybe<Boolean>;
   new_not?: Maybe<Boolean>;
@@ -1418,6 +1579,20 @@ export interface OrderWhereInput {
   amount_lte?: Maybe<Int>;
   amount_gt?: Maybe<Int>;
   amount_gte?: Maybe<Int>;
+  ccRefNum?: Maybe<String>;
+  ccRefNum_not?: Maybe<String>;
+  ccRefNum_in?: Maybe<String[] | String>;
+  ccRefNum_not_in?: Maybe<String[] | String>;
+  ccRefNum_lt?: Maybe<String>;
+  ccRefNum_lte?: Maybe<String>;
+  ccRefNum_gt?: Maybe<String>;
+  ccRefNum_gte?: Maybe<String>;
+  ccRefNum_contains?: Maybe<String>;
+  ccRefNum_not_contains?: Maybe<String>;
+  ccRefNum_starts_with?: Maybe<String>;
+  ccRefNum_not_starts_with?: Maybe<String>;
+  ccRefNum_ends_with?: Maybe<String>;
+  ccRefNum_not_ends_with?: Maybe<String>;
   refnum?: Maybe<String>;
   refnum_not?: Maybe<String>;
   refnum_in?: Maybe<String[] | String>;
@@ -1534,6 +1709,7 @@ export interface AddressCreateInput {
   state: String;
   zipcode: String;
   telephone: String;
+  email?: Maybe<String>;
   shippoId?: Maybe<String>;
 }
 
@@ -1663,6 +1839,7 @@ export interface AddressCreateWithoutUserInput {
   state: String;
   zipcode: String;
   telephone: String;
+  email?: Maybe<String>;
   shippoId?: Maybe<String>;
 }
 
@@ -1744,15 +1921,24 @@ export interface OrderCreateManyWithoutPrescriptionInput {
 
 export interface OrderCreateWithoutPrescriptionInput {
   id?: Maybe<ID_Input>;
+  orderId?: Maybe<String>;
   status?: Maybe<OrderStatus>;
   user: UserCreateOneInput;
-  address: AddressCreateOneInput;
-  shipDate?: Maybe<DateTimeInput>;
+  addressOne?: Maybe<String>;
+  addressTwo?: Maybe<String>;
+  city?: Maybe<String>;
+  state?: Maybe<String>;
+  zipcode?: Maybe<String>;
+  shippoAddressId?: Maybe<String>;
+  shippoShipmentId?: Maybe<String>;
+  shippoBatchId?: Maybe<String>;
   trackingNumber?: Maybe<String>;
+  shipDate?: Maybe<DateTimeInput>;
   creditCard?: Maybe<CreditCardCreateOneInput>;
   new?: Maybe<Boolean>;
   refills: Int;
   amount: Int;
+  ccRefNum?: Maybe<String>;
   refnum: String;
 }
 
@@ -1781,11 +1967,6 @@ export interface UserCreateInput {
   tokenVersion?: Maybe<Int>;
 }
 
-export interface AddressCreateOneInput {
-  create?: Maybe<AddressCreateInput>;
-  connect?: Maybe<AddressWhereUniqueInput>;
-}
-
 export interface AddressUpdateInput {
   user?: Maybe<UserUpdateOneRequiredWithoutAddressesInput>;
   active?: Maybe<Boolean>;
@@ -1795,6 +1976,7 @@ export interface AddressUpdateInput {
   state?: Maybe<String>;
   zipcode?: Maybe<String>;
   telephone?: Maybe<String>;
+  email?: Maybe<String>;
   shippoId?: Maybe<String>;
 }
 
@@ -2106,6 +2288,7 @@ export interface AddressUpdateWithoutUserDataInput {
   state?: Maybe<String>;
   zipcode?: Maybe<String>;
   telephone?: Maybe<String>;
+  email?: Maybe<String>;
   shippoId?: Maybe<String>;
 }
 
@@ -2232,6 +2415,20 @@ export interface AddressScalarWhereInput {
   telephone_not_starts_with?: Maybe<String>;
   telephone_ends_with?: Maybe<String>;
   telephone_not_ends_with?: Maybe<String>;
+  email?: Maybe<String>;
+  email_not?: Maybe<String>;
+  email_in?: Maybe<String[] | String>;
+  email_not_in?: Maybe<String[] | String>;
+  email_lt?: Maybe<String>;
+  email_lte?: Maybe<String>;
+  email_gt?: Maybe<String>;
+  email_gte?: Maybe<String>;
+  email_contains?: Maybe<String>;
+  email_not_contains?: Maybe<String>;
+  email_starts_with?: Maybe<String>;
+  email_not_starts_with?: Maybe<String>;
+  email_ends_with?: Maybe<String>;
+  email_not_ends_with?: Maybe<String>;
   shippoId?: Maybe<String>;
   shippoId_not?: Maybe<String>;
   shippoId_in?: Maybe<String[] | String>;
@@ -2264,6 +2461,7 @@ export interface AddressUpdateManyDataInput {
   state?: Maybe<String>;
   zipcode?: Maybe<String>;
   telephone?: Maybe<String>;
+  email?: Maybe<String>;
   shippoId?: Maybe<String>;
 }
 
@@ -2478,15 +2676,24 @@ export interface OrderUpdateWithWhereUniqueWithoutPrescriptionInput {
 }
 
 export interface OrderUpdateWithoutPrescriptionDataInput {
+  orderId?: Maybe<String>;
   status?: Maybe<OrderStatus>;
   user?: Maybe<UserUpdateOneRequiredInput>;
-  address?: Maybe<AddressUpdateOneRequiredInput>;
-  shipDate?: Maybe<DateTimeInput>;
+  addressOne?: Maybe<String>;
+  addressTwo?: Maybe<String>;
+  city?: Maybe<String>;
+  state?: Maybe<String>;
+  zipcode?: Maybe<String>;
+  shippoAddressId?: Maybe<String>;
+  shippoShipmentId?: Maybe<String>;
+  shippoBatchId?: Maybe<String>;
   trackingNumber?: Maybe<String>;
+  shipDate?: Maybe<DateTimeInput>;
   creditCard?: Maybe<CreditCardUpdateOneInput>;
   new?: Maybe<Boolean>;
   refills?: Maybe<Int>;
   amount?: Maybe<Int>;
+  ccRefNum?: Maybe<String>;
   refnum?: Maybe<String>;
 }
 
@@ -2521,30 +2728,6 @@ export interface UserUpsertNestedInput {
   create: UserCreateInput;
 }
 
-export interface AddressUpdateOneRequiredInput {
-  create?: Maybe<AddressCreateInput>;
-  update?: Maybe<AddressUpdateDataInput>;
-  upsert?: Maybe<AddressUpsertNestedInput>;
-  connect?: Maybe<AddressWhereUniqueInput>;
-}
-
-export interface AddressUpdateDataInput {
-  user?: Maybe<UserUpdateOneRequiredWithoutAddressesInput>;
-  active?: Maybe<Boolean>;
-  addressOne?: Maybe<String>;
-  addressTwo?: Maybe<String>;
-  city?: Maybe<String>;
-  state?: Maybe<String>;
-  zipcode?: Maybe<String>;
-  telephone?: Maybe<String>;
-  shippoId?: Maybe<String>;
-}
-
-export interface AddressUpsertNestedInput {
-  update: AddressUpdateDataInput;
-  create: AddressCreateInput;
-}
-
 export interface OrderUpsertWithWhereUniqueWithoutPrescriptionInput {
   where: OrderWhereUniqueInput;
   update: OrderUpdateWithoutPrescriptionDataInput;
@@ -2566,6 +2749,20 @@ export interface OrderScalarWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
+  orderId?: Maybe<String>;
+  orderId_not?: Maybe<String>;
+  orderId_in?: Maybe<String[] | String>;
+  orderId_not_in?: Maybe<String[] | String>;
+  orderId_lt?: Maybe<String>;
+  orderId_lte?: Maybe<String>;
+  orderId_gt?: Maybe<String>;
+  orderId_gte?: Maybe<String>;
+  orderId_contains?: Maybe<String>;
+  orderId_not_contains?: Maybe<String>;
+  orderId_starts_with?: Maybe<String>;
+  orderId_not_starts_with?: Maybe<String>;
+  orderId_ends_with?: Maybe<String>;
+  orderId_not_ends_with?: Maybe<String>;
   status?: Maybe<OrderStatus>;
   status_not?: Maybe<OrderStatus>;
   status_in?: Maybe<OrderStatus[] | OrderStatus>;
@@ -2586,14 +2783,118 @@ export interface OrderScalarWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  shipDate?: Maybe<DateTimeInput>;
-  shipDate_not?: Maybe<DateTimeInput>;
-  shipDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  shipDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  shipDate_lt?: Maybe<DateTimeInput>;
-  shipDate_lte?: Maybe<DateTimeInput>;
-  shipDate_gt?: Maybe<DateTimeInput>;
-  shipDate_gte?: Maybe<DateTimeInput>;
+  addressOne?: Maybe<String>;
+  addressOne_not?: Maybe<String>;
+  addressOne_in?: Maybe<String[] | String>;
+  addressOne_not_in?: Maybe<String[] | String>;
+  addressOne_lt?: Maybe<String>;
+  addressOne_lte?: Maybe<String>;
+  addressOne_gt?: Maybe<String>;
+  addressOne_gte?: Maybe<String>;
+  addressOne_contains?: Maybe<String>;
+  addressOne_not_contains?: Maybe<String>;
+  addressOne_starts_with?: Maybe<String>;
+  addressOne_not_starts_with?: Maybe<String>;
+  addressOne_ends_with?: Maybe<String>;
+  addressOne_not_ends_with?: Maybe<String>;
+  addressTwo?: Maybe<String>;
+  addressTwo_not?: Maybe<String>;
+  addressTwo_in?: Maybe<String[] | String>;
+  addressTwo_not_in?: Maybe<String[] | String>;
+  addressTwo_lt?: Maybe<String>;
+  addressTwo_lte?: Maybe<String>;
+  addressTwo_gt?: Maybe<String>;
+  addressTwo_gte?: Maybe<String>;
+  addressTwo_contains?: Maybe<String>;
+  addressTwo_not_contains?: Maybe<String>;
+  addressTwo_starts_with?: Maybe<String>;
+  addressTwo_not_starts_with?: Maybe<String>;
+  addressTwo_ends_with?: Maybe<String>;
+  addressTwo_not_ends_with?: Maybe<String>;
+  city?: Maybe<String>;
+  city_not?: Maybe<String>;
+  city_in?: Maybe<String[] | String>;
+  city_not_in?: Maybe<String[] | String>;
+  city_lt?: Maybe<String>;
+  city_lte?: Maybe<String>;
+  city_gt?: Maybe<String>;
+  city_gte?: Maybe<String>;
+  city_contains?: Maybe<String>;
+  city_not_contains?: Maybe<String>;
+  city_starts_with?: Maybe<String>;
+  city_not_starts_with?: Maybe<String>;
+  city_ends_with?: Maybe<String>;
+  city_not_ends_with?: Maybe<String>;
+  state?: Maybe<String>;
+  state_not?: Maybe<String>;
+  state_in?: Maybe<String[] | String>;
+  state_not_in?: Maybe<String[] | String>;
+  state_lt?: Maybe<String>;
+  state_lte?: Maybe<String>;
+  state_gt?: Maybe<String>;
+  state_gte?: Maybe<String>;
+  state_contains?: Maybe<String>;
+  state_not_contains?: Maybe<String>;
+  state_starts_with?: Maybe<String>;
+  state_not_starts_with?: Maybe<String>;
+  state_ends_with?: Maybe<String>;
+  state_not_ends_with?: Maybe<String>;
+  zipcode?: Maybe<String>;
+  zipcode_not?: Maybe<String>;
+  zipcode_in?: Maybe<String[] | String>;
+  zipcode_not_in?: Maybe<String[] | String>;
+  zipcode_lt?: Maybe<String>;
+  zipcode_lte?: Maybe<String>;
+  zipcode_gt?: Maybe<String>;
+  zipcode_gte?: Maybe<String>;
+  zipcode_contains?: Maybe<String>;
+  zipcode_not_contains?: Maybe<String>;
+  zipcode_starts_with?: Maybe<String>;
+  zipcode_not_starts_with?: Maybe<String>;
+  zipcode_ends_with?: Maybe<String>;
+  zipcode_not_ends_with?: Maybe<String>;
+  shippoAddressId?: Maybe<String>;
+  shippoAddressId_not?: Maybe<String>;
+  shippoAddressId_in?: Maybe<String[] | String>;
+  shippoAddressId_not_in?: Maybe<String[] | String>;
+  shippoAddressId_lt?: Maybe<String>;
+  shippoAddressId_lte?: Maybe<String>;
+  shippoAddressId_gt?: Maybe<String>;
+  shippoAddressId_gte?: Maybe<String>;
+  shippoAddressId_contains?: Maybe<String>;
+  shippoAddressId_not_contains?: Maybe<String>;
+  shippoAddressId_starts_with?: Maybe<String>;
+  shippoAddressId_not_starts_with?: Maybe<String>;
+  shippoAddressId_ends_with?: Maybe<String>;
+  shippoAddressId_not_ends_with?: Maybe<String>;
+  shippoShipmentId?: Maybe<String>;
+  shippoShipmentId_not?: Maybe<String>;
+  shippoShipmentId_in?: Maybe<String[] | String>;
+  shippoShipmentId_not_in?: Maybe<String[] | String>;
+  shippoShipmentId_lt?: Maybe<String>;
+  shippoShipmentId_lte?: Maybe<String>;
+  shippoShipmentId_gt?: Maybe<String>;
+  shippoShipmentId_gte?: Maybe<String>;
+  shippoShipmentId_contains?: Maybe<String>;
+  shippoShipmentId_not_contains?: Maybe<String>;
+  shippoShipmentId_starts_with?: Maybe<String>;
+  shippoShipmentId_not_starts_with?: Maybe<String>;
+  shippoShipmentId_ends_with?: Maybe<String>;
+  shippoShipmentId_not_ends_with?: Maybe<String>;
+  shippoBatchId?: Maybe<String>;
+  shippoBatchId_not?: Maybe<String>;
+  shippoBatchId_in?: Maybe<String[] | String>;
+  shippoBatchId_not_in?: Maybe<String[] | String>;
+  shippoBatchId_lt?: Maybe<String>;
+  shippoBatchId_lte?: Maybe<String>;
+  shippoBatchId_gt?: Maybe<String>;
+  shippoBatchId_gte?: Maybe<String>;
+  shippoBatchId_contains?: Maybe<String>;
+  shippoBatchId_not_contains?: Maybe<String>;
+  shippoBatchId_starts_with?: Maybe<String>;
+  shippoBatchId_not_starts_with?: Maybe<String>;
+  shippoBatchId_ends_with?: Maybe<String>;
+  shippoBatchId_not_ends_with?: Maybe<String>;
   trackingNumber?: Maybe<String>;
   trackingNumber_not?: Maybe<String>;
   trackingNumber_in?: Maybe<String[] | String>;
@@ -2608,6 +2909,14 @@ export interface OrderScalarWhereInput {
   trackingNumber_not_starts_with?: Maybe<String>;
   trackingNumber_ends_with?: Maybe<String>;
   trackingNumber_not_ends_with?: Maybe<String>;
+  shipDate?: Maybe<DateTimeInput>;
+  shipDate_not?: Maybe<DateTimeInput>;
+  shipDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  shipDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  shipDate_lt?: Maybe<DateTimeInput>;
+  shipDate_lte?: Maybe<DateTimeInput>;
+  shipDate_gt?: Maybe<DateTimeInput>;
+  shipDate_gte?: Maybe<DateTimeInput>;
   new?: Maybe<Boolean>;
   new_not?: Maybe<Boolean>;
   refills?: Maybe<Int>;
@@ -2626,6 +2935,20 @@ export interface OrderScalarWhereInput {
   amount_lte?: Maybe<Int>;
   amount_gt?: Maybe<Int>;
   amount_gte?: Maybe<Int>;
+  ccRefNum?: Maybe<String>;
+  ccRefNum_not?: Maybe<String>;
+  ccRefNum_in?: Maybe<String[] | String>;
+  ccRefNum_not_in?: Maybe<String[] | String>;
+  ccRefNum_lt?: Maybe<String>;
+  ccRefNum_lte?: Maybe<String>;
+  ccRefNum_gt?: Maybe<String>;
+  ccRefNum_gte?: Maybe<String>;
+  ccRefNum_contains?: Maybe<String>;
+  ccRefNum_not_contains?: Maybe<String>;
+  ccRefNum_starts_with?: Maybe<String>;
+  ccRefNum_not_starts_with?: Maybe<String>;
+  ccRefNum_ends_with?: Maybe<String>;
+  ccRefNum_not_ends_with?: Maybe<String>;
   refnum?: Maybe<String>;
   refnum_not?: Maybe<String>;
   refnum_in?: Maybe<String[] | String>;
@@ -2651,12 +2974,22 @@ export interface OrderUpdateManyWithWhereNestedInput {
 }
 
 export interface OrderUpdateManyDataInput {
+  orderId?: Maybe<String>;
   status?: Maybe<OrderStatus>;
-  shipDate?: Maybe<DateTimeInput>;
+  addressOne?: Maybe<String>;
+  addressTwo?: Maybe<String>;
+  city?: Maybe<String>;
+  state?: Maybe<String>;
+  zipcode?: Maybe<String>;
+  shippoAddressId?: Maybe<String>;
+  shippoShipmentId?: Maybe<String>;
+  shippoBatchId?: Maybe<String>;
   trackingNumber?: Maybe<String>;
+  shipDate?: Maybe<DateTimeInput>;
   new?: Maybe<Boolean>;
   refills?: Maybe<Int>;
   amount?: Maybe<Int>;
+  ccRefNum?: Maybe<String>;
   refnum?: Maybe<String>;
 }
 
@@ -2838,6 +3171,7 @@ export interface AddressUpdateManyMutationInput {
   state?: Maybe<String>;
   zipcode?: Maybe<String>;
   telephone?: Maybe<String>;
+  email?: Maybe<String>;
   shippoId?: Maybe<String>;
 }
 
@@ -3010,16 +3344,25 @@ export interface MessageUpdateManyMutationInput {
 
 export interface OrderCreateInput {
   id?: Maybe<ID_Input>;
+  orderId?: Maybe<String>;
   status?: Maybe<OrderStatus>;
   user: UserCreateOneInput;
-  address: AddressCreateOneInput;
-  prescription: PrescriptionCreateOneWithoutOrdersInput;
-  shipDate?: Maybe<DateTimeInput>;
+  addressOne?: Maybe<String>;
+  addressTwo?: Maybe<String>;
+  city?: Maybe<String>;
+  state?: Maybe<String>;
+  zipcode?: Maybe<String>;
+  shippoAddressId?: Maybe<String>;
+  shippoShipmentId?: Maybe<String>;
+  shippoBatchId?: Maybe<String>;
   trackingNumber?: Maybe<String>;
+  shipDate?: Maybe<DateTimeInput>;
+  prescription: PrescriptionCreateOneWithoutOrdersInput;
   creditCard?: Maybe<CreditCardCreateOneInput>;
   new?: Maybe<Boolean>;
   refills: Int;
   amount: Int;
+  ccRefNum?: Maybe<String>;
   refnum: String;
 }
 
@@ -3051,16 +3394,25 @@ export interface PrescriptionCreateWithoutOrdersInput {
 }
 
 export interface OrderUpdateInput {
+  orderId?: Maybe<String>;
   status?: Maybe<OrderStatus>;
   user?: Maybe<UserUpdateOneRequiredInput>;
-  address?: Maybe<AddressUpdateOneRequiredInput>;
-  prescription?: Maybe<PrescriptionUpdateOneRequiredWithoutOrdersInput>;
-  shipDate?: Maybe<DateTimeInput>;
+  addressOne?: Maybe<String>;
+  addressTwo?: Maybe<String>;
+  city?: Maybe<String>;
+  state?: Maybe<String>;
+  zipcode?: Maybe<String>;
+  shippoAddressId?: Maybe<String>;
+  shippoShipmentId?: Maybe<String>;
+  shippoBatchId?: Maybe<String>;
   trackingNumber?: Maybe<String>;
+  shipDate?: Maybe<DateTimeInput>;
+  prescription?: Maybe<PrescriptionUpdateOneRequiredWithoutOrdersInput>;
   creditCard?: Maybe<CreditCardUpdateOneInput>;
   new?: Maybe<Boolean>;
   refills?: Maybe<Int>;
   amount?: Maybe<Int>;
+  ccRefNum?: Maybe<String>;
   refnum?: Maybe<String>;
 }
 
@@ -3098,12 +3450,22 @@ export interface PrescriptionUpsertWithoutOrdersInput {
 }
 
 export interface OrderUpdateManyMutationInput {
+  orderId?: Maybe<String>;
   status?: Maybe<OrderStatus>;
-  shipDate?: Maybe<DateTimeInput>;
+  addressOne?: Maybe<String>;
+  addressTwo?: Maybe<String>;
+  city?: Maybe<String>;
+  state?: Maybe<String>;
+  zipcode?: Maybe<String>;
+  shippoAddressId?: Maybe<String>;
+  shippoShipmentId?: Maybe<String>;
+  shippoBatchId?: Maybe<String>;
   trackingNumber?: Maybe<String>;
+  shipDate?: Maybe<DateTimeInput>;
   new?: Maybe<Boolean>;
   refills?: Maybe<Int>;
   amount?: Maybe<Int>;
+  ccRefNum?: Maybe<String>;
   refnum?: Maybe<String>;
 }
 
@@ -3337,7 +3699,8 @@ export interface Address {
   state: String;
   zipcode: String;
   telephone: String;
-  shippoId: String;
+  email?: String;
+  shippoId?: String;
 }
 
 export interface AddressPromise extends Promise<Address>, Fragmentable {
@@ -3352,6 +3715,7 @@ export interface AddressPromise extends Promise<Address>, Fragmentable {
   state: () => Promise<String>;
   zipcode: () => Promise<String>;
   telephone: () => Promise<String>;
+  email: () => Promise<String>;
   shippoId: () => Promise<String>;
 }
 
@@ -3369,6 +3733,7 @@ export interface AddressSubscription
   state: () => Promise<AsyncIterator<String>>;
   zipcode: () => Promise<AsyncIterator<String>>;
   telephone: () => Promise<AsyncIterator<String>>;
+  email: () => Promise<AsyncIterator<String>>;
   shippoId: () => Promise<AsyncIterator<String>>;
 }
 
@@ -3386,6 +3751,7 @@ export interface AddressNullablePromise
   state: () => Promise<String>;
   zipcode: () => Promise<String>;
   telephone: () => Promise<String>;
+  email: () => Promise<String>;
   shippoId: () => Promise<String>;
 }
 
@@ -3861,31 +4227,50 @@ export interface ProductNullablePromise
 
 export interface Order {
   id: ID_Output;
+  orderId?: String;
   status: OrderStatus;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
-  shipDate?: DateTimeOutput;
+  addressOne?: String;
+  addressTwo?: String;
+  city?: String;
+  state?: String;
+  zipcode?: String;
+  shippoAddressId?: String;
+  shippoShipmentId?: String;
+  shippoBatchId?: String;
   trackingNumber?: String;
+  shipDate?: DateTimeOutput;
   new: Boolean;
   refills: Int;
   amount: Int;
+  ccRefNum?: String;
   refnum: String;
 }
 
 export interface OrderPromise extends Promise<Order>, Fragmentable {
   id: () => Promise<ID_Output>;
+  orderId: () => Promise<String>;
   status: () => Promise<OrderStatus>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   user: <T = UserPromise>() => T;
-  address: <T = AddressPromise>() => T;
-  prescription: <T = PrescriptionPromise>() => T;
-  shipDate: () => Promise<DateTimeOutput>;
+  addressOne: () => Promise<String>;
+  addressTwo: () => Promise<String>;
+  city: () => Promise<String>;
+  state: () => Promise<String>;
+  zipcode: () => Promise<String>;
+  shippoAddressId: () => Promise<String>;
+  shippoShipmentId: () => Promise<String>;
+  shippoBatchId: () => Promise<String>;
   trackingNumber: () => Promise<String>;
+  shipDate: () => Promise<DateTimeOutput>;
+  prescription: <T = PrescriptionPromise>() => T;
   creditCard: <T = CreditCardPromise>() => T;
   new: () => Promise<Boolean>;
   refills: () => Promise<Int>;
   amount: () => Promise<Int>;
+  ccRefNum: () => Promise<String>;
   refnum: () => Promise<String>;
 }
 
@@ -3893,18 +4278,27 @@ export interface OrderSubscription
   extends Promise<AsyncIterator<Order>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  orderId: () => Promise<AsyncIterator<String>>;
   status: () => Promise<AsyncIterator<OrderStatus>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   user: <T = UserSubscription>() => T;
-  address: <T = AddressSubscription>() => T;
-  prescription: <T = PrescriptionSubscription>() => T;
-  shipDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  addressOne: () => Promise<AsyncIterator<String>>;
+  addressTwo: () => Promise<AsyncIterator<String>>;
+  city: () => Promise<AsyncIterator<String>>;
+  state: () => Promise<AsyncIterator<String>>;
+  zipcode: () => Promise<AsyncIterator<String>>;
+  shippoAddressId: () => Promise<AsyncIterator<String>>;
+  shippoShipmentId: () => Promise<AsyncIterator<String>>;
+  shippoBatchId: () => Promise<AsyncIterator<String>>;
   trackingNumber: () => Promise<AsyncIterator<String>>;
+  shipDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  prescription: <T = PrescriptionSubscription>() => T;
   creditCard: <T = CreditCardSubscription>() => T;
   new: () => Promise<AsyncIterator<Boolean>>;
   refills: () => Promise<AsyncIterator<Int>>;
   amount: () => Promise<AsyncIterator<Int>>;
+  ccRefNum: () => Promise<AsyncIterator<String>>;
   refnum: () => Promise<AsyncIterator<String>>;
 }
 
@@ -3912,18 +4306,27 @@ export interface OrderNullablePromise
   extends Promise<Order | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  orderId: () => Promise<String>;
   status: () => Promise<OrderStatus>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   user: <T = UserPromise>() => T;
-  address: <T = AddressPromise>() => T;
-  prescription: <T = PrescriptionPromise>() => T;
-  shipDate: () => Promise<DateTimeOutput>;
+  addressOne: () => Promise<String>;
+  addressTwo: () => Promise<String>;
+  city: () => Promise<String>;
+  state: () => Promise<String>;
+  zipcode: () => Promise<String>;
+  shippoAddressId: () => Promise<String>;
+  shippoShipmentId: () => Promise<String>;
+  shippoBatchId: () => Promise<String>;
   trackingNumber: () => Promise<String>;
+  shipDate: () => Promise<DateTimeOutput>;
+  prescription: <T = PrescriptionPromise>() => T;
   creditCard: <T = CreditCardPromise>() => T;
   new: () => Promise<Boolean>;
   refills: () => Promise<Int>;
   amount: () => Promise<Int>;
+  ccRefNum: () => Promise<String>;
   refnum: () => Promise<String>;
 }
 
@@ -4487,7 +4890,8 @@ export interface AddressPreviousValues {
   state: String;
   zipcode: String;
   telephone: String;
-  shippoId: String;
+  email?: String;
+  shippoId?: String;
 }
 
 export interface AddressPreviousValuesPromise
@@ -4503,6 +4907,7 @@ export interface AddressPreviousValuesPromise
   state: () => Promise<String>;
   zipcode: () => Promise<String>;
   telephone: () => Promise<String>;
+  email: () => Promise<String>;
   shippoId: () => Promise<String>;
 }
 
@@ -4519,6 +4924,7 @@ export interface AddressPreviousValuesSubscription
   state: () => Promise<AsyncIterator<String>>;
   zipcode: () => Promise<AsyncIterator<String>>;
   telephone: () => Promise<AsyncIterator<String>>;
+  email: () => Promise<AsyncIterator<String>>;
   shippoId: () => Promise<AsyncIterator<String>>;
 }
 
@@ -4667,14 +5073,24 @@ export interface OrderSubscriptionPayloadSubscription
 
 export interface OrderPreviousValues {
   id: ID_Output;
+  orderId?: String;
   status: OrderStatus;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
-  shipDate?: DateTimeOutput;
+  addressOne?: String;
+  addressTwo?: String;
+  city?: String;
+  state?: String;
+  zipcode?: String;
+  shippoAddressId?: String;
+  shippoShipmentId?: String;
+  shippoBatchId?: String;
   trackingNumber?: String;
+  shipDate?: DateTimeOutput;
   new: Boolean;
   refills: Int;
   amount: Int;
+  ccRefNum?: String;
   refnum: String;
 }
 
@@ -4682,14 +5098,24 @@ export interface OrderPreviousValuesPromise
   extends Promise<OrderPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  orderId: () => Promise<String>;
   status: () => Promise<OrderStatus>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
-  shipDate: () => Promise<DateTimeOutput>;
+  addressOne: () => Promise<String>;
+  addressTwo: () => Promise<String>;
+  city: () => Promise<String>;
+  state: () => Promise<String>;
+  zipcode: () => Promise<String>;
+  shippoAddressId: () => Promise<String>;
+  shippoShipmentId: () => Promise<String>;
+  shippoBatchId: () => Promise<String>;
   trackingNumber: () => Promise<String>;
+  shipDate: () => Promise<DateTimeOutput>;
   new: () => Promise<Boolean>;
   refills: () => Promise<Int>;
   amount: () => Promise<Int>;
+  ccRefNum: () => Promise<String>;
   refnum: () => Promise<String>;
 }
 
@@ -4697,14 +5123,24 @@ export interface OrderPreviousValuesSubscription
   extends Promise<AsyncIterator<OrderPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  orderId: () => Promise<AsyncIterator<String>>;
   status: () => Promise<AsyncIterator<OrderStatus>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  shipDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  addressOne: () => Promise<AsyncIterator<String>>;
+  addressTwo: () => Promise<AsyncIterator<String>>;
+  city: () => Promise<AsyncIterator<String>>;
+  state: () => Promise<AsyncIterator<String>>;
+  zipcode: () => Promise<AsyncIterator<String>>;
+  shippoAddressId: () => Promise<AsyncIterator<String>>;
+  shippoShipmentId: () => Promise<AsyncIterator<String>>;
+  shippoBatchId: () => Promise<AsyncIterator<String>>;
   trackingNumber: () => Promise<AsyncIterator<String>>;
+  shipDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   new: () => Promise<AsyncIterator<Boolean>>;
   refills: () => Promise<AsyncIterator<Int>>;
   amount: () => Promise<AsyncIterator<Int>>;
+  ccRefNum: () => Promise<AsyncIterator<String>>;
   refnum: () => Promise<AsyncIterator<String>>;
 }
 

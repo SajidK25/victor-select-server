@@ -97,7 +97,8 @@ type Mutation {
   processOrders(idList: [String]!): SuccessMessage!
   shipOrders(idList: [String]!): SuccessMessage!
   makePayment(amount: Int!, token: String!): PaymentMessage!
-  validateAddress: SuccessMessage!
+  validateUserAddress: SuccessMessage!
+  validateAddresses: SuccessMessage!
 }
 
 type Query {
@@ -106,6 +107,7 @@ type Query {
   user(id: String!): User
   users: [User]!
   creditCards: [CreditCard]!
+  getUserCreditCard: CreditCard
   userExists(email: String!): Boolean!
   hello: SuccessMessage
   prescription(id: String!): Prescription
@@ -116,6 +118,7 @@ type Query {
     after: String
     status: String
   ): PrescriptionConnection!
+  messages: [Message]!
   order(id: String!): Order
   orders(status: String): [Order]!
   validZipCode(zipcode: String!): Boolean!
