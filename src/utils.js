@@ -17,7 +17,7 @@ function getDate() {
 }
 
 function hasPermission(user, permissionsNeeded) {
-  const matchedPermissions = user.permissions.filter(permissionTheyHave =>
+  const matchedPermissions = user.permissions.filter((permissionTheyHave) =>
     permissionsNeeded.includes(permissionTheyHave)
   );
   if (!matchedPermissions.length) {
@@ -32,8 +32,17 @@ function hasPermission(user, permissionsNeeded) {
   }
 }
 
-exports.hasPermission = hasPermission;
-module.exports.getRandomString = getRandomString;
-module.exports.getRandomInt = getRandomInt;
-module.exports.getRandomAmount = getRandomAmount;
-module.exports.getDate = getDate;
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
+}
+
+module.exports = {
+  hasPermission,
+  getRandomString,
+  getRandomInt,
+  getRandomAmount,
+  getDate,
+  asyncForEach,
+};

@@ -10,6 +10,7 @@ const {
 const { sendRefreshToken } = require("../sendRefreshToken");
 const moment = require("moment");
 const { makePayment } = require("../services/usaepay");
+const { asyncForEach } = require("../utils");
 const {
   getCurrentCreditCard,
   updateAddress,
@@ -22,7 +23,12 @@ const {
   createAccessToken,
   validateUser
 } = require("../auth");
-const { validateAddress, createShipment } = require("../services/shippo");
+const {
+  validateAddress,
+  createShipment,
+  createBatch,
+  createParcel
+} = require("../services/shippo");
 
 const Mutation = {
   logout: async (_, __, { res }) => {
@@ -248,7 +254,11 @@ const Mutation = {
 
     const user = await prisma.user({ id: userId });
 
-    const address = await updateAddress(user, input, prisma);
+    const address = await updateAddress({
+      user: user,
+      addressInput: input,
+      prisma: prisma
+    });
 
     return address;
   },
@@ -432,10 +442,14 @@ const Mutation = {
       state: input.personal.state,
       zipcode: input.personal.zipCode,
       telephone: input.personal.telephone,
-      email: input.personal.email
+      email: user.email
     };
 
-    const address = await updateAddress(user, addressInput, prisma);
+    const address = await updateAddress({
+      user: user,
+      addressInput: addressInput,
+      prisma: prisma
+    });
     console.log("Address", address);
 
     // Save new visit
@@ -452,7 +466,7 @@ const Mutation = {
     const pricing = await setPricing(s, prisma);
 
     pInput.type = input.type;
-    pInput.timesPerMonth = parseInt(s.dosesPerMonth);
+    pInput.timesPerMonth = !s.dosesPerMonth ? 1 : parseInt(s.dosesPerMonth);
     const productId = s.drugId + s.doseOption;
     const addonId = s.addOnId;
     pInput.addonTimesPerMonth = s.addOnId ? 30 : 0;
@@ -507,21 +521,100 @@ const Mutation = {
   },
 
   processOrders: async (_, { idList }, { req, prisma }) => {
-    const payload = await validateUser(req, true);
+    await validateUser(req, true);
 
     console.log("idList: ", idList);
 
-    idList.forEach(async i => {
-      console.log("id", i);
+    await asyncForEach(idList, async id => {
+      console.log("id", id);
       await prisma.updateOrder({
         data: {
           status: "PROCESSING"
         },
-        where: { id: i }
+        where: { id: id }
       });
     });
 
     return { message: "OK" };
+  },
+
+  resetShippoIds: async (_, __, { req, prisma }) => {
+    //   await validateUser(req, true);
+    const users = await prisma.users();
+
+    if (users) {
+      await asyncForEach(users, async user => {
+        await updateAddress({ user: user, prisma: prisma });
+      });
+    }
+
+    const orders = await prisma.orders();
+    var user;
+    var address;
+
+    if (orders) {
+      await asyncForEach(
+        orders,
+        async order => {
+          //     if (!order.addressOne) {
+          user = await prisma.order({ id: order.id }).user();
+          address = await getCurrentAddress(user.id, prisma);
+          await prisma.updateOrder({
+            data: {
+              addressOne: address.addressOne,
+              addressTwo: address.addressTwo,
+              city: address.city,
+              state: address.state,
+              zipcode: address.zipcode,
+              shippoAddressId: address.shippoId
+            },
+            where: { id: order.id }
+          });
+        }
+        //  }
+      );
+    }
+
+    return { message: "OK" };
+  },
+
+  prepareShipment: async (_, { idList }, { req, prisma }) => {
+    //   await validateUser(req, true);
+    console.log("Starting process...");
+
+    const fragment = `
+    fragment OrderWithPrescription on Order {
+      id
+      shippoAddressId
+      prescription {
+        product {
+          productId
+        }
+        addon {
+          productId
+        }
+        shippingInterval
+      }
+     }`;
+
+    let batchOrders = [];
+    let order = null;
+    let parcelId = null;
+
+    await asyncForEach(idList, async id => {
+      order = await prisma.order({ id: id }).$fragment(fragment);
+      parcelId = await createParcel(order.prescription);
+      batchOrders.push({
+        addressId: order.shippoAddressId,
+        parcelId: parcelId
+      });
+    });
+
+    const batch = await createBatch(batchOrders);
+
+    console.log("Return Batch", batch);
+
+    return { resultCode: "OK", batchAmount: 0 };
   },
 
   shipOrders: async (_, { idList }, { req, prisma }) => {
@@ -535,10 +628,10 @@ const Mutation = {
     var shipments = [];
     let order = null;
     // Create Shipments
-    idList.forEach(async i => {
-      console.log("id", i);
+    await asyncForEach(idList, async id => {
+      console.log("id", id);
 
-      order = await prisma.order({ id: i });
+      order = await prisma.order({ id: id });
       console.log("AddressId", order.shippoAddressId);
       shipmentId = await createShipment(order.shippoAddressId);
       shipments.push({ orderId: i, shipmentId: shipmentId });
@@ -569,27 +662,31 @@ const Mutation = {
     let user = null;
     let input = null;
     let updateRet = null;
-    addresses.forEach(async address => {
+    await asyncForEach(addresses, async address => {
       console.log(address);
       if (!address.shippoId || !address.email) {
         user = await prisma.address({ id: address.id }).user();
         input = {
+          addressTwo: address.addressTwo,
+          addressOne: address.addressOne,
           city: address.city,
+          state: address.state,
           zipcode: address.zipcode,
           email: user.email,
-          state: address.state,
-          addressOne: address.addressOne,
-          telephone: address.telephone,
-          addressTwo: ""
+          telephone: address.telephone
         };
-        updateRet = await updateAddress(user, input, prisma);
+        updateRet = await updateAddress({
+          user: user,
+          addressInput: input,
+          prisma: prisma
+        });
         console.log(updateRet);
       }
     });
 
     return { message: "OK" };
   },
-
+  // updateOrders: (_, __, { req, prisma }) => {},
   validateUserAddress: async (_, __, { req, prisma }) => {
     const input = {
       name: "Brian Baker",
@@ -598,7 +695,7 @@ const Mutation = {
       city: "Newport Coast",
       state: "CA",
       zipcode: "92657",
-      phoneNumber: "9494138239",
+      telephone: "9494138239",
       email: "brianbbaker.net"
     };
 

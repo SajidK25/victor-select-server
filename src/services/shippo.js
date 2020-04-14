@@ -1,17 +1,69 @@
-const shippo = require("shippo")(process.env.SHIPPOTEST_TOKEN);
+const shippo = require("shippo")(process.env.SHIPPOLIVETEST_TOKEN);
 const { validateArgument } = require("./utils");
 
+const SHIPPO_DEFAULTCARRIER = process.env.SHIPPOTEST_USPS;
+const SHIPPO_ADDRESSFROM = process.env.SHIPPOLIVETEST_ADDRESSFROM;
+const SHIPPO_DEFAULTSERVICELEVEL = "usps_first";
+
+const ED_BASEWEIGHT = 2.5;
+const ED_EXTRAMONTH = 0.5;
+const EDWITHADDON_BASEWEIGHT = 5;
+const EDWITHADDON_EXTRAMONTH = 1;
+
+const createParcel = async prescription => {
+  const parcel = {
+    length: 12.5,
+    width: 9.5,
+    height: 1,
+    distance_unit: "in",
+    weight: 0,
+    mass_unit: "oz"
+  };
+
+  console.log("Prescription:", prescription);
+
+  console.log("Addon", prescription.addon);
+  switch (prescription.type) {
+    case "ED":
+      parcel.weight = !prescription.addon
+        ? ED_BASEWEIGHT
+        : EDWITHADDON_BASEWEIGHT;
+      parcel.weight +=
+        (!prescription.addon ? ED_EXTRAMONTH : EDWITHADDON_EXTRAMONTH) *
+        (prescription.shippingInterval - 1);
+      break;
+
+    default:
+      parcel.weight = 5;
+  }
+
+  let shippoParcel = null;
+  try {
+    shippoParcel = await shippo.parcel.create({
+      ...parcel
+    });
+  } catch (err) {
+    console.log("Parcel Err:", err);
+    throw new Error("Unable to create parcel");
+  }
+
+  return shippoParcel.object_id;
+};
+
 const validateAddress = async input => {
+  console.log("ShippoInput:", input);
+
   validateArgument(input, "input");
   validateArgument(input.addressOne, "input.addressOne");
   validateArgument(input.addressTwo, "input.addressTwo");
   validateArgument(input.city, "input.city");
   validateArgument(input.state, "input.state");
+  validateArgument(input.zipcode, "input.zipcode");
   validateArgument(input.name, "input.name");
+  validateArgument(input.email, "input.email");
+  validateArgument(input.telephone, "input.telephone");
 
-  console.log(process.eventNames);
-
-  let address = {};
+  let address = null;
   try {
     address = await shippo.address.create({
       name: input.name,
@@ -21,11 +73,10 @@ const validateAddress = async input => {
       state: input.state,
       zip: input.zipcode,
       country: "US",
-      phone: input.phoneNumber,
+      phone: input.telephone,
       email: input.email,
       validate: true
     });
-    console.log("CreateReturn:", address);
   } catch (err) {
     console.log("createAddressError", err);
     throw new Error(err);
@@ -43,36 +94,134 @@ const validateAddress = async input => {
       };
 };
 
-const createShipment = async shippoAddressId => {
-  console.log("AddressID", shippoAddressId);
-  let shipment = "";
-  try {
-    const shipment = await shippo.shipment.create({
-      address_to: shippoAddressId,
-      address_from: {
-        name: "Daily Dose Pharmacy",
-        street1: "4534 Westgate Blvd.",
-        street2: "",
-        city: "Austin",
-        state: "TX",
-        zip: "78745",
-        country: "US",
-        phone: "9494138239",
-        email: "brian@bbaker.net"
-      },
-      parcels: [
-        {
-          weight: "1",
-          mass_unit: "lb",
-          template: "USPS_FlatRateEnvelope"
-        }
-      ]
+// function checkBatchStatus(object_id) {
+//   let result
+
+//   shippo.batch.retrieve(object_id).then(
+//     function(response) {
+//       if (response.status === "VALID") {
+//         //Example of adding a shipment to a batch object
+//         shippo.batch.add(response.object_id, shipments).then(
+//           function(addResponse) {
+//             console.log(
+//               "Response from adding shipments to batch: %s",
+//               JSON.stringify(addResponse, null, 4)
+//             );
+//             //Example of removing a shipment from a batch object
+//             shippo.batch
+//               .remove(addResponse.object_id, [
+//                 addResponse.batch_shipments.results[0].object_id
+//               ])
+//               .then(
+//                 function(removeResponse) {
+//                   console.log(
+//                     "Response from removing shipments from the batch: %s",
+//                     JSON.stringify(removeResponse, null, 4)
+//                   );
+//                   //Example of purchasing a batch shipment
+//                   shippo.batch.purchase(response.object_id).then(
+//                     function(purchaseResponse) {
+//                       console.log(
+//                         "Batch shipment purchase response: %s",
+//                         JSON.stringify(purchaseResponse, null, 4)
+//                       );
+//                     },
+//                     function(purchaseErr) {
+//                       console.log(
+//                         "There was an error purchasing the batch shipment: %s",
+//                         purchaseErr
+//                       );
+//                     }
+//                   );
+//                 },
+//                 function(removeErr) {
+//                   console.log(
+//                     "There was an error removing shipments from the batch: %s",
+//                     removeErr
+//                   );
+//                 }
+//               );
+//           },
+//           function(addErr) {
+//             console.log(
+//               "There was an error adding shipments to the batch: %s",
+//               addErr
+//             );
+//           }
+//         );
+//       } else if (timeout < BATCH_WAIT_TIMEOUT) {
+//         timeout = timeout + POLLING_INTERVAL;
+//         setTimeout(checkBatchStatus, POLLING_INTERVAL, response.object_id);
+//       } else {
+//         console.log("Batch purchase timed out on batch %s", response.object_id);
+//       }
+//     },
+//     function(err) {
+//       console.log(
+//         "There was an error retrieving the batch information: %s",
+//         retrieveErr
+//       );
+//     }
+//   );
+
+// const createBatch = async shipments => {
+
+// }
+
+// const createParcel = async (package_size, weight) => {
+//   let parcel = null;
+//   try {
+//     parcel = await shippo.parcel.create({
+//       ...package_size,
+//       distance_unit: "in",
+//       weight: weight,
+//       mass_unit: "oz",
+//     });
+//   } catch (err) {
+//     throw new Error("Unable to create parcel");
+//   }
+
+//   if (!parcel) {
+//     throw new Error("Unable to create parcel");
+//   }
+
+//   return parcel.object_id;
+// };
+
+const createBatch = async orders => {
+  let batchShipments = [];
+
+  const input = {
+    default_carrier_account: "74b06950e9054ca295802751a807cf2e",
+    default_servicelevel_token: SHIPPO_DEFAULTSERVICELEVEL,
+    label_filetype: "PDF_4x6",
+    metadata: "",
+    batch_shipments: []
+  };
+
+  orders.forEach(o => {
+    input.batch_shipments.push({
+      shipment: {
+        address_to: o.addressId,
+        address_from: SHIPPO_ADDRESSFROM,
+        parcels: [o.parcelId],
+        carrier_account: SHIPPO_DEFAULTCARRIER,
+        servicelevel_token: SHIPPO_DEFAULTSERVICELEVEL
+      }
     });
-    return shipment.object_id;
-    console.log("Shipment:", shipment);
+  });
+
+  console.log("Input:", JSON.stringify(input, 0, 2));
+  let batch = null;
+  //return batch;
+
+  try {
+    batch = await shippo.batch.create(input);
   } catch (err) {
-    console.log("Shipment Err:", err);
+    console.log("Batch Error:", err);
   }
+
+  console.log("createBatch", batch);
 };
 
 var shipments = [];
@@ -193,4 +342,4 @@ function checkBatchStatus(object_id) {
   );
 }
 */
-module.exports = { validateAddress, createShipment };
+module.exports = { validateAddress, createParcel, createBatch };
