@@ -5,7 +5,7 @@ const {
   sendResetMail,
   sendWelcomeMail,
   sendDeniedMail,
-  sendShippedMail
+  sendShippedMail,
 } = require("../services/mail");
 const { sendRefreshToken } = require("../sendRefreshToken");
 const moment = require("moment");
@@ -16,18 +16,18 @@ const {
   updateAddress,
   updateCreditCard,
   getCurrentAddress,
-  setPricing
+  setPricing,
 } = require("./Helpers");
 const {
   createRefreshToken,
   createAccessToken,
-  validateUser
+  validateUser,
 } = require("../auth");
 const {
   validateAddress,
   createShipment,
   createBatch,
-  createParcel
+  createParcel,
 } = require("../services/shippo");
 
 const Mutation = {
@@ -53,7 +53,7 @@ const Mutation = {
         // copy the updates
         newUser = await prisma.updateUser({
           where: { email: input.email },
-          data: { ...input }
+          data: { ...input },
         });
         message = "OK";
       }
@@ -67,7 +67,7 @@ const Mutation = {
     return {
       message: message,
       accessToken: createAccessToken(newUser),
-      user: newUser
+      user: newUser,
     };
   },
 
@@ -92,7 +92,7 @@ const Mutation = {
     // Set the cookies with the token...
     return {
       accessToken: createAccessToken(user),
-      user
+      user,
     };
   },
 
@@ -108,7 +108,7 @@ const Mutation = {
     const resetTokenExpiry = Date.now() + 3600000; // 1 hour from now
     const updateUser = await prisma.updateUser({
       where: { email: args.email },
-      data: { resetToken, resetTokenExpiry }
+      data: { resetToken, resetTokenExpiry },
     });
     console.log("UpdateUser:", updateUser);
     // 3. Email them that reset token
@@ -130,9 +130,9 @@ const Mutation = {
       where: {
         AND: [
           { resetToken: args.resetToken },
-          { resetTokenExpiry_gte: Date.now() - 3600000 }
-        ]
-      }
+          { resetTokenExpiry_gte: Date.now() - 3600000 },
+        ],
+      },
     });
     if (!user) {
       throw new Error("This token is either invalid or expired!");
@@ -145,8 +145,8 @@ const Mutation = {
       data: {
         password,
         resetToken: null,
-        resetTokenExpiry: null
-      }
+        resetTokenExpiry: null,
+      },
     });
     // 6. Generate JWT
     // Set the cookies with the token...
@@ -163,7 +163,7 @@ const Mutation = {
     const count = user.count + 1;
     await prisma.updateUser({
       data: { count },
-      where: { id: args.userId }
+      where: { id: args.userId },
     });
 
     return true;
@@ -180,7 +180,7 @@ const Mutation = {
       // Update all current user credit cards to inactive
       await prisma.updateManyCreditCards({
         where: { user: { id: userId }, active: true },
-        data: { active: false }
+        data: { active: false },
       });
       // Save new active card
       const newCC = await prisma.createCreditCard({
@@ -191,9 +191,9 @@ const Mutation = {
         active: true,
         user: {
           connect: {
-            id: userId
-          }
-        }
+            id: userId,
+          },
+        },
       });
 
       console.log("NewCC", newCC);
@@ -221,28 +221,28 @@ const Mutation = {
     const msgInput = {
       prescription: {
         connect: {
-          id: input.prescriptionId
-        }
+          id: input.prescriptionId,
+        },
       },
       text: input.text,
       user: {
         connect: {
-          id: prescriptionUser.id
-        }
+          id: prescriptionUser.id,
+        },
       },
-      private: input.private
+      private: input.private,
     };
 
     if (userRole === "PHYSICIAN") {
       msgInput.physician = {
         connect: {
-          id: userId
-        }
+          id: userId,
+        },
       };
     }
 
     await prisma.createMessage({
-      ...msgInput
+      ...msgInput,
     });
 
     return { message: "OK" };
@@ -257,7 +257,7 @@ const Mutation = {
     const address = await updateAddress({
       user: user,
       addressInput: input,
-      prisma: prisma
+      prisma: prisma,
     });
 
     return address;
@@ -271,7 +271,7 @@ const Mutation = {
     delete input.payment;
     await prisma.updateUser({
       data: { currVisit: input },
-      where: { id: payload.userId }
+      where: { id: payload.userId },
     });
     return { message: "OK" };
   },
@@ -279,9 +279,9 @@ const Mutation = {
   updateVisit: async (_, { id, status = "APPROVED" }, { prisma }) => {
     await prisma.updateVisit({
       data: {
-        status: status
+        status: status,
       },
-      where: { id: id }
+      where: { id: id },
     });
     return { message: "OK" };
   },
@@ -289,9 +289,9 @@ const Mutation = {
   updatePrescription: async (_, { id, status = "NEW" }, { prisma }) => {
     await prisma.updatePrescription({
       data: {
-        status: status
+        status: status,
       },
-      where: { id: id }
+      where: { id: id },
     });
     return { message: "OK" };
   },
@@ -304,7 +304,7 @@ const Mutation = {
       ccToken: token,
       amount: amount,
       email: "bakerman59@gmail.com",
-      cardholder: "Brian Baker"
+      cardholder: "Brian Baker",
     });
 
     return result;
@@ -315,9 +315,9 @@ const Mutation = {
     await prisma.updatePrescription({
       data: {
         status: "DENIED",
-        approvedDate: moment().format()
+        approvedDate: moment().format(),
       },
-      where: { id: id }
+      where: { id: id },
     });
     const user = await prisma.prescription({ id: id }).user();
     // send denied email
@@ -345,7 +345,7 @@ const Mutation = {
         ccToken: creditcard.ccToken,
         amount: prescription.amountDue,
         cardholder: user.firstName + " " + user.lastName,
-        email: user.email
+        email: user.email,
       });
     } catch (err) {
       paymentResult = { resultCode: "D", refnum: "" };
@@ -368,7 +368,7 @@ const Mutation = {
       city: address.city,
       state: address.state,
       zipcode: address.zipcode,
-      shippoAddressId: address.shippoId
+      shippoAddressId: address.shippoId,
     });
 
     const refillsRemaining =
@@ -386,9 +386,9 @@ const Mutation = {
         status: "ACTIVE",
         approvedDate: approvedDate.format(),
         startDate: approvedDate.format(),
-        expireDate: expireDate
+        expireDate: expireDate,
       },
-      where: { id: id }
+      where: { id: id },
     });
 
     // Create message
@@ -398,7 +398,7 @@ const Mutation = {
       physician: { connect: { id: physicianId } },
       user: { connect: { id: user.id } },
       prescription: { connect: { id: prescription.id } },
-      text: "New patient message!"
+      text: "New patient message!",
     });
     console.log("Message", message);
 
@@ -428,7 +428,7 @@ const Mutation = {
       firstName: user.firstName,
       lastName: user.lastName,
       zipCode: input.personal.zipCode,
-      address: input.personal.addressOne
+      address: input.personal.addressOne,
     };
 
     const newCC = await updateCreditCard(userId, cardInput, prisma);
@@ -442,13 +442,13 @@ const Mutation = {
       state: input.personal.state,
       zipcode: input.personal.zipCode,
       telephone: input.personal.telephone,
-      email: user.email
+      email: user.email,
     };
 
     const address = await updateAddress({
       user: user,
       addressInput: addressInput,
-      prisma: prisma
+      prisma: prisma,
     });
     console.log("Address", address);
 
@@ -487,9 +487,9 @@ const Mutation = {
       questionnaire: questionaire,
       user: {
         connect: {
-          id: userId
-        }
-      }
+          id: userId,
+        },
+      },
     });
     console.log("Visit", visit);
 
@@ -499,7 +499,7 @@ const Mutation = {
       user: { connect: { id: userId } },
       visit: { connect: { id: visit.id } },
       product: { connect: { productId: productId } },
-      addon: addonId ? { connect: { productId: addonId } } : {}
+      addon: addonId ? { connect: { productId: addonId } } : {},
     });
     console.log("Prescription:", prescription);
 
@@ -511,9 +511,9 @@ const Mutation = {
         //        role: userRole,
         gender: gender,
         birthDate: birthDate,
-        photoId: photoId
+        photoId: photoId,
       },
-      where: { id: userId }
+      where: { id: userId },
     });
     sendWelcomeMail({ email: updateUser.email, name: updateUser.firstName });
 
@@ -525,13 +525,13 @@ const Mutation = {
 
     console.log("idList: ", idList);
 
-    await asyncForEach(idList, async id => {
+    await asyncForEach(idList, async (id) => {
       console.log("id", id);
       await prisma.updateOrder({
         data: {
-          status: "PROCESSING"
+          status: "PROCESSING",
         },
-        where: { id: id }
+        where: { id: id },
       });
     });
 
@@ -543,7 +543,7 @@ const Mutation = {
     const users = await prisma.users();
 
     if (users) {
-      await asyncForEach(users, async user => {
+      await asyncForEach(users, async (user) => {
         await updateAddress({ user: user, prisma: prisma });
       });
     }
@@ -555,7 +555,7 @@ const Mutation = {
     if (orders) {
       await asyncForEach(
         orders,
-        async order => {
+        async (order) => {
           //     if (!order.addressOne) {
           user = await prisma.order({ id: order.id }).user();
           address = await getCurrentAddress(user.id, prisma);
@@ -566,9 +566,9 @@ const Mutation = {
               city: address.city,
               state: address.state,
               zipcode: address.zipcode,
-              shippoAddressId: address.shippoId
+              shippoAddressId: address.shippoId,
             },
-            where: { id: order.id }
+            where: { id: order.id },
           });
         }
         //  }
@@ -601,12 +601,12 @@ const Mutation = {
     let order = null;
     let parcelId = null;
 
-    await asyncForEach(idList, async id => {
+    await asyncForEach(idList, async (id) => {
       order = await prisma.order({ id: id }).$fragment(fragment);
       parcelId = await createParcel(order.prescription);
       batchOrders.push({
         addressId: order.shippoAddressId,
-        parcelId: parcelId
+        parcelId: parcelId,
       });
     });
 
@@ -628,7 +628,7 @@ const Mutation = {
     var shipments = [];
     let order = null;
     // Create Shipments
-    await asyncForEach(idList, async id => {
+    await asyncForEach(idList, async (id) => {
       console.log("id", id);
 
       order = await prisma.order({ id: id });
@@ -662,7 +662,7 @@ const Mutation = {
     let user = null;
     let input = null;
     let updateRet = null;
-    await asyncForEach(addresses, async address => {
+    await asyncForEach(addresses, async (address) => {
       console.log(address);
       if (!address.shippoId || !address.email) {
         user = await prisma.address({ id: address.id }).user();
@@ -673,12 +673,12 @@ const Mutation = {
           state: address.state,
           zipcode: address.zipcode,
           email: user.email,
-          telephone: address.telephone
+          telephone: address.telephone,
         };
         updateRet = await updateAddress({
           user: user,
           addressInput: input,
-          prisma: prisma
+          prisma: prisma,
         });
         console.log(updateRet);
       }
@@ -696,14 +696,21 @@ const Mutation = {
       state: "CA",
       zipcode: "92657",
       telephone: "9494138239",
-      email: "brianbbaker.net"
+      email: "brianbbaker.net",
     };
 
     const ret = await validateAddress(input);
     console.log("Address", ret);
 
     return { message: "OK" };
-  }
+  },
+
+  addInterest: async (_, { input }, { prisma }) => {
+    console.log("Interest Input", input);
+    await prisma.createInterest({ ...input });
+
+    return { message: "OK" };
+  },
 };
 
 module.exports = { Mutation };

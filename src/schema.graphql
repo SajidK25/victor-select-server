@@ -41,6 +41,12 @@ input SaveVisitInput {
   questionnaire: Json!
 }
 
+input InterestInput {
+  email: String!
+  category: String
+  note: String
+}
+
 input RegisterInput {
   email: String!
   password: String!
@@ -99,6 +105,7 @@ type Mutation {
   denyPrescription(id: String!): SuccessMessage!
   approvePrescription(id: String!): SuccessMessage!
   updatePrescription(id: String!, status: String): SuccessMessage!
+  addInterest(input: InterestInput): SuccessMessage!
   resetShippoIds: SuccessMessage!
   processOrders(idList: [String]!): SuccessMessage!
   shipOrders(idList: [String]!): SuccessMessage!

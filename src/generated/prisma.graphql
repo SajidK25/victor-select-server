@@ -507,6 +507,10 @@ type AggregateCreditCard {
   count: Int!
 }
 
+type AggregateInterest {
+  count: Int!
+}
+
 type AggregateMessage {
   count: Int!
 }
@@ -914,6 +918,169 @@ input CreditCardWhereUniqueInput {
 
 scalar DateTime
 
+type Interest {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  email: String!
+  category: String
+  note: String
+}
+
+type InterestConnection {
+  pageInfo: PageInfo!
+  edges: [InterestEdge]!
+  aggregate: AggregateInterest!
+}
+
+input InterestCreateInput {
+  id: ID
+  email: String!
+  category: String
+  note: String
+}
+
+type InterestEdge {
+  node: Interest!
+  cursor: String!
+}
+
+enum InterestOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  email_ASC
+  email_DESC
+  category_ASC
+  category_DESC
+  note_ASC
+  note_DESC
+}
+
+type InterestPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  email: String!
+  category: String
+  note: String
+}
+
+type InterestSubscriptionPayload {
+  mutation: MutationType!
+  node: Interest
+  updatedFields: [String!]
+  previousValues: InterestPreviousValues
+}
+
+input InterestSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: InterestWhereInput
+  AND: [InterestSubscriptionWhereInput!]
+  OR: [InterestSubscriptionWhereInput!]
+  NOT: [InterestSubscriptionWhereInput!]
+}
+
+input InterestUpdateInput {
+  email: String
+  category: String
+  note: String
+}
+
+input InterestUpdateManyMutationInput {
+  email: String
+  category: String
+  note: String
+}
+
+input InterestWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  email: String
+  email_not: String
+  email_in: [String!]
+  email_not_in: [String!]
+  email_lt: String
+  email_lte: String
+  email_gt: String
+  email_gte: String
+  email_contains: String
+  email_not_contains: String
+  email_starts_with: String
+  email_not_starts_with: String
+  email_ends_with: String
+  email_not_ends_with: String
+  category: String
+  category_not: String
+  category_in: [String!]
+  category_not_in: [String!]
+  category_lt: String
+  category_lte: String
+  category_gt: String
+  category_gte: String
+  category_contains: String
+  category_not_contains: String
+  category_starts_with: String
+  category_not_starts_with: String
+  category_ends_with: String
+  category_not_ends_with: String
+  note: String
+  note_not: String
+  note_in: [String!]
+  note_not_in: [String!]
+  note_lt: String
+  note_lte: String
+  note_gt: String
+  note_gte: String
+  note_contains: String
+  note_not_contains: String
+  note_starts_with: String
+  note_not_starts_with: String
+  note_ends_with: String
+  note_not_ends_with: String
+  AND: [InterestWhereInput!]
+  OR: [InterestWhereInput!]
+  NOT: [InterestWhereInput!]
+}
+
+input InterestWhereUniqueInput {
+  id: ID
+}
+
 scalar Json
 
 scalar Long
@@ -1082,6 +1249,12 @@ type Mutation {
   upsertCreditCard(where: CreditCardWhereUniqueInput!, create: CreditCardCreateInput!, update: CreditCardUpdateInput!): CreditCard!
   deleteCreditCard(where: CreditCardWhereUniqueInput!): CreditCard
   deleteManyCreditCards(where: CreditCardWhereInput): BatchPayload!
+  createInterest(data: InterestCreateInput!): Interest!
+  updateInterest(data: InterestUpdateInput!, where: InterestWhereUniqueInput!): Interest
+  updateManyInterests(data: InterestUpdateManyMutationInput!, where: InterestWhereInput): BatchPayload!
+  upsertInterest(where: InterestWhereUniqueInput!, create: InterestCreateInput!, update: InterestUpdateInput!): Interest!
+  deleteInterest(where: InterestWhereUniqueInput!): Interest
+  deleteManyInterests(where: InterestWhereInput): BatchPayload!
   createMessage(data: MessageCreateInput!): Message!
   updateMessage(data: MessageUpdateInput!, where: MessageWhereUniqueInput!): Message
   updateManyMessages(data: MessageUpdateManyMutationInput!, where: MessageWhereInput): BatchPayload!
@@ -2922,6 +3095,9 @@ type Query {
   creditCard(where: CreditCardWhereUniqueInput!): CreditCard
   creditCards(where: CreditCardWhereInput, orderBy: CreditCardOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CreditCard]!
   creditCardsConnection(where: CreditCardWhereInput, orderBy: CreditCardOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CreditCardConnection!
+  interest(where: InterestWhereUniqueInput!): Interest
+  interests(where: InterestWhereInput, orderBy: InterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Interest]!
+  interestsConnection(where: InterestWhereInput, orderBy: InterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InterestConnection!
   message(where: MessageWhereUniqueInput!): Message
   messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message]!
   messagesConnection(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): MessageConnection!
@@ -2953,6 +3129,7 @@ enum Role {
 type Subscription {
   address(where: AddressSubscriptionWhereInput): AddressSubscriptionPayload
   creditCard(where: CreditCardSubscriptionWhereInput): CreditCardSubscriptionPayload
+  interest(where: InterestSubscriptionWhereInput): InterestSubscriptionPayload
   message(where: MessageSubscriptionWhereInput): MessageSubscriptionPayload
   order(where: OrderSubscriptionWhereInput): OrderSubscriptionPayload
   prescription(where: PrescriptionSubscriptionWhereInput): PrescriptionSubscriptionPayload

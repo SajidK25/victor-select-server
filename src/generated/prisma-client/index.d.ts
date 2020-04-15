@@ -18,6 +18,7 @@ export type Maybe<T> = T | undefined | null;
 export interface Exists {
   address: (where?: AddressWhereInput) => Promise<boolean>;
   creditCard: (where?: CreditCardWhereInput) => Promise<boolean>;
+  interest: (where?: InterestWhereInput) => Promise<boolean>;
   message: (where?: MessageWhereInput) => Promise<boolean>;
   order: (where?: OrderWhereInput) => Promise<boolean>;
   prescription: (where?: PrescriptionWhereInput) => Promise<boolean>;
@@ -83,6 +84,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => CreditCardConnectionPromise;
+  interest: (where: InterestWhereUniqueInput) => InterestNullablePromise;
+  interests: (args?: {
+    where?: InterestWhereInput;
+    orderBy?: InterestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<Interest>;
+  interestsConnection: (args?: {
+    where?: InterestWhereInput;
+    orderBy?: InterestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => InterestConnectionPromise;
   message: (where: MessageWhereUniqueInput) => MessageNullablePromise;
   messages: (args?: {
     where?: MessageWhereInput;
@@ -237,6 +257,22 @@ export interface Prisma {
   }) => CreditCardPromise;
   deleteCreditCard: (where: CreditCardWhereUniqueInput) => CreditCardPromise;
   deleteManyCreditCards: (where?: CreditCardWhereInput) => BatchPayloadPromise;
+  createInterest: (data: InterestCreateInput) => InterestPromise;
+  updateInterest: (args: {
+    data: InterestUpdateInput;
+    where: InterestWhereUniqueInput;
+  }) => InterestPromise;
+  updateManyInterests: (args: {
+    data: InterestUpdateManyMutationInput;
+    where?: InterestWhereInput;
+  }) => BatchPayloadPromise;
+  upsertInterest: (args: {
+    where: InterestWhereUniqueInput;
+    create: InterestCreateInput;
+    update: InterestUpdateInput;
+  }) => InterestPromise;
+  deleteInterest: (where: InterestWhereUniqueInput) => InterestPromise;
+  deleteManyInterests: (where?: InterestWhereInput) => BatchPayloadPromise;
   createMessage: (data: MessageCreateInput) => MessagePromise;
   updateMessage: (args: {
     data: MessageUpdateInput;
@@ -352,6 +388,9 @@ export interface Subscription {
   creditCard: (
     where?: CreditCardSubscriptionWhereInput
   ) => CreditCardSubscriptionPayloadSubscription;
+  interest: (
+    where?: InterestSubscriptionWhereInput
+  ) => InterestSubscriptionPayloadSubscription;
   message: (
     where?: MessageSubscriptionWhereInput
   ) => MessageSubscriptionPayloadSubscription;
@@ -529,6 +568,20 @@ export type VisitOrderByInput =
   | "type_DESC"
   | "questionnaire_ASC"
   | "questionnaire_DESC";
+
+export type InterestOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "email_ASC"
+  | "email_DESC"
+  | "category_ASC"
+  | "category_DESC"
+  | "note_ASC"
+  | "note_DESC";
 
 export type MessageOrderByInput =
   | "id_ASC"
@@ -1615,6 +1668,88 @@ export interface OrderWhereInput {
 export type CreditCardWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
+
+export type InterestWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface InterestWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  email?: Maybe<String>;
+  email_not?: Maybe<String>;
+  email_in?: Maybe<String[] | String>;
+  email_not_in?: Maybe<String[] | String>;
+  email_lt?: Maybe<String>;
+  email_lte?: Maybe<String>;
+  email_gt?: Maybe<String>;
+  email_gte?: Maybe<String>;
+  email_contains?: Maybe<String>;
+  email_not_contains?: Maybe<String>;
+  email_starts_with?: Maybe<String>;
+  email_not_starts_with?: Maybe<String>;
+  email_ends_with?: Maybe<String>;
+  email_not_ends_with?: Maybe<String>;
+  category?: Maybe<String>;
+  category_not?: Maybe<String>;
+  category_in?: Maybe<String[] | String>;
+  category_not_in?: Maybe<String[] | String>;
+  category_lt?: Maybe<String>;
+  category_lte?: Maybe<String>;
+  category_gt?: Maybe<String>;
+  category_gte?: Maybe<String>;
+  category_contains?: Maybe<String>;
+  category_not_contains?: Maybe<String>;
+  category_starts_with?: Maybe<String>;
+  category_not_starts_with?: Maybe<String>;
+  category_ends_with?: Maybe<String>;
+  category_not_ends_with?: Maybe<String>;
+  note?: Maybe<String>;
+  note_not?: Maybe<String>;
+  note_in?: Maybe<String[] | String>;
+  note_not_in?: Maybe<String[] | String>;
+  note_lt?: Maybe<String>;
+  note_lte?: Maybe<String>;
+  note_gt?: Maybe<String>;
+  note_gte?: Maybe<String>;
+  note_contains?: Maybe<String>;
+  note_not_contains?: Maybe<String>;
+  note_starts_with?: Maybe<String>;
+  note_not_starts_with?: Maybe<String>;
+  note_ends_with?: Maybe<String>;
+  note_not_ends_with?: Maybe<String>;
+  AND?: Maybe<InterestWhereInput[] | InterestWhereInput>;
+  OR?: Maybe<InterestWhereInput[] | InterestWhereInput>;
+  NOT?: Maybe<InterestWhereInput[] | InterestWhereInput>;
+}
 
 export type MessageWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -3192,6 +3327,25 @@ export interface CreditCardUpdateManyMutationInput {
   ccExpire?: Maybe<String>;
 }
 
+export interface InterestCreateInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  category?: Maybe<String>;
+  note?: Maybe<String>;
+}
+
+export interface InterestUpdateInput {
+  email?: Maybe<String>;
+  category?: Maybe<String>;
+  note?: Maybe<String>;
+}
+
+export interface InterestUpdateManyMutationInput {
+  email?: Maybe<String>;
+  category?: Maybe<String>;
+  note?: Maybe<String>;
+}
+
 export interface MessageCreateInput {
   id?: Maybe<ID_Input>;
   prescription: PrescriptionCreateOneInput;
@@ -3609,6 +3763,21 @@ export interface CreditCardSubscriptionWhereInput {
   >;
   NOT?: Maybe<
     CreditCardSubscriptionWhereInput[] | CreditCardSubscriptionWhereInput
+  >;
+}
+
+export interface InterestSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<InterestWhereInput>;
+  AND?: Maybe<
+    InterestSubscriptionWhereInput[] | InterestSubscriptionWhereInput
+  >;
+  OR?: Maybe<InterestSubscriptionWhereInput[] | InterestSubscriptionWhereInput>;
+  NOT?: Maybe<
+    InterestSubscriptionWhereInput[] | InterestSubscriptionWhereInput
   >;
 }
 
@@ -4463,6 +4632,102 @@ export interface AggregateCreditCardSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface Interest {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  email: String;
+  category?: String;
+  note?: String;
+}
+
+export interface InterestPromise extends Promise<Interest>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  email: () => Promise<String>;
+  category: () => Promise<String>;
+  note: () => Promise<String>;
+}
+
+export interface InterestSubscription
+  extends Promise<AsyncIterator<Interest>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  email: () => Promise<AsyncIterator<String>>;
+  category: () => Promise<AsyncIterator<String>>;
+  note: () => Promise<AsyncIterator<String>>;
+}
+
+export interface InterestNullablePromise
+  extends Promise<Interest | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  email: () => Promise<String>;
+  category: () => Promise<String>;
+  note: () => Promise<String>;
+}
+
+export interface InterestConnection {
+  pageInfo: PageInfo;
+  edges: InterestEdge[];
+}
+
+export interface InterestConnectionPromise
+  extends Promise<InterestConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<InterestEdge>>() => T;
+  aggregate: <T = AggregateInterestPromise>() => T;
+}
+
+export interface InterestConnectionSubscription
+  extends Promise<AsyncIterator<InterestConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<InterestEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateInterestSubscription>() => T;
+}
+
+export interface InterestEdge {
+  node: Interest;
+  cursor: String;
+}
+
+export interface InterestEdgePromise
+  extends Promise<InterestEdge>,
+    Fragmentable {
+  node: <T = InterestPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface InterestEdgeSubscription
+  extends Promise<AsyncIterator<InterestEdge>>,
+    Fragmentable {
+  node: <T = InterestSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateInterest {
+  count: Int;
+}
+
+export interface AggregateInterestPromise
+  extends Promise<AggregateInterest>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateInterestSubscription
+  extends Promise<AsyncIterator<AggregateInterest>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface Message {
   id: ID_Output;
   createdAt: DateTimeOutput;
@@ -4988,6 +5253,62 @@ export interface CreditCardPreviousValuesSubscription
   ccType: () => Promise<AsyncIterator<String>>;
   ccNumber: () => Promise<AsyncIterator<String>>;
   ccExpire: () => Promise<AsyncIterator<String>>;
+}
+
+export interface InterestSubscriptionPayload {
+  mutation: MutationType;
+  node: Interest;
+  updatedFields: String[];
+  previousValues: InterestPreviousValues;
+}
+
+export interface InterestSubscriptionPayloadPromise
+  extends Promise<InterestSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = InterestPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = InterestPreviousValuesPromise>() => T;
+}
+
+export interface InterestSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<InterestSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = InterestSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = InterestPreviousValuesSubscription>() => T;
+}
+
+export interface InterestPreviousValues {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  email: String;
+  category?: String;
+  note?: String;
+}
+
+export interface InterestPreviousValuesPromise
+  extends Promise<InterestPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  email: () => Promise<String>;
+  category: () => Promise<String>;
+  note: () => Promise<String>;
+}
+
+export interface InterestPreviousValuesSubscription
+  extends Promise<AsyncIterator<InterestPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  email: () => Promise<AsyncIterator<String>>;
+  category: () => Promise<AsyncIterator<String>>;
+  note: () => Promise<AsyncIterator<String>>;
 }
 
 export interface MessageSubscriptionPayload {
@@ -5521,6 +5842,10 @@ export const models: Model[] = [
   },
   {
     name: "Address",
+    embedded: false
+  },
+  {
+    name: "Interest",
     embedded: false
   },
   {

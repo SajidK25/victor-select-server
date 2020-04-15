@@ -37,6 +37,10 @@ var models = [
     embedded: false
   },
   {
+    name: "Interest",
+    embedded: false
+  },
+  {
     name: "Product",
     embedded: false
   },

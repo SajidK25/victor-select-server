@@ -82,6 +82,15 @@ type Address {
   shippoId: String
 }
 
+type Interest {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  email: String!
+  category: String
+  note: String
+}
+
 type Product @pgTable(name: "product") {
   id: ID! @id
   productId: String! @unique
