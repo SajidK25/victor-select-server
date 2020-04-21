@@ -1,26 +1,26 @@
 const { sign, verify } = require("jsonwebtoken");
 
-const createAccessToken = user => {
+const createAccessToken = (user) => {
   return sign(
     { userId: user.id, userRole: user.role },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: "120min"
+      expiresIn: "120min",
     }
   );
 };
 
-const createRefreshToken = user => {
+const createRefreshToken = (user) => {
   return sign(
     { userId: user.id, userRole: user.Role },
     process.env.REFRESH_TOKEN_SECRET,
     {
-      expiresIn: "7d"
+      expiresIn: "7d",
     }
   );
 };
 
-const getAuthorizedUserId = req => {
+const getAuthorizedUserId = (req) => {
   const authorization = req.headers["authorization"];
   if (!authorization) {
     return null;
@@ -57,5 +57,5 @@ module.exports = {
   createAccessToken,
   createRefreshToken,
   getAuthorizedUserId,
-  validateUser
+  validateUser,
 };

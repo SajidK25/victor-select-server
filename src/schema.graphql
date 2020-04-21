@@ -113,6 +113,7 @@ type Mutation {
   makePayment(amount: Int!, token: String!): PaymentMessage!
   validateUserAddress: SuccessMessage!
   validateAddresses: SuccessMessage!
+  testLiveConnection: SuccessMessage!
 }
 
 type Query {
@@ -133,6 +134,8 @@ type Query {
     status: String
   ): PrescriptionConnection!
   messages: [Message]!
+  getMessagesByPrescription(prescriptionId: String!): [Message]!
+  getPatientMessages: [Message]!
   order(id: String!): Order
   orders(status: String): [Order]!
   validZipCode(zipcode: String!): Boolean!
@@ -140,6 +143,9 @@ type Query {
   visitsCount: Int!
   visits(pageSize: Int, after: String, status: String): VisitConnection!
   usersConnection(input: UserConnectionInput): UserConnection!
+  getRecentPrescriptionMessage(prescriptionId: String!): Message
+  getPatientPrescriptions(userId: String): [Prescription]!
+  getPatientChat(prescriptionId: String!): [Message]!
 }
 
 type User {

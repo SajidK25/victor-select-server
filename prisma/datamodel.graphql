@@ -106,6 +106,8 @@ type Product @pgTable(name: "product") {
   twoMonthPrice: Int!
   threeMonthPrice: Int!
   directions: String
+  treatmentUrl: String
+  newMessage: String
 }
 
 type Prescription {
@@ -131,6 +133,7 @@ type Prescription {
   shippingInterval: Int!
   amountDue: Int!
   orders: [Order]!
+  messages: [Message]!
 }
 
 type Order {
@@ -178,6 +181,7 @@ type Message {
   prescription: Prescription!
   private: Boolean! @default(value: true)
   read: Boolean! @default(value: false)
+  fromPatient: Boolean! @default(value: false)
   physician: User @relation(name: "MessagePhysician")
   user: User! @relation(name: "MessageUser")
   text: String!

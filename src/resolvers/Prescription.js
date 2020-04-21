@@ -13,7 +13,10 @@ const Prescription = {
   },
   orders: (parent, _, { prisma }) => {
     return prisma.prescription({ id: parent.id }).orders();
-  }
+  },
+  messages: (parent, _, { prisma }) => {
+    return prisma.prescription({ id: parent.id }).messages();
+  },
 };
 
 module.exports = { Prescription };

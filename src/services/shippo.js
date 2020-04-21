@@ -1,8 +1,8 @@
-const shippo = require("shippo")(process.env.SHIPPOLIVETEST_TOKEN);
+const shippo = require("shippo")(process.env.SHIPPOTEST_TOKEN);
 const { validateArgument } = require("./utils");
 
 const SHIPPO_DEFAULTCARRIER = process.env.SHIPPOTEST_USPS;
-const SHIPPO_ADDRESSFROM = process.env.SHIPPOLIVETEST_ADDRESSFROM;
+const SHIPPO_ADDRESSFROM = process.env.SHIPPOTEST_ADDRESSFROM;
 const SHIPPO_DEFAULTSERVICELEVEL = "usps_first";
 
 const ED_BASEWEIGHT = 2.5;
@@ -10,14 +10,14 @@ const ED_EXTRAMONTH = 0.5;
 const EDWITHADDON_BASEWEIGHT = 5;
 const EDWITHADDON_EXTRAMONTH = 1;
 
-const createParcel = async prescription => {
+const createParcel = async (prescription) => {
   const parcel = {
     length: 12.5,
     width: 9.5,
     height: 1,
     distance_unit: "in",
     weight: 0,
-    mass_unit: "oz"
+    mass_unit: "oz",
   };
 
   console.log("Prescription:", prescription);
@@ -40,7 +40,7 @@ const createParcel = async prescription => {
   let shippoParcel = null;
   try {
     shippoParcel = await shippo.parcel.create({
-      ...parcel
+      ...parcel,
     });
   } catch (err) {
     console.log("Parcel Err:", err);
@@ -50,7 +50,7 @@ const createParcel = async prescription => {
   return shippoParcel.object_id;
 };
 
-const validateAddress = async input => {
+const validateAddress = async (input) => {
   console.log("ShippoInput:", input);
 
   validateArgument(input, "input");
@@ -75,7 +75,7 @@ const validateAddress = async input => {
       country: "US",
       phone: input.telephone,
       email: input.email,
-      validate: true
+      validate: true,
     });
   } catch (err) {
     console.log("createAddressError", err);
@@ -85,12 +85,14 @@ const validateAddress = async input => {
     throw new Error("Unable to create address");
   }
 
+  console.log("Shippo return:", address);
+
   return address.validation_results.is_valid
     ? { valid: true, shippoId: address.object_id }
     : {
         valid: false,
         shippoId: "",
-        errors: address.validation_results.messages
+        errors: address.validation_results.messages,
       };
 };
 
@@ -188,7 +190,7 @@ const validateAddress = async input => {
 //   return parcel.object_id;
 // };
 
-const createBatch = async orders => {
+const createBatch = async (orders) => {
   let batchShipments = [];
 
   const input = {
@@ -196,18 +198,18 @@ const createBatch = async orders => {
     default_servicelevel_token: SHIPPO_DEFAULTSERVICELEVEL,
     label_filetype: "PDF_4x6",
     metadata: "",
-    batch_shipments: []
+    batch_shipments: [],
   };
 
-  orders.forEach(o => {
+  orders.forEach((o) => {
     input.batch_shipments.push({
       shipment: {
         address_to: o.addressId,
         address_from: SHIPPO_ADDRESSFROM,
         parcels: [o.parcelId],
         carrier_account: SHIPPO_DEFAULTCARRIER,
-        servicelevel_token: SHIPPO_DEFAULTSERVICELEVEL
-      }
+        servicelevel_token: SHIPPO_DEFAULTSERVICELEVEL,
+      },
     });
   });
 

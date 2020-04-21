@@ -2,34 +2,45 @@ const got = require("got");
 const sha256 = require("sha256");
 const { validateArgument } = require("./utils");
 
-const production = "https://usaepay.com/api/v2/";
-const sandbox = "https://sandbox.usaepay.com/api/v2/";
+var paymentUrl;
+var paymentAPI;
 
-const prehash =
-  process.env.USAEPAY_APIKEY +
-  process.env.USAEPAY_SEED +
-  process.env.USAEPAY_PIN;
+if (process.env.PAYMENT_MODE === "TEST") {
+  paymentUrl = "https://sandbox.usaepay.com/api/v2/";
+  paymentAPI = process.env.USAEPAYTEST_APIKEY;
+  paymentPin = process.env.USAEPAYTEST_PIN;
+} else {
+  paymentUrl = "https://usaepay.com/api/v2/";
+  paymentAPI = process.env.USAEPAYLIVE_APIKEY;
+  paymentPin = process.env.USAEPAYLIVE_PIN;
+}
+
+const prehash = paymentAPI + process.env.USAEPAY_SEED + paymentPin;
+
+console.log("Key:", paymentAPI);
+console.log("Pin:", paymentPin);
+
 const apihash = "s2/" + process.env.USAEPAY_SEED + "/" + sha256(prehash);
-const authKey = new Buffer.from(
-  process.env.USAEPAY_APIKEY + ":" + apihash
-).toString("base64");
+
+const authKey = new Buffer.from(paymentAPI + ":" + apihash).toString("base64");
 
 const usaepayHeaders = {
   Authorization: "Basic " + authKey,
-  "Content-Type": "application/json"
+  "Content-Type": "application/json",
 };
 
 const usaepayAPI = got.extend({
   headers: usaepayHeaders,
   //  prefixUrl: process.env.NODE_ENV === "development" ? sandbox : production,
-  prefixUrl: sandbox,
+  // prefixUrl: sandbox,
+  prefixUrl: paymentUrl,
   json: true,
   responseType: "json",
-  resolveBodyOnly: true
+  resolveBodyOnly: true,
 });
 
 // This will save a card and return a token
-const saveCreditCard = async input => {
+const saveCreditCard = async (input) => {
   console.log("input", input);
   validateArgument(input, "input");
   validateArgument(input.cardNumber, "input.cardNumber");
@@ -39,8 +50,8 @@ const saveCreditCard = async input => {
     command: "cc:save",
     creditcard: {
       number: input.cardNumber,
-      expiration: input.cardExpiry
-    }
+      expiration: input.cardExpiry,
+    },
   };
 
   if (input.firstName && input.lastName) {
@@ -56,10 +67,14 @@ const saveCreditCard = async input => {
     data.creditcard.cvc = input.cardCVC;
   }
 
-  console.log("Data:", data);
-  const body = await usaepayAPI.post("transactions", {
-    json: data
-  });
+  let body = null;
+  try {
+    body = await usaepayAPI.post("transactions", {
+      json: data,
+    });
+  } catch (err) {
+    console.log("Error", err);
+  }
 
   console.log("Body:", body);
   console.log("Code", body.result_code);
@@ -70,22 +85,24 @@ const saveCreditCard = async input => {
     throw new Error("Card could not be saved");
   }
 
+  console.log("Saved Card Body", body);
+
   return body.savedcard;
 };
 
-const releaseAuthorization = async refnum => {
+const releaseAuthorization = async (refnum) => {
   validateArgument(refnum, "refnum");
 
   console.log("refnum:", refnum);
 
   var data = {
     command: "cc:void:release",
-    refnum: refnum
+    refnum: refnum,
   };
 
   console.log("Data:", data);
   const body = await usaepayAPI.post("transactions", {
-    json: data
+    json: data,
   });
 
   console.log("Body:", body);
@@ -94,7 +111,7 @@ const releaseAuthorization = async refnum => {
   return body;
 };
 
-const makePayment = async input => {
+const makePayment = async (input) => {
   console.log("input", input);
   validateArgument(input, "input");
   validateArgument(input.amount, "input.amount");
@@ -109,16 +126,16 @@ const makePayment = async input => {
     amount: input.amount / 100,
     creditcard: {
       number: input.ccToken,
-      cardholder: input.cardholder
+      cardholder: input.cardholder,
     },
     email: input.email,
     send_receipt: true,
-    description: "Victory Select"
+    description: "Victory Select",
   };
 
   console.log("Data:", data);
   const body = await usaepayAPI.post("transactions", {
-    json: data
+    json: data,
   });
 
   console.log("Body:", body);
@@ -130,4 +147,8 @@ const makePayment = async input => {
   return { resultCode: body.result_code, refnum: body.refnum };
 };
 
-module.exports = { saveCreditCard, releaseAuthorization, makePayment };
+module.exports = {
+  saveCreditCard,
+  releaseAuthorization,
+  makePayment,
+};

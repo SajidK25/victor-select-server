@@ -1092,6 +1092,7 @@ type Message {
   prescription: Prescription!
   private: Boolean!
   read: Boolean!
+  fromPatient: Boolean!
   physician: User
   user: User!
   text: String!
@@ -1105,9 +1106,25 @@ type MessageConnection {
 
 input MessageCreateInput {
   id: ID
-  prescription: PrescriptionCreateOneInput!
+  prescription: PrescriptionCreateOneWithoutMessagesInput!
   private: Boolean
   read: Boolean
+  fromPatient: Boolean
+  physician: UserCreateOneInput
+  user: UserCreateOneInput!
+  text: String!
+}
+
+input MessageCreateManyWithoutPrescriptionInput {
+  create: [MessageCreateWithoutPrescriptionInput!]
+  connect: [MessageWhereUniqueInput!]
+}
+
+input MessageCreateWithoutPrescriptionInput {
+  id: ID
+  private: Boolean
+  read: Boolean
+  fromPatient: Boolean
   physician: UserCreateOneInput
   user: UserCreateOneInput!
   text: String!
@@ -1129,6 +1146,8 @@ enum MessageOrderByInput {
   private_DESC
   read_ASC
   read_DESC
+  fromPatient_ASC
+  fromPatient_DESC
   text_ASC
   text_DESC
 }
@@ -1139,7 +1158,64 @@ type MessagePreviousValues {
   updatedAt: DateTime!
   private: Boolean!
   read: Boolean!
+  fromPatient: Boolean!
   text: String!
+}
+
+input MessageScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  private: Boolean
+  private_not: Boolean
+  read: Boolean
+  read_not: Boolean
+  fromPatient: Boolean
+  fromPatient_not: Boolean
+  text: String
+  text_not: String
+  text_in: [String!]
+  text_not_in: [String!]
+  text_lt: String
+  text_lte: String
+  text_gt: String
+  text_gte: String
+  text_contains: String
+  text_not_contains: String
+  text_starts_with: String
+  text_not_starts_with: String
+  text_ends_with: String
+  text_not_ends_with: String
+  AND: [MessageScalarWhereInput!]
+  OR: [MessageScalarWhereInput!]
+  NOT: [MessageScalarWhereInput!]
 }
 
 type MessageSubscriptionPayload {
@@ -1161,18 +1237,64 @@ input MessageSubscriptionWhereInput {
 }
 
 input MessageUpdateInput {
-  prescription: PrescriptionUpdateOneRequiredInput
+  prescription: PrescriptionUpdateOneRequiredWithoutMessagesInput
   private: Boolean
   read: Boolean
+  fromPatient: Boolean
   physician: UserUpdateOneInput
   user: UserUpdateOneRequiredInput
+  text: String
+}
+
+input MessageUpdateManyDataInput {
+  private: Boolean
+  read: Boolean
+  fromPatient: Boolean
   text: String
 }
 
 input MessageUpdateManyMutationInput {
   private: Boolean
   read: Boolean
+  fromPatient: Boolean
   text: String
+}
+
+input MessageUpdateManyWithoutPrescriptionInput {
+  create: [MessageCreateWithoutPrescriptionInput!]
+  delete: [MessageWhereUniqueInput!]
+  connect: [MessageWhereUniqueInput!]
+  set: [MessageWhereUniqueInput!]
+  disconnect: [MessageWhereUniqueInput!]
+  update: [MessageUpdateWithWhereUniqueWithoutPrescriptionInput!]
+  upsert: [MessageUpsertWithWhereUniqueWithoutPrescriptionInput!]
+  deleteMany: [MessageScalarWhereInput!]
+  updateMany: [MessageUpdateManyWithWhereNestedInput!]
+}
+
+input MessageUpdateManyWithWhereNestedInput {
+  where: MessageScalarWhereInput!
+  data: MessageUpdateManyDataInput!
+}
+
+input MessageUpdateWithoutPrescriptionDataInput {
+  private: Boolean
+  read: Boolean
+  fromPatient: Boolean
+  physician: UserUpdateOneInput
+  user: UserUpdateOneRequiredInput
+  text: String
+}
+
+input MessageUpdateWithWhereUniqueWithoutPrescriptionInput {
+  where: MessageWhereUniqueInput!
+  data: MessageUpdateWithoutPrescriptionDataInput!
+}
+
+input MessageUpsertWithWhereUniqueWithoutPrescriptionInput {
+  where: MessageWhereUniqueInput!
+  update: MessageUpdateWithoutPrescriptionDataInput!
+  create: MessageCreateWithoutPrescriptionInput!
 }
 
 input MessageWhereInput {
@@ -1211,6 +1333,8 @@ input MessageWhereInput {
   private_not: Boolean
   read: Boolean
   read_not: Boolean
+  fromPatient: Boolean
+  fromPatient_not: Boolean
   physician: UserWhereInput
   user: UserWhereInput
   text: String
@@ -2101,6 +2225,7 @@ type Prescription {
   shippingInterval: Int!
   amountDue: Int!
   orders(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Order!]
+  messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
 }
 
 type PrescriptionConnection {
@@ -2130,6 +2255,7 @@ input PrescriptionCreateInput {
   shippingInterval: Int!
   amountDue: Int!
   orders: OrderCreateManyWithoutPrescriptionInput
+  messages: MessageCreateManyWithoutPrescriptionInput
 }
 
 input PrescriptionCreateManyWithoutUserInput {
@@ -2137,14 +2263,37 @@ input PrescriptionCreateManyWithoutUserInput {
   connect: [PrescriptionWhereUniqueInput!]
 }
 
-input PrescriptionCreateOneInput {
-  create: PrescriptionCreateInput
+input PrescriptionCreateOneWithoutMessagesInput {
+  create: PrescriptionCreateWithoutMessagesInput
   connect: PrescriptionWhereUniqueInput
 }
 
 input PrescriptionCreateOneWithoutOrdersInput {
   create: PrescriptionCreateWithoutOrdersInput
   connect: PrescriptionWhereUniqueInput
+}
+
+input PrescriptionCreateWithoutMessagesInput {
+  id: ID
+  status: PrescriptionStatus
+  creditcard: CreditCardCreateOneInput
+  refnum: String
+  user: UserCreateOneWithoutPrescriptionsInput!
+  visit: VisitCreateOneInput!
+  type: PrescriptionType!
+  product: ProductCreateOneInput!
+  timesPerMonth: Int!
+  addon: ProductCreateOneInput
+  addonTimesPerMonth: Int
+  approvedDate: DateTime
+  startDate: DateTime
+  expireDate: DateTime
+  totalRefills: Int!
+  refillsRemaining: Int!
+  nextDelivery: DateTime
+  shippingInterval: Int!
+  amountDue: Int!
+  orders: OrderCreateManyWithoutPrescriptionInput
 }
 
 input PrescriptionCreateWithoutOrdersInput {
@@ -2167,6 +2316,7 @@ input PrescriptionCreateWithoutOrdersInput {
   nextDelivery: DateTime
   shippingInterval: Int!
   amountDue: Int!
+  messages: MessageCreateManyWithoutPrescriptionInput
 }
 
 input PrescriptionCreateWithoutUserInput {
@@ -2189,6 +2339,7 @@ input PrescriptionCreateWithoutUserInput {
   shippingInterval: Int!
   amountDue: Int!
   orders: OrderCreateManyWithoutPrescriptionInput
+  messages: MessageCreateManyWithoutPrescriptionInput
 }
 
 type PrescriptionEdge {
@@ -2422,28 +2573,6 @@ enum PrescriptionType {
   WEIGHT
 }
 
-input PrescriptionUpdateDataInput {
-  status: PrescriptionStatus
-  creditcard: CreditCardUpdateOneInput
-  refnum: String
-  user: UserUpdateOneRequiredWithoutPrescriptionsInput
-  visit: VisitUpdateOneRequiredInput
-  type: PrescriptionType
-  product: ProductUpdateOneRequiredInput
-  timesPerMonth: Int
-  addon: ProductUpdateOneInput
-  addonTimesPerMonth: Int
-  approvedDate: DateTime
-  startDate: DateTime
-  expireDate: DateTime
-  totalRefills: Int
-  refillsRemaining: Int
-  nextDelivery: DateTime
-  shippingInterval: Int
-  amountDue: Int
-  orders: OrderUpdateManyWithoutPrescriptionInput
-}
-
 input PrescriptionUpdateInput {
   status: PrescriptionStatus
   creditcard: CreditCardUpdateOneInput
@@ -2464,6 +2593,7 @@ input PrescriptionUpdateInput {
   shippingInterval: Int
   amountDue: Int
   orders: OrderUpdateManyWithoutPrescriptionInput
+  messages: MessageUpdateManyWithoutPrescriptionInput
 }
 
 input PrescriptionUpdateManyDataInput {
@@ -2515,10 +2645,10 @@ input PrescriptionUpdateManyWithWhereNestedInput {
   data: PrescriptionUpdateManyDataInput!
 }
 
-input PrescriptionUpdateOneRequiredInput {
-  create: PrescriptionCreateInput
-  update: PrescriptionUpdateDataInput
-  upsert: PrescriptionUpsertNestedInput
+input PrescriptionUpdateOneRequiredWithoutMessagesInput {
+  create: PrescriptionCreateWithoutMessagesInput
+  update: PrescriptionUpdateWithoutMessagesDataInput
+  upsert: PrescriptionUpsertWithoutMessagesInput
   connect: PrescriptionWhereUniqueInput
 }
 
@@ -2527,6 +2657,28 @@ input PrescriptionUpdateOneRequiredWithoutOrdersInput {
   update: PrescriptionUpdateWithoutOrdersDataInput
   upsert: PrescriptionUpsertWithoutOrdersInput
   connect: PrescriptionWhereUniqueInput
+}
+
+input PrescriptionUpdateWithoutMessagesDataInput {
+  status: PrescriptionStatus
+  creditcard: CreditCardUpdateOneInput
+  refnum: String
+  user: UserUpdateOneRequiredWithoutPrescriptionsInput
+  visit: VisitUpdateOneRequiredInput
+  type: PrescriptionType
+  product: ProductUpdateOneRequiredInput
+  timesPerMonth: Int
+  addon: ProductUpdateOneInput
+  addonTimesPerMonth: Int
+  approvedDate: DateTime
+  startDate: DateTime
+  expireDate: DateTime
+  totalRefills: Int
+  refillsRemaining: Int
+  nextDelivery: DateTime
+  shippingInterval: Int
+  amountDue: Int
+  orders: OrderUpdateManyWithoutPrescriptionInput
 }
 
 input PrescriptionUpdateWithoutOrdersDataInput {
@@ -2548,6 +2700,7 @@ input PrescriptionUpdateWithoutOrdersDataInput {
   nextDelivery: DateTime
   shippingInterval: Int
   amountDue: Int
+  messages: MessageUpdateManyWithoutPrescriptionInput
 }
 
 input PrescriptionUpdateWithoutUserDataInput {
@@ -2569,6 +2722,7 @@ input PrescriptionUpdateWithoutUserDataInput {
   shippingInterval: Int
   amountDue: Int
   orders: OrderUpdateManyWithoutPrescriptionInput
+  messages: MessageUpdateManyWithoutPrescriptionInput
 }
 
 input PrescriptionUpdateWithWhereUniqueWithoutUserInput {
@@ -2576,9 +2730,9 @@ input PrescriptionUpdateWithWhereUniqueWithoutUserInput {
   data: PrescriptionUpdateWithoutUserDataInput!
 }
 
-input PrescriptionUpsertNestedInput {
-  update: PrescriptionUpdateDataInput!
-  create: PrescriptionCreateInput!
+input PrescriptionUpsertWithoutMessagesInput {
+  update: PrescriptionUpdateWithoutMessagesDataInput!
+  create: PrescriptionCreateWithoutMessagesInput!
 }
 
 input PrescriptionUpsertWithoutOrdersInput {
@@ -2733,6 +2887,9 @@ input PrescriptionWhereInput {
   orders_every: OrderWhereInput
   orders_some: OrderWhereInput
   orders_none: OrderWhereInput
+  messages_every: MessageWhereInput
+  messages_some: MessageWhereInput
+  messages_none: MessageWhereInput
   AND: [PrescriptionWhereInput!]
   OR: [PrescriptionWhereInput!]
   NOT: [PrescriptionWhereInput!]
@@ -2757,6 +2914,8 @@ type Product {
   twoMonthPrice: Int!
   threeMonthPrice: Int!
   directions: String
+  treatmentUrl: String
+  newMessage: String
 }
 
 type ProductConnection {
@@ -2780,6 +2939,8 @@ input ProductCreateInput {
   twoMonthPrice: Int!
   threeMonthPrice: Int!
   directions: String
+  treatmentUrl: String
+  newMessage: String
 }
 
 input ProductCreateOneInput {
@@ -2821,6 +2982,10 @@ enum ProductOrderByInput {
   threeMonthPrice_DESC
   directions_ASC
   directions_DESC
+  treatmentUrl_ASC
+  treatmentUrl_DESC
+  newMessage_ASC
+  newMessage_DESC
 }
 
 type ProductPreviousValues {
@@ -2838,6 +3003,8 @@ type ProductPreviousValues {
   twoMonthPrice: Int!
   threeMonthPrice: Int!
   directions: String
+  treatmentUrl: String
+  newMessage: String
 }
 
 type ProductSubscriptionPayload {
@@ -2872,6 +3039,8 @@ input ProductUpdateDataInput {
   twoMonthPrice: Int
   threeMonthPrice: Int
   directions: String
+  treatmentUrl: String
+  newMessage: String
 }
 
 input ProductUpdateInput {
@@ -2888,6 +3057,8 @@ input ProductUpdateInput {
   twoMonthPrice: Int
   threeMonthPrice: Int
   directions: String
+  treatmentUrl: String
+  newMessage: String
 }
 
 input ProductUpdateManyMutationInput {
@@ -2904,6 +3075,8 @@ input ProductUpdateManyMutationInput {
   twoMonthPrice: Int
   threeMonthPrice: Int
   directions: String
+  treatmentUrl: String
+  newMessage: String
 }
 
 input ProductUpdateOneInput {
@@ -3078,6 +3251,34 @@ input ProductWhereInput {
   directions_not_starts_with: String
   directions_ends_with: String
   directions_not_ends_with: String
+  treatmentUrl: String
+  treatmentUrl_not: String
+  treatmentUrl_in: [String!]
+  treatmentUrl_not_in: [String!]
+  treatmentUrl_lt: String
+  treatmentUrl_lte: String
+  treatmentUrl_gt: String
+  treatmentUrl_gte: String
+  treatmentUrl_contains: String
+  treatmentUrl_not_contains: String
+  treatmentUrl_starts_with: String
+  treatmentUrl_not_starts_with: String
+  treatmentUrl_ends_with: String
+  treatmentUrl_not_ends_with: String
+  newMessage: String
+  newMessage_not: String
+  newMessage_in: [String!]
+  newMessage_not_in: [String!]
+  newMessage_lt: String
+  newMessage_lte: String
+  newMessage_gt: String
+  newMessage_gte: String
+  newMessage_contains: String
+  newMessage_not_contains: String
+  newMessage_starts_with: String
+  newMessage_not_starts_with: String
+  newMessage_ends_with: String
+  newMessage_not_ends_with: String
   AND: [ProductWhereInput!]
   OR: [ProductWhereInput!]
   NOT: [ProductWhereInput!]

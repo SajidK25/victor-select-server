@@ -9,7 +9,7 @@ const {
 } = require("../services/mail");
 const { sendRefreshToken } = require("../sendRefreshToken");
 const moment = require("moment");
-const { makePayment } = require("../services/usaepay");
+const { makePayment, saveCreditCard } = require("../services/usaepay");
 const { asyncForEach } = require("../utils");
 const {
   getCurrentCreditCard,
@@ -210,13 +210,15 @@ const Mutation = {
     const payload = await validateUser(req);
     const { userId, userRole } = payload;
 
+    console.log("MessageInput", input);
+
     const prescriptionUser = await prisma
-      .visit({ id: input.prescriptionId })
+      .prescription({ id: input.prescriptionId })
       .user();
     if (!prescriptionUser) {
       throw new Error("Unable to find prescription record");
     }
-    console.log("Visit User:", visitUser);
+    console.log("prescription User:", prescriptionUser);
 
     const msgInput = {
       prescription: {
@@ -225,6 +227,7 @@ const Mutation = {
         },
       },
       text: input.text,
+      fromPatient: userRole === "PATIENT" || userRole === "VISITOR",
       user: {
         connect: {
           id: prescriptionUser.id,
@@ -395,10 +398,11 @@ const Mutation = {
     const message = await prisma.createMessage({
       private: false,
       read: false,
+      fromPatient: false,
       physician: { connect: { id: physicianId } },
       user: { connect: { id: user.id } },
       prescription: { connect: { id: prescription.id } },
-      text: "New patient message!",
+      text: "[ED_WELCOME]",
     });
     console.log("Message", message);
 
@@ -708,6 +712,23 @@ const Mutation = {
   addInterest: async (_, { input }, { prisma }) => {
     console.log("Interest Input", input);
     await prisma.createInterest({ ...input });
+
+    return { message: "OK" };
+  },
+
+  testLiveConnection: async (_, __, { prisma }) => {
+    const cardInput = {
+      cardNumber: "372762278391011",
+      cardExpiry: "11/24",
+      cardCVC: "3091",
+      firstName: "Brian",
+      lastName: "Baker",
+      zipCode: "92657",
+      address: "352 Ambroise",
+    };
+
+    const savedCard = await saveCreditCard(cardInput);
+    console.log("Saved Card", savedCard);
 
     return { message: "OK" };
   },

@@ -60,7 +60,7 @@ const Query = {
     await validateUser(req, true);
     let variables = {
       orderBy: "createdAt_ASC",
-      where: { status: status }
+      where: { status: status },
     };
 
     return await prisma.orders(variables);
@@ -79,16 +79,36 @@ const Query = {
               {
                 approvedDate_gt: moment()
                   .subtract(3, "days")
-                  .format()
-              }
-            ]
-          }
-        ]
-      }
+                  .format(),
+              },
+            ],
+          },
+        ],
+      },
       //
     };
 
     return await prisma.prescriptions(variables);
+  },
+  getMessagesByPrescription: async (_, { prescriptionId }, { prisma, req }) => {
+    return await prisma.prescription({ id: prescriptionId }).messages();
+  },
+
+  getPatientChat: async (_, { prescriptionId }, { prisma, req }) => {
+    await validateUser(req);
+
+    return await prisma
+      .prescription({ id: prescriptionId })
+      .messages({ where: { private: false } });
+  },
+
+  getPatientMessages: async (_, __, { prisma, req }) => {
+    return await prisma.messages({
+      where: {
+        fromPatient: true,
+      },
+      orderBy: "createdAt_DESC",
+    });
   },
 
   physicianListPrescriptions: async (_, __, { prisma, req }) => {
@@ -102,12 +122,12 @@ const Query = {
               {
                 approvedDate_gt: moment()
                   .subtract(14, "days")
-                  .format()
-              }
-            ]
-          }
-        ]
-      }
+                  .format(),
+              },
+            ],
+          },
+        ],
+      },
     };
 
     return await prisma.prescriptions(variables);
@@ -123,7 +143,7 @@ const Query = {
       orderBy: "createdAt_ASC",
       first: pageSize,
       after: after,
-      where: { status: status }
+      where: { status: status },
     };
 
     return await prisma.prescriptionsConnection(variables);
@@ -140,7 +160,7 @@ const Query = {
       orderBy: "createdAt_ASC",
       first: pageSize,
       after: after,
-      where: { status: status }
+      where: { status: status },
     };
 
     return await prisma.visitsConnection(variables);
@@ -155,6 +175,37 @@ const Query = {
       .visitsConnection()
       .aggregate()
       .count();
+  },
+
+  getPatientPrescriptions: async (_, { userId }, { prisma, req }) => {
+    const payload = await validateUser(req, false);
+    console.log("payload", payload);
+
+    if (!userId) {
+      userId = payload.userId;
+    }
+    console.log("userId", userId);
+
+    return await prisma.user({ id: userId }).prescriptions();
+  },
+
+  getRecentPrescriptionMessage: async (
+    _,
+    { prescriptionId },
+    { prisma, req }
+  ) => {
+    await validateUser(req);
+
+    const messages = await prisma
+      .prescription({ id: prescriptionId })
+      .messages({
+        orderBy: "createdAt_DESC",
+        where: { fromPatient: false, private: false },
+      });
+    if (messages) {
+      return messages[0];
+    }
+    return null;
   },
 
   creditCards: async (_, __, { prisma }) => {
@@ -172,11 +223,11 @@ const Query = {
     args.email = args.email.toLowerCase();
     // if it's a visitor account we won't enforce the duplicate
     const user = await prisma.users({
-      where: { email: args.email, role_not: "VISITOR" }
+      where: { email: args.email, role_not: "VISITOR" },
     });
     console.log("User=", user);
     return user.length > 0;
-  }
+  },
 };
 
 // const Visit = {
