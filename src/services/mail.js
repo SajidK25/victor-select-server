@@ -1,6 +1,8 @@
 const sgMail = require("@sendgrid/mail");
 
-const sendMail = async msg => {
+const returnEmail = "careteam@victoryselect.com";
+
+const sendMail = async (msg) => {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
   res = await sgMail.send(msg);
 };
@@ -8,28 +10,28 @@ const sendMail = async msg => {
 const sendResetMail = ({ email, name, url }) => {
   const msg = {
     from: {
-      email: "brian@bbaker.net",
-      name: "Victory Select"
+      email: returnEmail,
+      name: "Victory Select",
     },
     reply_to: {
-      email: "careteam@victoryselect.com",
-      name: "Victory Select"
+      email: returnEmail,
+      name: "Victory Select",
     },
     personalizations: [
       {
         to: [
           {
-            email: email
-          }
+            email: email,
+          },
         ],
         dynamic_template_data: {
           name: name,
-          url: url
+          url: url,
         },
-        subject: "Reset your password"
-      }
+        subject: "Reset your password",
+      },
     ],
-    template_id: "d-025df4ee89e4452889bfea7f1f2a173a"
+    template_id: "d-025df4ee89e4452889bfea7f1f2a173a",
   };
   sendMail(msg);
 };
@@ -37,27 +39,27 @@ const sendResetMail = ({ email, name, url }) => {
 const sendDeniedMail = ({ email, name }) => {
   const msg = {
     from: {
-      email: "brian@bbaker.net",
-      name: "Victory Select"
+      email: returnEmail,
+      name: "Victory Select",
     },
     reply_to: {
-      email: "careteam@victoryselect.com",
-      name: "Victory Select"
+      email: returnEmail,
+      name: "Victory Select",
     },
     personalizations: [
       {
         to: [
           {
-            email: email
-          }
+            email: email,
+          },
         ],
         dynamic_template_data: {
-          name: name
+          name: name,
         },
-        subject: "Important Message from VictorySelect"
-      }
+        subject: "Important Message from VictorySelect",
+      },
     ],
-    template_id: "d-c7f1491219d447d4ae641d8a2555be66"
+    template_id: "d-c7f1491219d447d4ae641d8a2555be66",
   };
   sendMail(msg);
 };
@@ -65,29 +67,29 @@ const sendDeniedMail = ({ email, name }) => {
 const sendShippedMail = async ({ email }) => {
   const msg = {
     from: {
-      email: "brian@bbaker.net",
-      name: "Victory Select"
+      email: returnEmail,
+      name: "Victory Select",
     },
     reply_to: {
-      email: "info@victoryselect.com",
-      name: "Victory Select"
+      email: returnEmail,
+      name: "Victory Select",
     },
     personalizations: [
       {
         to: [
           {
-            email: email
-          }
+            email: email,
+          },
         ],
         dynamic_template_data: {
           order_number: "VS-E10923544",
           tracking_number: "1Z00W3Y80299999",
-          tracking_url: ""
+          tracking_url: "",
         },
-        subject: "Your shipment from VictorySelect is on its way"
-      }
+        subject: "Your shipment from VictorySelect is on its way",
+      },
     ],
-    template_id: "d-98a420cabf1f49e8a22465c739807b84"
+    template_id: "d-98a420cabf1f49e8a22465c739807b84",
   };
   await sendMail(msg);
 };
@@ -95,32 +97,32 @@ const sendShippedMail = async ({ email }) => {
 const sendWelcomeMail = ({ email, name }) => {
   const msg = {
     from: {
-      email: "brian@bbaker.net",
-      name: "Victory Select"
+      email: returnEmail,
+      name: "Victory Select",
     },
     reply_to: {
-      email: "info@victoryselect.com",
-      name: "Victory Select"
+      email: returnEmail,
+      name: "Victory Select",
     },
     personalizations: [
       {
         to: [
           {
-            email: email
-          }
+            email: email,
+          },
         ],
         dynamic_template_data: {
-          name: name
+          name: name,
         },
-        subject: "Welcome to VictorySelect"
-      }
+        subject: "Welcome to VictorySelect",
+      },
     ],
-    template_id: "d-1ea2eba2ed044883a22824126b0f42a1"
+    template_id: "d-1ea2eba2ed044883a22824126b0f42a1",
   };
   sendMail(msg);
 };
 
-const makeANiceEmail = text => `
+const makeANiceEmail = (text) => `
   <div className="email" style="
     border: 1px solid black;
     padding: 20px;
@@ -139,5 +141,5 @@ module.exports = {
   sendResetMail,
   sendWelcomeMail,
   sendDeniedMail,
-  sendShippedMail
+  sendShippedMail,
 };
