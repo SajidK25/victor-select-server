@@ -16,7 +16,7 @@ const { prisma } = require("./generated/prisma-client");
 const Sentry = require("@sentry/node");
 
 Sentry.init({
-  dsn: "https://595b407caeb64d4bb27945994a417a3e@sentry.io/5171137"
+  dsn: "https://595b407caeb64d4bb27945994a417a3e@sentry.io/5171137",
 });
 
 var whitelist = [
@@ -24,7 +24,7 @@ var whitelist = [
   "http://localhost:3000",
   "http://localhost:4444",
   "https://physician-select.herokuapp.com",
-  "https://victory-select.herokuapp.com"
+  "https://victory-select.herokuapp.com",
 ];
 
 let corsOptions = {
@@ -35,16 +35,16 @@ let corsOptions = {
       if (whitelist.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
-        console.log("Origin:", origin);
         callback(new Error("Not allowed by CORS"));
       }
     }
   },
-  credentials: true // <-- REQUIRED backend setting
+  credentials: true, // <-- REQUIRED backend setting
 };
 
 (async () => {
   const app = express();
+  app.use(Sentry.Handlers.requestHandler());
   app.use(cors(corsOptions));
   app.use(CookieParser());
   app.use(
@@ -57,27 +57,31 @@ let corsOptions = {
             "https://fonts.googleapis.com",
             "https://cdn.jsdelivr.net",
             "http://cdn.jsdelivr.net",
-            "https://fonts.gstatic.com"
+            "https://fonts.gstatic.com",
           ],
           styleSrc: [
             "'self'",
             `'unsafe-inline'`,
             "https://cdn.jsdelivr.net",
-            "https://fonts.googleapis.com"
+            "https://fonts.googleapis.com",
           ],
           scriptSrc: ["'self'", `'unsafe-inline'`, "https://cdn.jsdelivr.net"],
           reportUri: "/report-violation",
           objectSrc: ["'self'"],
-          upgradeInsecureRequests: true
+          upgradeInsecureRequests: true,
         },
         referrerPolicy: { policy: "same-origin" },
-        featurePolicy: {}
-      }
+        featurePolicy: {},
+      },
     })
   );
   app.use(helmet.referrerPolicy({ policy: "no-referrer" }));
 
   app.get("/", (_req, res) => res.send("Hello!"));
+
+  app.get("/debug-sentry", function mainHandler(req, res) {
+    throw new Error("My first Sentry error!");
+  });
 
   app.post("/refresh_token", async (req, res) => {
     const token = req.cookies.jid;
@@ -113,16 +117,26 @@ let corsOptions = {
   const schema = makeExecutableSchema({
     typeDefs: importSchema("./src/schema.graphql"),
     resolvers,
-    directiveResolvers
+    directiveResolvers,
   });
 
   const apolloServer = new ApolloServer({
     schema,
     //   context: req => ({ ...req, db })
-    context: ({ req, res }) => ({ req, res, prisma })
+    context: ({ req, res }) => ({ req, res, prisma }),
   });
 
   apolloServer.applyMiddleware({ app, cors: false });
+
+  app.use(Sentry.Handlers.errorHandler());
+
+  // Optional fallthrough error handler
+  app.use(function onError(err, req, res, next) {
+    // The error id is attached to `res.sentry` to be returned
+    // and optionally displayed to the user for support.
+    res.statusCode = 500;
+    res.end(res.sentry + "\n");
+  });
 
   app.listen(process.env.PORT, () => {
     console.log(`🚀 Server ready at http://localhost:4444`);

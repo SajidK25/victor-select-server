@@ -46,13 +46,11 @@ const Query = {
 
   prescription: async (_, { id }, { prisma }) => {
     const prescription = await prisma.prescription({ id: id });
-    console.log("Prescription:", prescription);
     return prescription;
   },
 
   order: async (_, { id }, { prisma }) => {
     const order = await prisma.order({ id: id });
-    console.log("Order:", order);
     return order;
   },
 

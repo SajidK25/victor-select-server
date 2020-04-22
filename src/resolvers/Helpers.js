@@ -1,4 +1,7 @@
-const { saveCreditCard } = require("../services/usaepay");
+const {
+  saveCreditCard,
+  authorizeAndSaveCreditCard,
+} = require("../services/usaepay");
 const { validateAddress } = require("../services/shippo");
 
 const getCurrentCreditCard = async (userId, prisma) => {
@@ -10,13 +13,19 @@ const getCurrentCreditCard = async (userId, prisma) => {
 };
 
 const updateCreditCard = async (userId, cardInput, prisma) => {
-  const savedCard = await saveCreditCard(cardInput);
+  const response = await authorizeAndSaveCreditCard(cardInput);
+
+  if (response.result_code !== "A") {
+    throw new Error("Unable to verify credit card.");
+  }
+
+  const savedCard = response.saved_card;
   let newCC = null;
   if (savedCard) {
     // Update all current user credit cards to inactive
     await prisma.updateManyCreditCards({
       where: { user: { id: userId }, active: true },
-      data: { active: false }
+      data: { active: false },
     });
     // Save new active card
     newCC = await prisma.createCreditCard({
@@ -27,9 +36,9 @@ const updateCreditCard = async (userId, cardInput, prisma) => {
       active: true,
       user: {
         connect: {
-          id: userId
-        }
-      }
+          id: userId,
+        },
+      },
     });
   }
 
@@ -61,13 +70,13 @@ const updateAddress = async ({ user, addressInput, prisma }) => {
         city: address.city,
         state: address.state,
         zipcode: address.zipcode,
-        telephone: address.telephone
+        telephone: address.telephone,
       }
     : addressInput;
 
   const shippoInput = {
     name: user.firstName + " " + user.lastName,
-    ...newAddressInput
+    ...newAddressInput,
   };
 
   let shippoId = "";
@@ -82,21 +91,21 @@ const updateAddress = async ({ user, addressInput, prisma }) => {
     shippoId: shippoId,
     user: {
       connect: {
-        id: user.id
-      }
-    }
+        id: user.id,
+      },
+    },
   };
 
   if (!address) {
     address = await prisma.createAddress({
-      ...upsertAddressInput
+      ...upsertAddressInput,
     });
   } else {
     address = await prisma.updateAddress({
       where: { id: address.id },
       data: {
-        ...upsertAddressInput
-      }
+        ...upsertAddressInput,
+      },
     });
   }
 
@@ -105,12 +114,12 @@ const updateAddress = async ({ user, addressInput, prisma }) => {
 
 const setPricing = async (subscription, prisma) => {
   const product = await prisma.product({
-    productId: subscription.drugId + subscription.doseOption
+    productId: subscription.drugId + subscription.doseOption,
   });
   let addon = null;
   if (subscription.addOnId !== "NO_ADDON") {
     addon = await prisma.product({
-      productId: subscription.addOnId + "ADDON"
+      productId: subscription.addOnId + "ADDON",
     });
   }
 
@@ -150,5 +159,5 @@ module.exports = {
   updateAddress,
   updateCreditCard,
   getCurrentAddress,
-  setPricing
+  setPricing,
 };

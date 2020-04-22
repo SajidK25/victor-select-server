@@ -17,9 +17,6 @@ if (process.env.PAYMENT_MODE === "TEST") {
 
 const prehash = paymentAPI + process.env.USAEPAY_SEED + paymentPin;
 
-console.log("Key:", paymentAPI);
-console.log("Pin:", paymentPin);
-
 const apihash = "s2/" + process.env.USAEPAY_SEED + "/" + sha256(prehash);
 
 const authKey = new Buffer.from(paymentAPI + ":" + apihash).toString("base64");
@@ -39,9 +36,52 @@ const usaepayAPI = got.extend({
   resolveBodyOnly: true,
 });
 
+const authorizeAndSaveCreditCard = async (input) => {
+  validateArgument(input, "input");
+  validateArgument(input.cardNumber, "input.cardNumber");
+  validateArgument(input.cardExpiry, "input.cardExpiry");
+
+  var data = {
+    command: "cc:authonly",
+    amount: "1.00",
+    save_card: true,
+    creditcard: {
+      number: input.cardNumber,
+      expiration: input.cardExpiry,
+    },
+    send_receipt: false,
+  };
+
+  if (input.firstName && input.lastName) {
+    data.creditcard.cardholder = input.firstName + " " + input.lastName;
+  }
+  if (input.address) {
+    data.creditcard.avs_street = input.address;
+  }
+  if (input.zipcode) {
+    data.creditcard.avs_zip = input.zipcode;
+  }
+  if (input.cardCVC) {
+    data.creditcard.cvc = input.cardCVC;
+  }
+
+  let body = null;
+  try {
+    body = await usaepayAPI.post("transactions", {
+      json: data,
+    });
+  } catch (err) {
+    console.log(err);
+    throw new Error("Unable to contact card processor.");
+  }
+
+  if (!body) return { result_code: "ERR" };
+
+  return body;
+};
+
 // This will save a card and return a token
 const saveCreditCard = async (input) => {
-  console.log("input", input);
   validateArgument(input, "input");
   validateArgument(input.cardNumber, "input.cardNumber");
   validateArgument(input.cardExpiry, "input.cardExpiry");
@@ -76,8 +116,6 @@ const saveCreditCard = async (input) => {
     console.log("Error", err);
   }
 
-  console.log("Body:", body);
-  console.log("Code", body.result_code);
   if (!body || body.result_code !== "A") {
     throw new Error("Card not approved");
   }
@@ -85,41 +123,30 @@ const saveCreditCard = async (input) => {
     throw new Error("Card could not be saved");
   }
 
-  console.log("Saved Card Body", body);
-
   return body.savedcard;
 };
 
 const releaseAuthorization = async (refnum) => {
   validateArgument(refnum, "refnum");
 
-  console.log("refnum:", refnum);
-
   var data = {
     command: "cc:void:release",
     refnum: refnum,
   };
 
-  console.log("Data:", data);
   const body = await usaepayAPI.post("transactions", {
     json: data,
   });
-
-  console.log("Body:", body);
-  console.log("Code", body.result_code);
 
   return body;
 };
 
 const makePayment = async (input) => {
-  console.log("input", input);
   validateArgument(input, "input");
   validateArgument(input.amount, "input.amount");
   validateArgument(input.ccToken, "input.ccToken");
   validateArgument(input.cardholder, "input.cardholder");
   validateArgument(input.email, "input.email");
-
-  console.log("Input:", input);
 
   var data = {
     command: "cc:sale",
@@ -133,13 +160,10 @@ const makePayment = async (input) => {
     description: "Victory Select",
   };
 
-  console.log("Data:", data);
   const body = await usaepayAPI.post("transactions", {
     json: data,
   });
 
-  console.log("Body:", body);
-  console.log("Code", body.result_code);
   if (!body || body.result_code !== "A") {
     throw new Error("Card not approved");
   }
@@ -149,6 +173,7 @@ const makePayment = async (input) => {
 
 module.exports = {
   saveCreditCard,
+  authorizeAndSaveCreditCard,
   releaseAuthorization,
   makePayment,
 };

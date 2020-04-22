@@ -37,11 +37,9 @@ const Mutation = {
     return true;
   },
   register: async (_, args, { prisma, res }) => {
-    console.log("Entering register...");
     const { input } = args;
     input.email = input.email.toLowerCase();
     const user = await prisma.user({ email: input.email });
-    console.log("Register User:", user);
     input.password = await bcrypt.hash(input.password, 10);
     let newUser;
     let message = "";
@@ -72,8 +70,6 @@ const Mutation = {
   },
 
   login: async (_, { email, password }, { res, prisma }) => {
-    console.log("email:", email);
-
     // 1. Check for a user with that email address
     email = email.toLowerCase();
     const user = await prisma.user({ email });
@@ -110,7 +106,6 @@ const Mutation = {
       where: { email: args.email },
       data: { resetToken, resetTokenExpiry },
     });
-    console.log("UpdateUser:", updateUser);
     // 3. Email them that reset token
     const url = `${process.env.FRONTEND_URL}/reset?resetToken=${resetToken}`;
     sendResetMail({ email: args.email, name: updateUser.firstName, url });
@@ -196,7 +191,6 @@ const Mutation = {
         },
       });
 
-      console.log("NewCC", newCC);
       return newCC;
     } else {
       throw new Error("Unable to process credit card");
@@ -210,15 +204,12 @@ const Mutation = {
     const payload = await validateUser(req);
     const { userId, userRole } = payload;
 
-    console.log("MessageInput", input);
-
     const prescriptionUser = await prisma
       .prescription({ id: input.prescriptionId })
       .user();
     if (!prescriptionUser) {
       throw new Error("Unable to find prescription record");
     }
-    console.log("prescription User:", prescriptionUser);
 
     const msgInput = {
       prescription: {
@@ -301,7 +292,6 @@ const Mutation = {
 
   makePayment: async (_, args, { req, prisma }) => {
     const { token, amount } = args;
-    console.log(token, amount);
 
     const result = await makePayment({
       ccToken: token,
@@ -339,8 +329,6 @@ const Mutation = {
     const user = await prisma.prescription({ id: id }).user();
     const creditcard = await getCurrentCreditCard(user.id, prisma);
     const address = await getCurrentAddress(user.id, prisma);
-    console.log("Token=", creditcard);
-    console.log("Prescription:", prescription);
 
     var paymentResult = {};
     try {
@@ -380,9 +368,7 @@ const Mutation = {
     const expireDate = moment(approvedDate)
       .add(1, "year")
       .format();
-    console.log("ExpireDate", expireDate);
 
-    console.log("Order:", order);
     await prisma.updatePrescription({
       data: {
         refillsRemaining: refillsRemaining,
@@ -404,7 +390,6 @@ const Mutation = {
       prescription: { connect: { id: prescription.id } },
       text: "[ED_WELCOME]",
     });
-    console.log("Message", message);
 
     // Send approved email...
     // Send new private message email...
@@ -413,12 +398,9 @@ const Mutation = {
   },
 
   saveNewVisit: async (_, args, { req, prisma }) => {
-    console.log("Save New Visit!");
     const payload = await validateUser(req);
 
     const { userId } = payload;
-    console.log("Payload", payload);
-    console.log("UserId", userId);
 
     const user = await prisma.user({ id: userId });
 
@@ -436,7 +418,6 @@ const Mutation = {
     };
 
     const newCC = await updateCreditCard(userId, cardInput, prisma);
-    console.log("NewCC", newCC);
 
     // Next add address
     addressInput = {
@@ -454,11 +435,9 @@ const Mutation = {
       addressInput: addressInput,
       prisma: prisma,
     });
-    console.log("Address", address);
 
     // Save new visit
     const birthDate = new Date(input.personal.birthDate);
-    console.log("BirthDate", birthDate);
     const gender = input.personal.gender;
     const photoId = input.personal.licenseImage;
 
@@ -495,7 +474,6 @@ const Mutation = {
         },
       },
     });
-    console.log("Visit", visit);
 
     // Create Prescription
     const prescription = await prisma.createPrescription({
@@ -505,8 +483,6 @@ const Mutation = {
       product: { connect: { productId: productId } },
       addon: addonId ? { connect: { productId: addonId } } : {},
     });
-    console.log("Prescription:", prescription);
-
     // const userRole = user.role === "VISITOR" ? "PATIENT" : user.role;
     // Update user
     const updateUser = await prisma.updateUser({
@@ -526,8 +502,6 @@ const Mutation = {
 
   processOrders: async (_, { idList }, { req, prisma }) => {
     await validateUser(req, true);
-
-    console.log("idList: ", idList);
 
     await asyncForEach(idList, async (id) => {
       console.log("id", id);
@@ -667,7 +641,6 @@ const Mutation = {
     let input = null;
     let updateRet = null;
     await asyncForEach(addresses, async (address) => {
-      console.log(address);
       if (!address.shippoId || !address.email) {
         user = await prisma.address({ id: address.id }).user();
         input = {
@@ -728,8 +701,6 @@ const Mutation = {
     };
 
     const savedCard = await saveCreditCard(cardInput);
-    console.log("Saved Card", savedCard);
-
     return { message: "OK" };
   },
 };

@@ -5,8 +5,6 @@ import { verify } from "jsonwebtoken";
 export const isAuth = ({ context }, next) => {
   const authorization = context.req.headers["authorization"];
 
-  console.log("AUTH:", authorization);
-
   if (!authorization) {
     throw new Error("not authenticated");
   }

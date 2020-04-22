@@ -1,9 +1,9 @@
-const shippo = require("shippo")(process.env.SHIPPOTEST_TOKEN);
+const shippo = require("shippo")(process.env.SHIPPO_TOKEN);
 const { validateArgument } = require("./utils");
 
-const SHIPPO_DEFAULTCARRIER = process.env.SHIPPOTEST_USPS;
-const SHIPPO_ADDRESSFROM = process.env.SHIPPOTEST_ADDRESSFROM;
-const SHIPPO_DEFAULTSERVICELEVEL = "usps_first";
+const shippoDefaultCarrier = process.env.SHIPPO_USPS;
+const shippoAddressFrom = process.env.SHIPPO_ADDRESSFROM;
+const shippoDEfaultServiceLevel = "usps_first";
 
 const ED_BASEWEIGHT = 2.5;
 const ED_EXTRAMONTH = 0.5;
@@ -20,9 +20,6 @@ const createParcel = async (prescription) => {
     mass_unit: "oz",
   };
 
-  console.log("Prescription:", prescription);
-
-  console.log("Addon", prescription.addon);
   switch (prescription.type) {
     case "ED":
       parcel.weight = !prescription.addon
@@ -86,6 +83,8 @@ const validateAddress = async (input) => {
   }
 
   console.log("Shippo return:", address);
+
+  if (!address.validation_results) return { valid: false, shippoId: "" };
 
   return address.validation_results.is_valid
     ? { valid: true, shippoId: address.object_id }
@@ -194,8 +193,8 @@ const createBatch = async (orders) => {
   let batchShipments = [];
 
   const input = {
-    default_carrier_account: "74b06950e9054ca295802751a807cf2e",
-    default_servicelevel_token: SHIPPO_DEFAULTSERVICELEVEL,
+    default_carrier_account: shippoDefaultCarrier,
+    default_servicelevel_token: shippoDefaultServiceLevel,
     label_filetype: "PDF_4x6",
     metadata: "",
     batch_shipments: [],
@@ -205,10 +204,10 @@ const createBatch = async (orders) => {
     input.batch_shipments.push({
       shipment: {
         address_to: o.addressId,
-        address_from: SHIPPO_ADDRESSFROM,
+        address_from: shippoAddressFrom,
         parcels: [o.parcelId],
-        carrier_account: SHIPPO_DEFAULTCARRIER,
-        servicelevel_token: SHIPPO_DEFAULTSERVICELEVEL,
+        carrier_account: shippoDefaultCarrier,
+        servicelevel_token: shippoDefaultServiceLevel,
       },
     });
   });
