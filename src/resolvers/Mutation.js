@@ -388,7 +388,7 @@ const Mutation = {
       physician: { connect: { id: physicianId } },
       user: { connect: { id: user.id } },
       prescription: { connect: { id: prescription.id } },
-      text: "[ED_WELCOME]",
+      text: `[${prescription.type}_WELCOME]`,
     });
 
     // Send approved email...

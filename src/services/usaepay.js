@@ -116,6 +116,11 @@ const saveCreditCard = async (input) => {
     console.log("Error", err);
   }
 
+  console.log("Body: ", body);
+  console.log("URL: ", paymentUrl);
+  console.log("API: ", paymentAPI);
+  console.log("PIN: ", paymentPin);
+
   if (!body || body.result_code !== "A") {
     throw new Error("Card not approved");
   }
@@ -160,9 +165,13 @@ const makePayment = async (input) => {
     description: "Victory Select",
   };
 
+  console.log("Data in:", data);
+
   const body = await usaepayAPI.post("transactions", {
     json: data,
   });
+
+  console.log("Payment return:", body);
 
   if (!body || body.result_code !== "A") {
     throw new Error("Card not approved");

@@ -9,6 +9,8 @@ const getCurrentCreditCard = async (userId, prisma) => {
     .user({ id: userId })
     .creditCards({ where: { active: true } });
 
+  console.log("Credit Cards:", creditcards);
+
   return creditcards[0];
 };
 
