@@ -6,6 +6,8 @@ const {
   sendWelcomeMail,
   sendDeniedMail,
   sendShippedMail,
+  sendComingSoonMail,
+  sendActivityCopy,
 } = require("../services/mail");
 const { sendRefreshToken } = require("../sendRefreshToken");
 const moment = require("moment");
@@ -684,8 +686,12 @@ const Mutation = {
 
   addInterest: async (_, { input }, { prisma }) => {
     console.log("Interest Input", input);
-    await prisma.createInterest({ ...input });
-
+    //  await prisma.createInterest({ ...input });
+    //  sendComingSoonMail({ email: input.email });
+    sendActivityCopy({
+      email: "careteam@victoryselect.com",
+      text: `Someone (${input.email}) added interest for ${input.category}.`,
+    });
     return { message: "OK" };
   },
 

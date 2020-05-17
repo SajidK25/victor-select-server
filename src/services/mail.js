@@ -7,7 +7,7 @@ const sendMail = async (msg) => {
   res = await sgMail.send(msg);
 };
 
-const sendResetMail = ({ email, name, url }) => {
+const sendAnEmail = ({ email, name, templateId, templateData }) => {
   const msg = {
     from: {
       email: returnEmail,
@@ -19,20 +19,28 @@ const sendResetMail = ({ email, name, url }) => {
     },
     personalizations: [
       {
-        to: [
-          {
-            email: email,
-          },
-        ],
+        to: [{ name: name, email: email }],
         dynamic_template_data: {
-          name: name,
-          url: url,
+          ...templateData,
         },
-        subject: "Reset your password",
       },
     ],
-    template_id: "d-025df4ee89e4452889bfea7f1f2a173a",
+    template_id: templateId,
   };
+  sendMail(msg);
+};
+
+const sendResetMail = ({ email, name, url }) => {
+  sendAnEmail({
+    name: name,
+    email: email,
+    templateId: "d-025df4ee89e4452889bfea7f1f2a173a",
+    templateData: {
+      name: name,
+      url: url,
+    },
+  });
+
   sendMail(msg);
 };
 
@@ -122,6 +130,67 @@ const sendWelcomeMail = ({ email, name }) => {
   sendMail(msg);
 };
 
+const sendComingSoonMail = ({ email }) => {
+  sendAnEmail({
+    name: "",
+    email: email,
+    templateId: "d-05724fe552a44257b89b05534b61e9ae",
+    tepmateData: {},
+  });
+};
+
+// const sendComingSoonMail = ({ email }) => {
+//   const msg = {
+//     from: {
+//       email: returnEmail,
+//       name: "Victory Select",
+//     },
+//     reply_to: {
+//       email: returnEmail,
+//       name: "Victory Select",
+//     },
+//     personalizations: [
+//       {
+//         to: [
+//           {
+//             email: email,
+//           },
+//         ],
+//       },
+//     ],
+//     template_id: "d-05724fe552a44257b89b05534b61e9ae",
+//   };
+//   sendMail(msg);
+// };
+
+const sendActivityCopy = ({ email, text }) => {
+  const msg = {
+    from: {
+      email: returnEmail,
+      name: "Victory Select",
+    },
+    reply_to: {
+      email: returnEmail,
+      name: "Victory Select",
+    },
+    personalizations: [
+      {
+        to: [
+          {
+            email: "brian@bbaker.net",
+          },
+          {
+            email: email,
+          },
+        ],
+        subject: "Activity notification",
+      },
+    ],
+    content: [{ type: "text/html", value: `<p>${text}</p>` }],
+  };
+  sendMail(msg);
+};
+
 const makeANiceEmail = (text) => `
   <div className="email" style="
     border: 1px solid black;
@@ -142,4 +211,6 @@ module.exports = {
   sendWelcomeMail,
   sendDeniedMail,
   sendShippedMail,
+  sendComingSoonMail,
+  sendActivityCopy,
 };
