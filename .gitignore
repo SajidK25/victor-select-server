@@ -24,3 +24,6 @@ yarn-error.log*
 
 *.exe 
 .env.prisma1.txt
+.env.master.branch
+tslint.json
+yarn.lock
