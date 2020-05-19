@@ -25,6 +25,7 @@ var whitelist = [
   "http://localhost:4444",
   "https://physician-select.herokuapp.com",
   "https://victory-select.herokuapp.com",
+  "https://victory-testing.heroku.com",
 ];
 
 let corsOptions = {
