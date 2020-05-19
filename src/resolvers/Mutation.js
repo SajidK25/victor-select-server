@@ -686,8 +686,8 @@ const Mutation = {
 
   addInterest: async (_, { input }, { prisma }) => {
     console.log("Interest Input", input);
-    //  await prisma.createInterest({ ...input });
-    //  sendComingSoonMail({ email: input.email });
+    await prisma.createInterest({ ...input });
+    sendComingSoonMail({ email: input.email });
     sendActivityCopy({
       email: "careteam@victoryselect.com",
       text: `Someone (${input.email}) added interest for ${input.category}.`,

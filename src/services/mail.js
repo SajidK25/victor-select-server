@@ -4,7 +4,7 @@ const returnEmail = "careteam@victoryselect.com";
 
 const sendMail = async (msg) => {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  res = await sgMail.send(msg);
+  let res = await sgMail.send(msg);
 };
 
 const sendAnEmail = ({ email, name, templateId, templateData }) => {
