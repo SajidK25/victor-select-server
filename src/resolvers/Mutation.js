@@ -7,6 +7,7 @@ const {
   sendDeniedMail,
   sendShippedMail,
   sendComingSoonMail,
+  sendPrivateMessageMail,
   sendActivityCopy,
 } = require("../services/mail");
 const { sendRefreshToken } = require("../sendRefreshToken");
@@ -393,8 +394,7 @@ const Mutation = {
       text: `[${prescription.type}_WELCOME]`,
     });
 
-    // Send approved email...
-    // Send new private message email...
+    sendPrivateMessageMail({ email: user.email, name: user.firstName });
 
     return { message: "OK" };
   },

@@ -44,6 +44,18 @@ const sendResetMail = ({ email, name, url }) => {
   sendMail(msg);
 };
 
+const sendPrivateMessageMail = ({ email, name }) => {
+  sendAnEmail({
+    name: name,
+    email: email,
+    templateId: "d-9bc26fb97cae4a2c9c5aa4d81ad6be44",
+    templateData: {
+      name: name,
+      url: `${process.env.FRONTEND_URL}/account/chat`,
+    },
+  });
+};
+
 const sendDeniedMail = ({ email, name }) => {
   const msg = {
     from: {
@@ -139,30 +151,6 @@ const sendComingSoonMail = ({ email }) => {
   });
 };
 
-// const sendComingSoonMail = ({ email }) => {
-//   const msg = {
-//     from: {
-//       email: returnEmail,
-//       name: "Victory Select",
-//     },
-//     reply_to: {
-//       email: returnEmail,
-//       name: "Victory Select",
-//     },
-//     personalizations: [
-//       {
-//         to: [
-//           {
-//             email: email,
-//           },
-//         ],
-//       },
-//     ],
-//     template_id: "d-05724fe552a44257b89b05534b61e9ae",
-//   };
-//   sendMail(msg);
-// };
-
 const sendActivityCopy = ({ email, text }) => {
   const msg = {
     from: {
@@ -208,6 +196,7 @@ const makeANiceEmail = (text) => `
 // exports.transport = transport
 module.exports = {
   sendResetMail,
+  sendPrivateMessageMail,
   sendWelcomeMail,
   sendDeniedMail,
   sendShippedMail,

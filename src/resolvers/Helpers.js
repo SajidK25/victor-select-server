@@ -16,12 +16,14 @@ const getCurrentCreditCard = async (userId, prisma) => {
 
 const updateCreditCard = async (userId, cardInput, prisma) => {
   const response = await authorizeAndSaveCreditCard(cardInput);
+  console.log("CC Response:", response);
 
   if (response.result_code !== "A") {
     throw new Error("Unable to verify credit card.");
   }
 
-  const savedCard = response.saved_card;
+  const savedCard = response.savedcard;
+
   let newCC = null;
   if (savedCard) {
     // Update all current user credit cards to inactive
