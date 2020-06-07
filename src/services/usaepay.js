@@ -116,19 +116,11 @@ const saveCreditCard = async (input) => {
     console.log("Error", err);
   }
 
-  console.log("Body: ", body);
-  console.log("URL: ", paymentUrl);
-  console.log("API: ", paymentAPI);
-  console.log("PIN: ", paymentPin);
-
-  if (!body || body.result_code !== "A") {
-    throw new Error("Card not approved");
-  }
   if (!body.savedcard || !body.savedcard.cardnumber) {
     throw new Error("Card could not be saved");
   }
 
-  return body.savedcard;
+  return body;
 };
 
 const releaseAuthorization = async (refnum) => {
@@ -173,9 +165,9 @@ const makePayment = async (input) => {
 
   console.log("Payment return:", body);
 
-  if (!body || body.result_code !== "A") {
-    throw new Error("Card not approved");
-  }
+  //  if (!body || body.result_code !== "A") {
+  //    throw new Error("Card not approved");
+  //  }
 
   return { resultCode: body.result_code, refnum: body.refnum };
 };

@@ -20,6 +20,7 @@ const {
   updateCreditCard,
   getCurrentAddress,
   setPricing,
+  setSupplementPricing,
 } = require("./Helpers");
 const {
   createRefreshToken,
@@ -248,16 +249,17 @@ const Mutation = {
   saveAddress: async (_, { input }, { req, prisma }) => {
     const payload = await validateUser(req);
     const { userId } = payload;
-
     const user = await prisma.user({ id: userId });
 
     const address = await updateAddress({
       user: user,
-      addressInput: input,
+      newAddress: input,
       prisma: prisma,
     });
 
-    return address;
+    if (!address) return { message: "NOT_SAVED" };
+
+    return { message: "OK" };
   },
 
   updateCurrVisit: async (_, args, { req, prisma }) => {
@@ -434,7 +436,7 @@ const Mutation = {
 
     const address = await updateAddress({
       user: user,
-      addressInput: addressInput,
+      newAddress: addressInput,
       prisma: prisma,
     });
 
@@ -515,6 +517,101 @@ const Mutation = {
       });
     });
 
+    return { message: "OK" };
+  },
+
+  saveNewSupplement: async (_, args, { req, prisma }) => {
+    const payload = await validateUser(req);
+
+    const { userId } = payload;
+    const user = await prisma.user({ id: userId });
+
+    const { input } = args;
+    // first validate and save credit card
+    const cardInput = {
+      cardNumber: input.payment.cardNumber,
+      cardExpiry: input.payment.cardExpiry,
+      cardCVC: input.payment.cardCVC,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      zipCode: input.personal.zipCode,
+      address: input.personal.addressOne,
+    };
+    const newCC = await updateCreditCard(userId, cardInput, prisma, true);
+
+    if (!newCC) return { message: "CANT_SAVE_CARD" };
+
+    // Save Prescription Information
+    const pInput = {};
+    const s = input.subscription;
+    const pricing = await setSupplementPricing(s, prisma);
+
+    pInput.type = input.type;
+    pInput.status = "ACTIVE";
+    pInput.timesPerMonth = 1;
+    const productId = s.drugId;
+    pInput.addonTimesPerMonth = 0;
+    pInput.totalRefills = 999;
+    pInput.refillsRemaining = 999;
+    pInput.shippingInterval = pricing.shippingInterval;
+    pInput.amountDue = pricing.amountDue;
+
+    const visit = await prisma.createVisit({
+      type: input.type,
+      questionnaire: {},
+      user: {
+        connect: {
+          id: userId,
+        },
+      },
+    });
+
+    // Create Prescription
+    const prescription = await prisma.createPrescription({
+      ...pInput,
+      user: { connect: { id: userId } },
+      visit: { connect: { id: visit.id } },
+      product: { connect: { productId: productId } },
+      addon: {},
+    });
+    // const userRole = user.role === "VISITOR" ? "PATIENT" : user.role;
+    // Update user
+    //   sendWelcomeMail({ email: updateUser.email, name: updateUser.firstName });
+    var paymentResult = {};
+    try {
+      paymentResult = await makePayment({
+        ccToken: newCC.ccToken,
+        amount: prescription.amountDue,
+        cardholder: user.firstName + " " + user.lastName,
+        email: user.email,
+      });
+    } catch (err) {
+      paymentResult = { resultCode: "D", refnum: "" };
+      console.log(err);
+    }
+
+    const address = await getCurrentAddress(user.id, prisma);
+    // Make payment...
+    const order = await prisma.createOrder({
+      amount: prescription.amountDue,
+      refnum: paymentResult.refnum,
+      status: paymentResult.resultCode === "A" ? "PENDING" : "PAYMENT_DECLINED",
+      new: true,
+      refills: 999,
+      user: { connect: { id: user.id } },
+      prescription: { connect: { id: prescription.id } },
+      creditCard: { connect: { id: newCC.id } },
+      addressOne: address.addressOne,
+      addressTwo: address.addressTwo,
+      city: address.city,
+      state: address.state,
+      zipcode: address.zipcode,
+      shippoAddressId: address.shippoId,
+    });
+
+    if (paymentResult.resultCode !== "A") {
+      return { message: "PAYMENT_DECLINED" };
+    }
     return { message: "OK" };
   },
 
@@ -656,7 +753,7 @@ const Mutation = {
         };
         updateRet = await updateAddress({
           user: user,
-          addressInput: input,
+          newAddress: input,
           prisma: prisma,
         });
         console.log(updateRet);

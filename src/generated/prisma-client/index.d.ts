@@ -429,7 +429,8 @@ export type PrescriptionType =
   | "SLEEP"
   | "JOY"
   | "ALLERGY"
-  | "WEIGHT";
+  | "WEIGHT"
+  | "SUPPLEMENT";
 
 export type OrderStatus =
   | "PENDING"

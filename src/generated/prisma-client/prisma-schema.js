@@ -2576,6 +2576,7 @@ enum PrescriptionType {
   JOY
   ALLERGY
   WEIGHT
+  SUPPLEMENT
 }
 
 input PrescriptionUpdateInput {

@@ -14,8 +14,18 @@ const getCurrentCreditCard = async (userId, prisma) => {
   return creditcards[0];
 };
 
-const updateCreditCard = async (userId, cardInput, prisma) => {
-  const response = await authorizeAndSaveCreditCard(cardInput);
+const updateCreditCard = async (
+  userId,
+  cardInput,
+  prisma,
+  saveOnly = false
+) => {
+  let response = null;
+  if (saveOnly) {
+    response = await saveCreditCard(cardInput);
+  } else {
+    response = await authorizeAndSaveCreditCard(cardInput);
+  }
   console.log("CC Response:", response);
 
   if (response.result_code !== "A") {
@@ -59,38 +69,53 @@ const getCurrentAddress = async (userId, prisma) => {
   return null;
 };
 
-const updateAddress = async ({ user, addressInput, prisma }) => {
-  let address = await getCurrentAddress(user.id, prisma);
+const updateAddress = async ({ user, newAddress, prisma }) => {
+  // Get the current User's address
+  let currentAddress = await getCurrentAddress(user.id, prisma);
   // There's nothing to do here
-  if (!address && !addressInput) return;
+  if (!currentAddress && !newAddress) return;
 
-  // No new address sent so use the current one
-  const newAddressInput = !addressInput
-    ? {
-        name: user.firstName + " " + user.lastName,
-        email: user.email,
-        addressOne: address.addressOne,
-        addressTwo: address.addressTwo,
-        city: address.city,
-        state: address.state,
-        zipcode: address.zipcode,
-        telephone: address.telephone,
-      }
-    : addressInput;
-
-  const shippoInput = {
+  const addressInput = {
     name: user.firstName + " " + user.lastName,
-    ...newAddressInput,
+    email: user.email,
+    addressOne: "",
+    addressTwo: "",
+    city: "",
+    state: "",
+    zipcode: "",
+    telephone: "",
   };
 
+  if (!newAddress) {
+    addressInput.addressOne = currentAddress.addressOne;
+    addressInput.addressTwo = currentAddress.addressTwo;
+    addressInput.city = currentAddress.city;
+    addressInput.state = currentAddress.state;
+    addressInput.zipcode = currentAddress.zipcode;
+    addressInput.telephone = currentAddress.telephone;
+  } else {
+    addressInput.addressOne = newAddress.addressOne;
+    addressInput.addressTwo = newAddress.addressTwo;
+    addressInput.city = newAddress.city;
+    addressInput.state = newAddress.state;
+    addressInput.zipcode = newAddress.zipcode;
+    addressInput.telephone = newAddress.telephone;
+  }
+
   let shippoId = "";
-  const shippoRet = await validateAddress(shippoInput);
+  const shippoRet = await validateAddress(addressInput);
+  if (!shippoRet.valid) {
+    return null;
+  }
+
   if (shippoRet) {
     shippoId = shippoRet.shippoId;
   }
+  console.log("addressInput", addressInput);
 
+  delete addressInput.name;
   const upsertAddressInput = {
-    ...newAddressInput,
+    ...addressInput,
     active: true,
     shippoId: shippoId,
     user: {
@@ -100,20 +125,49 @@ const updateAddress = async ({ user, addressInput, prisma }) => {
     },
   };
 
-  if (!address) {
-    address = await prisma.createAddress({
+  if (!currentAddress) {
+    currentAddress = await prisma.createAddress({
       ...upsertAddressInput,
     });
   } else {
-    address = await prisma.updateAddress({
-      where: { id: address.id },
+    currentAddress = await prisma.updateAddress({
+      where: { id: currentAddress.id },
       data: {
         ...upsertAddressInput,
       },
     });
   }
 
-  return address;
+  return currentAddress;
+};
+
+const setSupplementPricing = async (subscription, prisma) => {
+  const product = await prisma.product({
+    productId: subscription.drugId,
+  });
+
+  let shippingInterval = 0;
+  let price = 0;
+  switch (subscription.shippingInterval) {
+    case "3":
+      shippingInterval = 3;
+      if (product) price = product.threeMonthPrice;
+      break;
+
+    case "2":
+      shippingInterval = 2;
+      if (product) price = product.twoMonthPrice;
+      break;
+
+    case "1":
+      shippingInterval = 1;
+      if (product) price = product.monthlyPrice;
+      break;
+
+    default:
+  }
+  const amountDue = shippingInterval * price;
+  return { shippingInterval, amountDue };
 };
 
 const setPricing = async (subscription, prisma) => {
@@ -164,4 +218,5 @@ module.exports = {
   updateCreditCard,
   getCurrentAddress,
   setPricing,
+  setSupplementPricing,
 };

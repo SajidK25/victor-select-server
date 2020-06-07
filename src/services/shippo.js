@@ -60,9 +60,9 @@ const validateAddress = async (input) => {
   validateArgument(input.email, "input.email");
   validateArgument(input.telephone, "input.telephone");
 
-  let address = null;
+  let ret = null;
   try {
-    address = await shippo.address.create({
+    ret = await shippo.address.create({
       name: input.name,
       street1: input.addressOne,
       street2: input.addressTwo,
@@ -76,23 +76,31 @@ const validateAddress = async (input) => {
     });
   } catch (err) {
     console.log("createAddressError", err);
-    throw new Error(err);
+    throw new Error("Network error validating address. Please try later.");
   }
-  if (!address) {
-    throw new Error("Unable to create address");
+  if (!ret || !ret.validation_results) {
+    throw new Error("Network error validating address. Please try later.");
+  }
+  console.log("Shippo return:", ret);
+  ret.validation_results.messages.forEach((m) => console.log("message", m));
+
+  if (!ret.validation_results.is_valid) {
+    return {
+      valid: false,
+      shippoId: "",
+      errors: ret.validation_results.messages,
+    };
   }
 
-  console.log("Shippo return:", address);
+  // Get updated values
+  input.addressOne = ret.street1;
+  input.addressTwo = ret.street2;
+  input.city = ret.city;
+  input.state = ret.state;
+  input.zipcode = ret.zip;
+  input.telephone = ret.phone;
 
-  if (!address.validation_results) return { valid: false, shippoId: "" };
-
-  return address.validation_results.is_valid
-    ? { valid: true, shippoId: address.object_id }
-    : {
-        valid: false,
-        shippoId: "",
-        errors: address.validation_results.messages,
-      };
+  return { valid: true, shippoId: ret.object_id, errors: [], input };
 };
 
 // function checkBatchStatus(object_id) {

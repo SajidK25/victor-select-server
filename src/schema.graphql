@@ -81,6 +81,11 @@ type PrepareShipmentMessage {
   batchAmount: Int!
 }
 
+type TransactionMessage {
+  message: String!
+  orderId: String
+}
+
 type SuccessMessage {
   message: String
 }
@@ -99,8 +104,9 @@ type Mutation {
   revokeRefreshTokensForUser(userId: String!): Boolean!
   updateCurrVisit(input: Json): SuccessMessage!
   saveCard(input: SaveCardInput!): CreditCard!
-  saveAddress(input: SaveAddressInput!): Address!
+  saveAddress(input: SaveAddressInput!): SuccessMessage!
   saveNewVisit(input: Json!): SuccessMessage!
+  saveNewSupplement(input: Json!): SuccessMessage!
   updateVisit(id: String!, status: String): SuccessMessage!
   denyPrescription(id: String!): SuccessMessage!
   approvePrescription(id: String!): SuccessMessage!

@@ -27,3 +27,4 @@ yarn-error.log*
 .env.master.branch
 tslint.json
 yarn.lock
+.env.production

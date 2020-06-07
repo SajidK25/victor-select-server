@@ -33,6 +33,7 @@ enum PrescriptionType {
   JOY
   ALLERGY
   WEIGHT
+  SUPPLEMENT
 }
 
 type User {
