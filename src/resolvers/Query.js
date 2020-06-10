@@ -206,9 +206,15 @@ const Query = {
     return null;
   },
 
-  creditCards: async (_, __, { prisma }) => {
+  creditCards: async (_, __, { prisma, req }) => {
     await validateUser(req, true);
     return prisma.creditCards();
+  },
+
+  getProduct: async (_, { id }, { prisma }) => {
+    return await prisma.product({
+      productId: id,
+    });
   },
 
   getUserCreditCard: async (_, __, { prisma, req }) => {

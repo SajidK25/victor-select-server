@@ -142,6 +142,7 @@ type Query {
   messages: [Message]!
   getMessagesByPrescription(prescriptionId: String!): [Message]!
   getPatientMessages: [Message]!
+  getProduct(id: String!): Product
   order(id: String!): Order
   orders(status: String): [Order]!
   validZipCode(zipcode: String!): Boolean!

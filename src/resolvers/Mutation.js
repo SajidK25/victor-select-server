@@ -404,6 +404,11 @@ const Mutation = {
   saveNewVisit: async (_, args, { req, prisma }) => {
     const payload = await validateUser(req);
 
+    sendActivityCopy({
+      email: "brian@bbaker.net",
+      text: `New visit saved for (${user.email}).`,
+    });
+
     const { userId } = payload;
 
     const user = await prisma.user({ id: userId });
@@ -525,6 +530,10 @@ const Mutation = {
 
     const { userId } = payload;
     const user = await prisma.user({ id: userId });
+    sendActivityCopy({
+      email: "brian@bbaker.net",
+      text: `Supplement order for (${user.email}) was processed.`,
+    });
 
     const { input } = args;
     // first validate and save credit card
@@ -786,7 +795,7 @@ const Mutation = {
     await prisma.createInterest({ ...input });
     sendComingSoonMail({ email: input.email });
     sendActivityCopy({
-      email: "careteam@victoryselect.com",
+      email: ["brian@bbaker.net", "careteam@victoryselect.com"],
       text: `Someone (${input.email}) added interest for ${input.category}.`,
     });
     return { message: "OK" };
@@ -804,6 +813,7 @@ const Mutation = {
     };
 
     const savedCard = await saveCreditCard(cardInput);
+    console.log("SavedCard:", savedCard);
     return { message: "OK" };
   },
 };

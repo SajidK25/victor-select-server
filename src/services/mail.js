@@ -3,8 +3,13 @@ const sgMail = require("@sendgrid/mail");
 const returnEmail = "careteam@victoryselect.com";
 
 const sendMail = async (msg) => {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  let res = await sgMail.send(msg);
+  try {
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    let res = await sgMail.send(msg);
+    console.log("Sendgrid ret:", res);
+  } catch (err) {
+    console.log("Sendgrid Err:", err);
+  }
 };
 
 const sendAnEmail = ({ email, name, templateId, templateData }) => {
@@ -153,29 +158,28 @@ const sendComingSoonMail = ({ email }) => {
 
 const sendActivityCopy = ({ email, text }) => {
   const msg = {
-    from: {
-      email: returnEmail,
-      name: "Victory Select",
-    },
-    reply_to: {
-      email: returnEmail,
-      name: "Victory Select",
-    },
     personalizations: [
       {
-        to: [
-          {
-            email: "brian@bbaker.net",
-          },
-          {
-            email: email,
-          },
-        ],
-        subject: "Activity notification",
+        to: [],
       },
     ],
+    from: { email: returnEmail, name: "Victory Select" },
+    reply_to: { email: returnEmail, name: "Victory Select" },
+    subject: "Activity notification",
     content: [{ type: "text/html", value: `<p>${text}</p>` }],
   };
+
+  if (email) {
+    if (Array.isArray(email)) {
+      email.forEach((e) => {
+        console.log("emailAddress:", e);
+        msg.personalizations[0].to.push({ email: e });
+      });
+    } else {
+      msg.personalizations[0].to.push({ email: email });
+    }
+  }
+  console.log("msg:", msg);
   sendMail(msg);
 };
 

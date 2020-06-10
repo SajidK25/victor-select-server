@@ -28,3 +28,4 @@ yarn-error.log*
 tslint.json
 yarn.lock
 .env.production
+.env.testing
