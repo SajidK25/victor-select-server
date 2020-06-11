@@ -404,10 +404,10 @@ const Mutation = {
   saveNewVisit: async (_, args, { req, prisma }) => {
     const payload = await validateUser(req);
 
-    sendActivityCopy({
-      email: "brian@bbaker.net",
-      text: `New visit saved for (${user.email}).`,
-    });
+    // sendActivityCopy({
+    //   email: "brian@bbaker.net",
+    //   text: `New visit saved for (${user.email}).`,
+    // });
 
     const { userId } = payload;
 
