@@ -6,7 +6,6 @@ const sendMail = async (msg) => {
   try {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     let res = await sgMail.send(msg);
-    console.log("Sendgrid ret:", res);
   } catch (err) {
     console.log("Sendgrid Err:", err);
   }
@@ -45,8 +44,6 @@ const sendResetMail = ({ email, name, url }) => {
       url: url,
     },
   });
-
-  sendMail(msg);
 };
 
 const sendPrivateMessageMail = ({ email, name }) => {

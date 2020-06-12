@@ -98,7 +98,7 @@ type Mutation {
     resetToken: String!
     password: String!
     confirmPassword: String!
-  ): User!
+  ): SuccessMessage!
   logout: Boolean!
   newMessage(input: CreateMessageInput!): SuccessMessage!
   revokeRefreshTokensForUser(userId: String!): Boolean!

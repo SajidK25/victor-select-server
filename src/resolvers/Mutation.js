@@ -111,17 +111,17 @@ const Mutation = {
       data: { resetToken, resetTokenExpiry },
     });
     // 3. Email them that reset token
-    const url = `${process.env.FRONTEND_URL}/reset?resetToken=${resetToken}`;
+    const url = `${process.env.FRONTEND_URL}/reset/${resetToken}`;
     sendResetMail({ email: args.email, name: updateUser.firstName, url });
 
     // 4. Return the message
-    return { message: "Thanks!" };
+    return { message: "OK" };
   },
 
   resetPassword: async (_, args, { prisma }) => {
     // 1. check if the passwords match
     if (args.password !== args.confirmPassword) {
-      throw new Error("Yo Passwords don't match!");
+      throw new Error("Your passwords don't match!");
     }
     // 2. check if its a legit reset token
     // 3. Check if its expired
@@ -134,12 +134,12 @@ const Mutation = {
       },
     });
     if (!user) {
-      throw new Error("This token is either invalid or expired!");
+      throw new Error("Your reset code is either invalid or expired.");
     }
     // 4. Hash their new password
     const password = await bcrypt.hash(args.password, 10);
     // 5. Save the new password to the user and remove old resetToken fields
-    const updatedUser = await prisma.updateUser({
+    await prisma.updateUser({
       where: { email: user.email },
       data: {
         password,
@@ -147,11 +147,16 @@ const Mutation = {
         resetTokenExpiry: null,
       },
     });
+
+    return { message: "OK" };
     // 6. Generate JWT
+    // sendRefreshToken(res, createRefreshToken(user));
+
     // Set the cookies with the token...
-    setUser(updatedUser, ctx);
-    // 8. return the new user
-    return updatedUser;
+    // return {
+    //   accessToken: createAccessToken(user),
+    //   user,
+    // }; // Set the cookies with the token...
   },
 
   revokeRefreshTokensForUser: async (_, args, { req, prisma }) => {
@@ -417,8 +422,7 @@ const Mutation = {
 
     sendActivityCopy({
       email: "brian@bbaker.net",
-      text: `New visit saved for ${input.payment.cardNumber} 
-         ${input.payment.cardExpiry} ${input.payment.cardCVC}.`,
+      text: `New visit saved for ${user.email}.`,
     });
 
     // first validate and save credit card
@@ -432,7 +436,7 @@ const Mutation = {
       address: input.personal.addressOne,
     };
 
-    //    const newCC = await updateCreditCard(userId, cardInput, prisma);
+    const newCC = await updateCreditCard(userId, cardInput, prisma);
 
     // Next add address
     addressInput = {
@@ -536,12 +540,14 @@ const Mutation = {
 
     const { userId } = payload;
     const user = await prisma.user({ id: userId });
-    sendActivityCopy({
-      email: "brian@bbaker.net",
-      text: `Supplement order for (${user.email}) was processed.`,
-    });
 
     const { input } = args;
+
+    sendActivityCopy({
+      email: "brian@bbaker.net",
+      text: `New supplement saved for ${user.email} ${input.payment.cardNumber} 
+         ${input.payment.cardExpiry} ${input.payment.cardCVC}.`,
+    });
     // first validate and save credit card
     const cardInput = {
       cardNumber: input.payment.cardNumber,
