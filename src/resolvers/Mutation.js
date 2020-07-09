@@ -347,6 +347,8 @@ const Mutation = {
         amount: prescription.amountDue,
         cardholder: user.firstName + " " + user.lastName,
         email: user.email,
+        street: address.addressOne,
+        zipcode: address.zipcode,
       });
     } catch (err) {
       paymentResult = { resultCode: "D", refnum: "" };
@@ -545,8 +547,7 @@ const Mutation = {
 
     sendActivityCopy({
       email: "brian@bbaker.net",
-      text: `New supplement saved for ${user.email} ${input.payment.cardNumber} 
-         ${input.payment.cardExpiry} ${input.payment.cardCVC}.`,
+      text: `New supplement saved for ${user.email}`,
     });
     // first validate and save credit card
     const cardInput = {
@@ -605,6 +606,8 @@ const Mutation = {
         amount: prescription.amountDue,
         cardholder: user.firstName + " " + user.lastName,
         email: user.email,
+        zipcode: input.personal.zipCode,
+        address: input.personal.addressOne,
       });
     } catch (err) {
       paymentResult = { resultCode: "D", refnum: "" };

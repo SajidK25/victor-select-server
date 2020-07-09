@@ -107,6 +107,8 @@ const saveCreditCard = async (input) => {
     data.creditcard.cvc = input.cardCVC;
   }
 
+  console.log("Data Input:", data);
+
   let body = null;
   try {
     body = await usaepayAPI.post("transactions", {
@@ -151,6 +153,8 @@ const makePayment = async (input) => {
     creditcard: {
       number: input.ccToken,
       cardholder: input.cardholder,
+      avs_street: input.street,
+      avs_zip: input.zipcode,
     },
     email: input.email,
     send_receipt: true,
