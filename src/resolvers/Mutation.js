@@ -1,38 +1,14 @@
 const bcrypt = require("bcryptjs");
 const { randomBytes } = require("crypto");
 const { promisify } = require("util");
-const {
-  sendResetMail,
-  sendWelcomeMail,
-  sendDeniedMail,
-  sendShippedMail,
-  sendComingSoonMail,
-  sendPrivateMessageMail,
-  sendActivityCopy,
-} = require("../services/mail");
+const { sendResetMail, sendWelcomeMail, sendDeniedMail, sendShippedMail, sendComingSoonMail, sendPrivateMessageMail, sendActivityCopy } = require("../services/mail");
 const { sendRefreshToken } = require("../sendRefreshToken");
 const moment = require("moment");
 const { makePayment, saveCreditCard } = require("../services/usaepay");
 const { asyncForEach } = require("../utils");
-const {
-  getCurrentCreditCard,
-  updateAddress,
-  updateCreditCard,
-  getCurrentAddress,
-  setPricing,
-  setSupplementPricing,
-} = require("./Helpers");
-const {
-  createRefreshToken,
-  createAccessToken,
-  validateUser,
-} = require("../auth");
-const {
-  validateAddress,
-  createShipment,
-  createBatch,
-  createParcel,
-} = require("../services/shippo");
+const { getCurrentCreditCard, updateAddress, updateCreditCard, getCurrentAddress, setPricing, setSupplementPricing } = require("./Helpers");
+const { createRefreshToken, createAccessToken, validateUser } = require("../auth");
+const { validateAddress, createShipment, createBatch, createParcel } = require("../services/shippo");
 
 const Mutation = {
   logout: async (_, __, { res }) => {
@@ -127,10 +103,7 @@ const Mutation = {
     // 3. Check if its expired
     const [user] = await prisma.users({
       where: {
-        AND: [
-          { resetToken: args.resetToken },
-          { resetTokenExpiry_gte: Date.now() - 3600000 },
-        ],
+        AND: [{ resetToken: args.resetToken }, { resetTokenExpiry_gte: Date.now() - 3600000 }],
       },
     });
     if (!user) {
@@ -213,9 +186,7 @@ const Mutation = {
     const payload = await validateUser(req);
     const { userId, userRole } = payload;
 
-    const prescriptionUser = await prisma
-      .prescription({ id: input.prescriptionId })
-      .user();
+    const prescriptionUser = await prisma.prescription({ id: input.prescriptionId }).user();
     if (!prescriptionUser) {
       throw new Error("Unable to find prescription record");
     }
@@ -374,8 +345,7 @@ const Mutation = {
       shippoAddressId: address.shippoId,
     });
 
-    const refillsRemaining =
-      prescription.refillsRemaining - prescription.shippingInterval;
+    const refillsRemaining = prescription.refillsRemaining - prescription.shippingInterval;
     const approvedDate = moment();
     const expireDate = moment(approvedDate)
       .add(1, "year")
@@ -427,20 +397,7 @@ const Mutation = {
       text: `New visit saved for ${user.email}.`,
     });
 
-    // first validate and save credit card
-    const cardInput = {
-      cardNumber: input.payment.cardNumber,
-      cardExpiry: input.payment.cardExpiry,
-      cardCVC: input.payment.cardCVC,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      zipCode: input.personal.zipCode,
-      address: input.personal.addressOne,
-    };
-
-    const newCC = await updateCreditCard(userId, cardInput, prisma);
-
-    // Next add address
+    // First validate and add address
     addressInput = {
       addressOne: input.personal.addressOne,
       addressTwo: input.personal.addressTwo,
@@ -456,6 +413,19 @@ const Mutation = {
       newAddress: addressInput,
       prisma: prisma,
     });
+
+    // next validate and save credit card
+    const cardInput = {
+      cardNumber: input.payment.cardNumber,
+      cardExpiry: input.payment.cardExpiry,
+      cardCVC: input.payment.cardCVC,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      zipCode: input.personal.zipCode,
+      address: input.personal.addressOne,
+    };
+
+    const newCC = await updateCreditCard(userId, cardInput, prisma);
 
     // Save new visit
     const birthDate = new Date(input.personal.birthDate);
