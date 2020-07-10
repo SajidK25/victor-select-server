@@ -19,14 +19,7 @@ Sentry.init({
   dsn: "https://595b407caeb64d4bb27945994a417a3e@sentry.io/5171137",
 });
 
-var whitelist = [
-  "http://localhost:3005",
-  "http://localhost:3000",
-  "http://localhost:4444",
-  "https://physician-select.herokuapp.com",
-  "https://victory-select.herokuapp.com",
-  "https://victory-testing.herokuapp.com",
-];
+var whitelist = process.env.WHITE_LIST.split(" ");
 
 let corsOptions = {
   origin: function(origin, callback) {
@@ -52,20 +45,8 @@ let corsOptions = {
     helmet({
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: [
-            "'self'",
-            "data:",
-            "https://fonts.googleapis.com",
-            "https://cdn.jsdelivr.net",
-            "http://cdn.jsdelivr.net",
-            "https://fonts.gstatic.com",
-          ],
-          styleSrc: [
-            "'self'",
-            `'unsafe-inline'`,
-            "https://cdn.jsdelivr.net",
-            "https://fonts.googleapis.com",
-          ],
+          defaultSrc: ["'self'", "data:", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net", "http://cdn.jsdelivr.net", "https://fonts.gstatic.com"],
+          styleSrc: ["'self'", `'unsafe-inline'`, "https://cdn.jsdelivr.net", "https://fonts.googleapis.com"],
           scriptSrc: ["'self'", `'unsafe-inline'`, "https://cdn.jsdelivr.net"],
           reportUri: "/report-violation",
           objectSrc: ["'self'"],
