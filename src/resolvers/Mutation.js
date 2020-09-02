@@ -75,6 +75,7 @@ const Mutation = {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
       throw new Error("Invalid email or password.");
+      console.log("error");
     }
 
     //   if (user.role === "VISITOR") {
