@@ -1,12 +1,27 @@
 const bcrypt = require("bcryptjs");
 const { randomBytes } = require("crypto");
 const { promisify } = require("util");
-const { sendResetMail, sendWelcomeMail, sendDeniedMail, sendShippedMail, sendComingSoonMail, sendPrivateMessageMail, sendActivityCopy } = require("../services/mail");
+const {
+  sendResetMail,
+  sendWelcomeMail,
+  sendDeniedMail,
+  sendShippedMail,
+  sendComingSoonMail,
+  sendPrivateMessageMail,
+  sendActivityCopy,
+} = require("../services/mail");
 const { sendRefreshToken } = require("../sendRefreshToken");
 const moment = require("moment");
 const { makePayment, saveCreditCard } = require("../services/usaepay");
 const { asyncForEach } = require("../utils");
-const { getCurrentCreditCard, updateAddress, updateCreditCard, getCurrentAddress, setPricing, setSupplementPricing } = require("./Helpers");
+const {
+  getCurrentCreditCard,
+  updateAddress,
+  updateCreditCard,
+  getCurrentAddress,
+  setPricing,
+  setSupplementPricing,
+} = require("./Helpers");
 const { createRefreshToken, createAccessToken, validateUser } = require("../auth");
 const { validateAddress, createShipment, createBatch, createParcel } = require("../services/shippo");
 
@@ -59,7 +74,11 @@ const Mutation = {
     // 2. Check if password is correct
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
-      throw new Error("Invalid email or password");
+      throw new Error("Invalid email or password.");
+    }
+
+    if (user.role === "VISITOR") {
+      throw new Error("Invalid email or password.");
     }
 
     // Login successful
@@ -67,6 +86,7 @@ const Mutation = {
 
     // Set the cookies with the token...
     return {
+      message: "OK",
       accessToken: createAccessToken(user),
       user,
     };
@@ -226,6 +246,11 @@ const Mutation = {
     const payload = await validateUser(req);
     const { userId } = payload;
     const user = await prisma.user({ id: userId });
+
+    // No zipcode restrictions for supplements
+    if (!input.isSupplement && !validateZipcode(input.zipCode)) {
+      return { message: "INVALID_ZIPCODE" };
+    }
 
     const address = await updateAddress({
       user: user,
@@ -495,7 +520,6 @@ const Mutation = {
     await validateUser(req, true);
 
     await asyncForEach(idList, async (id) => {
-      console.log("id", id);
       await prisma.updateOrder({
         data: {
           status: "PROCESSING",
@@ -517,19 +541,24 @@ const Mutation = {
 
     sendActivityCopy({
       email: "brian@bbaker.net",
-      text: `New supplement saved for ${user.email}`,
+      text: `New supplement: ${input.subscription.drugId} saved for ${user.email}`,
     });
     // first validate and save credit card
-    const cardInput = {
-      cardNumber: input.payment.cardNumber,
-      cardExpiry: input.payment.cardExpiry,
-      cardCVC: input.payment.cardCVC,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      zipCode: input.personal.zipCode,
-      address: input.personal.addressOne,
-    };
-    const newCC = await updateCreditCard(userId, cardInput, prisma, true);
+    let newCC = null;
+    if (input.control.savedCreditCard) {
+      newCC = await getCurrentCreditCard(user.id, prisma);
+    } else {
+      const cardInput = {
+        cardNumber: input.payment.cardNumber,
+        cardExpiry: input.payment.cardExpiry,
+        cardCVC: input.payment.cardCVC,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        zipCode: input.personal.zipCode,
+        address: input.personal.addressOne,
+      };
+      newCC = await updateCreditCard(userId, cardInput, prisma, true);
+    }
 
     if (!newCC) return { message: "CANT_SAVE_CARD" };
 
@@ -691,7 +720,6 @@ const Mutation = {
   shipOrders: async (_, { idList }, { req, prisma }) => {
     const payload = await validateUser(req, true);
 
-    console.log("idList: ", idList);
     let user = null;
     // Create Shippo Batch and process it
     // Update orders to shipped
@@ -700,10 +728,8 @@ const Mutation = {
     let order = null;
     // Create Shipments
     await asyncForEach(idList, async (id) => {
-      console.log("id", id);
-
       order = await prisma.order({ id: id });
-      console.log("AddressId", order.shippoAddressId);
+
       shipmentId = await createShipment(order.shippoAddressId);
       shipments.push({ orderId: i, shipmentId: shipmentId });
       //      await createShipment()
@@ -770,13 +796,11 @@ const Mutation = {
     };
 
     const ret = await validateAddress(input);
-    console.log("Address", ret);
 
     return { message: "OK" };
   },
 
   addInterest: async (_, { input }, { prisma }) => {
-    console.log("Interest Input", input);
     await prisma.createInterest({ ...input });
     sendComingSoonMail({ email: input.email });
     sendActivityCopy({
@@ -798,7 +822,6 @@ const Mutation = {
     };
 
     const savedCard = await saveCreditCard(cardInput);
-    console.log("SavedCard:", savedCard);
     return { message: "OK" };
   },
 };

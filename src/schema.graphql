@@ -27,6 +27,7 @@ input SaveCardInput {
 }
 
 input SaveAddressInput {
+  isSupplement: Boolean
   addressOne: String!
   addressTwo: String
   city: String!
@@ -91,14 +92,10 @@ type SuccessMessage {
 }
 
 type Mutation {
-  login(email: String!, password: String!): LoginMessage
+  login(email: String!, password: String!): RegisterMessage!
   register(input: RegisterInput!): RegisterMessage!
   requestReset(email: String!): SuccessMessage!
-  resetPassword(
-    resetToken: String!
-    password: String!
-    confirmPassword: String!
-  ): SuccessMessage!
+  resetPassword(resetToken: String!, password: String!, confirmPassword: String!): SuccessMessage!
   logout: Boolean!
   newMessage(input: CreateMessageInput!): SuccessMessage!
   revokeRefreshTokensForUser(userId: String!): Boolean!
@@ -134,11 +131,7 @@ type Query {
   prescription(id: String!): Prescription
   pendingPrescriptions: [Prescription]!
   physicianListPrescriptions: [Prescription]!
-  prescriptions(
-    pageSize: Int
-    after: String
-    status: String
-  ): PrescriptionConnection!
+  prescriptions(pageSize: Int, after: String, status: String): PrescriptionConnection!
   messages: [Message]!
   getMessagesByPrescription(prescriptionId: String!): [Message]!
   getPatientMessages: [Message]!
