@@ -77,9 +77,9 @@ const Mutation = {
       throw new Error("Invalid email or password.");
     }
 
-    if (user.role === "VISITOR") {
-      throw new Error("Invalid email or password.");
-    }
+    //   if (user.role === "VISITOR") {
+    //     throw new Error("Invalid email or password.");
+    //   }
 
     // Login successful
     sendRefreshToken(res, createRefreshToken(user));
