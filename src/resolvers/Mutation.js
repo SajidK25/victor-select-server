@@ -240,6 +240,17 @@ const Mutation = {
       ...msgInput,
     });
 
+    if (userRole === "PHYSICIAN") {
+      if (prescriptionUser) {
+        sendPrivateMessageMail({ email: prescriptionUser.email, name: prescriptionUser.firstName });
+      }
+    } else {
+      sendActivityCopy({
+        email: "brian@bbaker.net",
+        text: `Secure message sent from ${prescriptionUser.email}.`,
+      });
+    }
+
     return { message: "OK" };
   },
 
