@@ -348,11 +348,16 @@ const Mutation = {
     const creditcard = await getCurrentCreditCard(user.id, prisma);
     const address = await getCurrentAddress(user.id, prisma);
 
+    let amountDue = prescription.amountDue;
+    if (prescription.amountFirstDue) {
+      amountDue = prescription.amountFirstDue;
+    }
+
     var paymentResult = {};
     try {
       paymentResult = await makePayment({
         ccToken: creditcard.ccToken,
-        amount: prescription.amountDue,
+        amount: amountDue,
         cardholder: user.firstName + " " + user.lastName,
         email: user.email,
         street: address.addressOne,
@@ -366,7 +371,7 @@ const Mutation = {
 
     // Create Order
     const order = await prisma.createOrder({
-      amount: prescription.amountDue,
+      amount: amountDue,
       refnum: paymentResult.refnum,
       status: paymentResult.resultCode === "A" ? "PENDING" : "PAYMENT_DECLINED",
       new: true,
@@ -417,11 +422,6 @@ const Mutation = {
 
   saveNewVisit: async (_, args, { req, prisma }) => {
     const payload = await validateUser(req);
-
-    // sendActivityCopy({
-    //   email: "brian@bbaker.net",
-    //   text: `New visit saved for (${user.email}).`,
-    // });
 
     const { userId } = payload;
 
@@ -485,6 +485,12 @@ const Mutation = {
     pInput.refillsRemaining = 12;
     pInput.shippingInterval = pricing.shippingInterval;
     pInput.amountDue = pricing.amountDue;
+    let discountAmount = s.discountAmount * 100;
+    if (discountAmount === 0) {
+      discountAmount = pricing.amountDue * s.discountPercent;
+    }
+    pInput.amountFirstDue = pricing.amountDue - discountAmount;
+    pInput.discountCode = discountAmount > 0 ? s.discountCode : "";
 
     // Isolate the questionnaire
     const questionaire = input;
@@ -503,6 +509,7 @@ const Mutation = {
       },
     });
 
+    console.log("Input", pInput);
     // Create Prescription
     const prescription = await prisma.createPrescription({
       ...pInput,

@@ -512,6 +512,10 @@ type AggregateCreditCard {
   count: Int!
 }
 
+type AggregateDiscount {
+  count: Int!
+}
+
 type AggregateInterest {
   count: Int!
 }
@@ -922,6 +926,134 @@ input CreditCardWhereUniqueInput {
 }
 
 scalar DateTime
+
+type Discount {
+  id: ID!
+  code: String!
+  amount: Int!
+  percent: Float!
+}
+
+type DiscountConnection {
+  pageInfo: PageInfo!
+  edges: [DiscountEdge]!
+  aggregate: AggregateDiscount!
+}
+
+input DiscountCreateInput {
+  id: ID
+  code: String!
+  amount: Int!
+  percent: Float
+}
+
+type DiscountEdge {
+  node: Discount!
+  cursor: String!
+}
+
+enum DiscountOrderByInput {
+  id_ASC
+  id_DESC
+  code_ASC
+  code_DESC
+  amount_ASC
+  amount_DESC
+  percent_ASC
+  percent_DESC
+}
+
+type DiscountPreviousValues {
+  id: ID!
+  code: String!
+  amount: Int!
+  percent: Float!
+}
+
+type DiscountSubscriptionPayload {
+  mutation: MutationType!
+  node: Discount
+  updatedFields: [String!]
+  previousValues: DiscountPreviousValues
+}
+
+input DiscountSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: DiscountWhereInput
+  AND: [DiscountSubscriptionWhereInput!]
+  OR: [DiscountSubscriptionWhereInput!]
+  NOT: [DiscountSubscriptionWhereInput!]
+}
+
+input DiscountUpdateInput {
+  code: String
+  amount: Int
+  percent: Float
+}
+
+input DiscountUpdateManyMutationInput {
+  code: String
+  amount: Int
+  percent: Float
+}
+
+input DiscountWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  code: String
+  code_not: String
+  code_in: [String!]
+  code_not_in: [String!]
+  code_lt: String
+  code_lte: String
+  code_gt: String
+  code_gte: String
+  code_contains: String
+  code_not_contains: String
+  code_starts_with: String
+  code_not_starts_with: String
+  code_ends_with: String
+  code_not_ends_with: String
+  amount: Int
+  amount_not: Int
+  amount_in: [Int!]
+  amount_not_in: [Int!]
+  amount_lt: Int
+  amount_lte: Int
+  amount_gt: Int
+  amount_gte: Int
+  percent: Float
+  percent_not: Float
+  percent_in: [Float!]
+  percent_not_in: [Float!]
+  percent_lt: Float
+  percent_lte: Float
+  percent_gt: Float
+  percent_gte: Float
+  AND: [DiscountWhereInput!]
+  OR: [DiscountWhereInput!]
+  NOT: [DiscountWhereInput!]
+}
+
+input DiscountWhereUniqueInput {
+  id: ID
+  code: String
+}
 
 type Interest {
   id: ID!
@@ -1378,6 +1510,12 @@ type Mutation {
   upsertCreditCard(where: CreditCardWhereUniqueInput!, create: CreditCardCreateInput!, update: CreditCardUpdateInput!): CreditCard!
   deleteCreditCard(where: CreditCardWhereUniqueInput!): CreditCard
   deleteManyCreditCards(where: CreditCardWhereInput): BatchPayload!
+  createDiscount(data: DiscountCreateInput!): Discount!
+  updateDiscount(data: DiscountUpdateInput!, where: DiscountWhereUniqueInput!): Discount
+  updateManyDiscounts(data: DiscountUpdateManyMutationInput!, where: DiscountWhereInput): BatchPayload!
+  upsertDiscount(where: DiscountWhereUniqueInput!, create: DiscountCreateInput!, update: DiscountUpdateInput!): Discount!
+  deleteDiscount(where: DiscountWhereUniqueInput!): Discount
+  deleteManyDiscounts(where: DiscountWhereInput): BatchPayload!
   createInterest(data: InterestCreateInput!): Interest!
   updateInterest(data: InterestUpdateInput!, where: InterestWhereUniqueInput!): Interest
   updateManyInterests(data: InterestUpdateManyMutationInput!, where: InterestWhereInput): BatchPayload!
@@ -2229,6 +2367,8 @@ type Prescription {
   nextDelivery: DateTime
   shippingInterval: Int!
   amountDue: Int!
+  amountFirstDue: Int!
+  discountCode: String
   orders(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Order!]
   messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
 }
@@ -2259,6 +2399,8 @@ input PrescriptionCreateInput {
   nextDelivery: DateTime
   shippingInterval: Int!
   amountDue: Int!
+  amountFirstDue: Int!
+  discountCode: String
   orders: OrderCreateManyWithoutPrescriptionInput
   messages: MessageCreateManyWithoutPrescriptionInput
 }
@@ -2298,6 +2440,8 @@ input PrescriptionCreateWithoutMessagesInput {
   nextDelivery: DateTime
   shippingInterval: Int!
   amountDue: Int!
+  amountFirstDue: Int!
+  discountCode: String
   orders: OrderCreateManyWithoutPrescriptionInput
 }
 
@@ -2321,6 +2465,8 @@ input PrescriptionCreateWithoutOrdersInput {
   nextDelivery: DateTime
   shippingInterval: Int!
   amountDue: Int!
+  amountFirstDue: Int!
+  discountCode: String
   messages: MessageCreateManyWithoutPrescriptionInput
 }
 
@@ -2343,6 +2489,8 @@ input PrescriptionCreateWithoutUserInput {
   nextDelivery: DateTime
   shippingInterval: Int!
   amountDue: Int!
+  amountFirstDue: Int!
+  discountCode: String
   orders: OrderCreateManyWithoutPrescriptionInput
   messages: MessageCreateManyWithoutPrescriptionInput
 }
@@ -2385,6 +2533,10 @@ enum PrescriptionOrderByInput {
   shippingInterval_DESC
   amountDue_ASC
   amountDue_DESC
+  amountFirstDue_ASC
+  amountFirstDue_DESC
+  discountCode_ASC
+  discountCode_DESC
 }
 
 type PrescriptionPreviousValues {
@@ -2404,6 +2556,8 @@ type PrescriptionPreviousValues {
   nextDelivery: DateTime
   shippingInterval: Int!
   amountDue: Int!
+  amountFirstDue: Int!
+  discountCode: String
 }
 
 input PrescriptionScalarWhereInput {
@@ -2539,6 +2693,28 @@ input PrescriptionScalarWhereInput {
   amountDue_lte: Int
   amountDue_gt: Int
   amountDue_gte: Int
+  amountFirstDue: Int
+  amountFirstDue_not: Int
+  amountFirstDue_in: [Int!]
+  amountFirstDue_not_in: [Int!]
+  amountFirstDue_lt: Int
+  amountFirstDue_lte: Int
+  amountFirstDue_gt: Int
+  amountFirstDue_gte: Int
+  discountCode: String
+  discountCode_not: String
+  discountCode_in: [String!]
+  discountCode_not_in: [String!]
+  discountCode_lt: String
+  discountCode_lte: String
+  discountCode_gt: String
+  discountCode_gte: String
+  discountCode_contains: String
+  discountCode_not_contains: String
+  discountCode_starts_with: String
+  discountCode_not_starts_with: String
+  discountCode_ends_with: String
+  discountCode_not_ends_with: String
   AND: [PrescriptionScalarWhereInput!]
   OR: [PrescriptionScalarWhereInput!]
   NOT: [PrescriptionScalarWhereInput!]
@@ -2598,6 +2774,8 @@ input PrescriptionUpdateInput {
   nextDelivery: DateTime
   shippingInterval: Int
   amountDue: Int
+  amountFirstDue: Int
+  discountCode: String
   orders: OrderUpdateManyWithoutPrescriptionInput
   messages: MessageUpdateManyWithoutPrescriptionInput
 }
@@ -2616,6 +2794,8 @@ input PrescriptionUpdateManyDataInput {
   nextDelivery: DateTime
   shippingInterval: Int
   amountDue: Int
+  amountFirstDue: Int
+  discountCode: String
 }
 
 input PrescriptionUpdateManyMutationInput {
@@ -2632,6 +2812,8 @@ input PrescriptionUpdateManyMutationInput {
   nextDelivery: DateTime
   shippingInterval: Int
   amountDue: Int
+  amountFirstDue: Int
+  discountCode: String
 }
 
 input PrescriptionUpdateManyWithoutUserInput {
@@ -2684,6 +2866,8 @@ input PrescriptionUpdateWithoutMessagesDataInput {
   nextDelivery: DateTime
   shippingInterval: Int
   amountDue: Int
+  amountFirstDue: Int
+  discountCode: String
   orders: OrderUpdateManyWithoutPrescriptionInput
 }
 
@@ -2706,6 +2890,8 @@ input PrescriptionUpdateWithoutOrdersDataInput {
   nextDelivery: DateTime
   shippingInterval: Int
   amountDue: Int
+  amountFirstDue: Int
+  discountCode: String
   messages: MessageUpdateManyWithoutPrescriptionInput
 }
 
@@ -2727,6 +2913,8 @@ input PrescriptionUpdateWithoutUserDataInput {
   nextDelivery: DateTime
   shippingInterval: Int
   amountDue: Int
+  amountFirstDue: Int
+  discountCode: String
   orders: OrderUpdateManyWithoutPrescriptionInput
   messages: MessageUpdateManyWithoutPrescriptionInput
 }
@@ -2890,6 +3078,28 @@ input PrescriptionWhereInput {
   amountDue_lte: Int
   amountDue_gt: Int
   amountDue_gte: Int
+  amountFirstDue: Int
+  amountFirstDue_not: Int
+  amountFirstDue_in: [Int!]
+  amountFirstDue_not_in: [Int!]
+  amountFirstDue_lt: Int
+  amountFirstDue_lte: Int
+  amountFirstDue_gt: Int
+  amountFirstDue_gte: Int
+  discountCode: String
+  discountCode_not: String
+  discountCode_in: [String!]
+  discountCode_not_in: [String!]
+  discountCode_lt: String
+  discountCode_lte: String
+  discountCode_gt: String
+  discountCode_gte: String
+  discountCode_contains: String
+  discountCode_not_contains: String
+  discountCode_starts_with: String
+  discountCode_not_starts_with: String
+  discountCode_ends_with: String
+  discountCode_not_ends_with: String
   orders_every: OrderWhereInput
   orders_some: OrderWhereInput
   orders_none: OrderWhereInput
@@ -3302,6 +3512,9 @@ type Query {
   creditCard(where: CreditCardWhereUniqueInput!): CreditCard
   creditCards(where: CreditCardWhereInput, orderBy: CreditCardOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CreditCard]!
   creditCardsConnection(where: CreditCardWhereInput, orderBy: CreditCardOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CreditCardConnection!
+  discount(where: DiscountWhereUniqueInput!): Discount
+  discounts(where: DiscountWhereInput, orderBy: DiscountOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Discount]!
+  discountsConnection(where: DiscountWhereInput, orderBy: DiscountOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): DiscountConnection!
   interest(where: InterestWhereUniqueInput!): Interest
   interests(where: InterestWhereInput, orderBy: InterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Interest]!
   interestsConnection(where: InterestWhereInput, orderBy: InterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InterestConnection!
@@ -3336,6 +3549,7 @@ enum Role {
 type Subscription {
   address(where: AddressSubscriptionWhereInput): AddressSubscriptionPayload
   creditCard(where: CreditCardSubscriptionWhereInput): CreditCardSubscriptionPayload
+  discount(where: DiscountSubscriptionWhereInput): DiscountSubscriptionPayload
   interest(where: InterestSubscriptionWhereInput): InterestSubscriptionPayload
   message(where: MessageSubscriptionWhereInput): MessageSubscriptionPayload
   order(where: OrderSubscriptionWhereInput): OrderSubscriptionPayload

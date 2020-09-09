@@ -18,6 +18,7 @@ export type Maybe<T> = T | undefined | null;
 export interface Exists {
   address: (where?: AddressWhereInput) => Promise<boolean>;
   creditCard: (where?: CreditCardWhereInput) => Promise<boolean>;
+  discount: (where?: DiscountWhereInput) => Promise<boolean>;
   interest: (where?: InterestWhereInput) => Promise<boolean>;
   message: (where?: MessageWhereInput) => Promise<boolean>;
   order: (where?: OrderWhereInput) => Promise<boolean>;
@@ -84,6 +85,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => CreditCardConnectionPromise;
+  discount: (where: DiscountWhereUniqueInput) => DiscountNullablePromise;
+  discounts: (args?: {
+    where?: DiscountWhereInput;
+    orderBy?: DiscountOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<Discount>;
+  discountsConnection: (args?: {
+    where?: DiscountWhereInput;
+    orderBy?: DiscountOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => DiscountConnectionPromise;
   interest: (where: InterestWhereUniqueInput) => InterestNullablePromise;
   interests: (args?: {
     where?: InterestWhereInput;
@@ -257,6 +277,22 @@ export interface Prisma {
   }) => CreditCardPromise;
   deleteCreditCard: (where: CreditCardWhereUniqueInput) => CreditCardPromise;
   deleteManyCreditCards: (where?: CreditCardWhereInput) => BatchPayloadPromise;
+  createDiscount: (data: DiscountCreateInput) => DiscountPromise;
+  updateDiscount: (args: {
+    data: DiscountUpdateInput;
+    where: DiscountWhereUniqueInput;
+  }) => DiscountPromise;
+  updateManyDiscounts: (args: {
+    data: DiscountUpdateManyMutationInput;
+    where?: DiscountWhereInput;
+  }) => BatchPayloadPromise;
+  upsertDiscount: (args: {
+    where: DiscountWhereUniqueInput;
+    create: DiscountCreateInput;
+    update: DiscountUpdateInput;
+  }) => DiscountPromise;
+  deleteDiscount: (where: DiscountWhereUniqueInput) => DiscountPromise;
+  deleteManyDiscounts: (where?: DiscountWhereInput) => BatchPayloadPromise;
   createInterest: (data: InterestCreateInput) => InterestPromise;
   updateInterest: (args: {
     data: InterestUpdateInput;
@@ -388,6 +424,9 @@ export interface Subscription {
   creditCard: (
     where?: CreditCardSubscriptionWhereInput
   ) => CreditCardSubscriptionPayloadSubscription;
+  discount: (
+    where?: DiscountSubscriptionWhereInput
+  ) => DiscountSubscriptionPayloadSubscription;
   interest: (
     where?: InterestSubscriptionWhereInput
   ) => InterestSubscriptionPayloadSubscription;
@@ -514,7 +553,11 @@ export type PrescriptionOrderByInput =
   | "shippingInterval_ASC"
   | "shippingInterval_DESC"
   | "amountDue_ASC"
-  | "amountDue_DESC";
+  | "amountDue_DESC"
+  | "amountFirstDue_ASC"
+  | "amountFirstDue_DESC"
+  | "discountCode_ASC"
+  | "discountCode_DESC";
 
 export type OrderOrderByInput =
   | "id_ASC"
@@ -585,6 +628,16 @@ export type VisitOrderByInput =
   | "type_DESC"
   | "questionnaire_ASC"
   | "questionnaire_DESC";
+
+export type DiscountOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "code_ASC"
+  | "code_DESC"
+  | "amount_ASC"
+  | "amount_DESC"
+  | "percent_ASC"
+  | "percent_DESC";
 
 export type InterestOrderByInput =
   | "id_ASC"
@@ -1230,6 +1283,28 @@ export interface PrescriptionWhereInput {
   amountDue_lte?: Maybe<Int>;
   amountDue_gt?: Maybe<Int>;
   amountDue_gte?: Maybe<Int>;
+  amountFirstDue?: Maybe<Int>;
+  amountFirstDue_not?: Maybe<Int>;
+  amountFirstDue_in?: Maybe<Int[] | Int>;
+  amountFirstDue_not_in?: Maybe<Int[] | Int>;
+  amountFirstDue_lt?: Maybe<Int>;
+  amountFirstDue_lte?: Maybe<Int>;
+  amountFirstDue_gt?: Maybe<Int>;
+  amountFirstDue_gte?: Maybe<Int>;
+  discountCode?: Maybe<String>;
+  discountCode_not?: Maybe<String>;
+  discountCode_in?: Maybe<String[] | String>;
+  discountCode_not_in?: Maybe<String[] | String>;
+  discountCode_lt?: Maybe<String>;
+  discountCode_lte?: Maybe<String>;
+  discountCode_gt?: Maybe<String>;
+  discountCode_gte?: Maybe<String>;
+  discountCode_contains?: Maybe<String>;
+  discountCode_not_contains?: Maybe<String>;
+  discountCode_starts_with?: Maybe<String>;
+  discountCode_not_starts_with?: Maybe<String>;
+  discountCode_ends_with?: Maybe<String>;
+  discountCode_not_ends_with?: Maybe<String>;
   orders_every?: Maybe<OrderWhereInput>;
   orders_some?: Maybe<OrderWhereInput>;
   orders_none?: Maybe<OrderWhereInput>;
@@ -1766,6 +1841,61 @@ export type CreditCardWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
+export type DiscountWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  code?: Maybe<String>;
+}>;
+
+export interface DiscountWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  code?: Maybe<String>;
+  code_not?: Maybe<String>;
+  code_in?: Maybe<String[] | String>;
+  code_not_in?: Maybe<String[] | String>;
+  code_lt?: Maybe<String>;
+  code_lte?: Maybe<String>;
+  code_gt?: Maybe<String>;
+  code_gte?: Maybe<String>;
+  code_contains?: Maybe<String>;
+  code_not_contains?: Maybe<String>;
+  code_starts_with?: Maybe<String>;
+  code_not_starts_with?: Maybe<String>;
+  code_ends_with?: Maybe<String>;
+  code_not_ends_with?: Maybe<String>;
+  amount?: Maybe<Int>;
+  amount_not?: Maybe<Int>;
+  amount_in?: Maybe<Int[] | Int>;
+  amount_not_in?: Maybe<Int[] | Int>;
+  amount_lt?: Maybe<Int>;
+  amount_lte?: Maybe<Int>;
+  amount_gt?: Maybe<Int>;
+  amount_gte?: Maybe<Int>;
+  percent?: Maybe<Float>;
+  percent_not?: Maybe<Float>;
+  percent_in?: Maybe<Float[] | Float>;
+  percent_not_in?: Maybe<Float[] | Float>;
+  percent_lt?: Maybe<Float>;
+  percent_lte?: Maybe<Float>;
+  percent_gt?: Maybe<Float>;
+  percent_gte?: Maybe<Float>;
+  AND?: Maybe<DiscountWhereInput[] | DiscountWhereInput>;
+  OR?: Maybe<DiscountWhereInput[] | DiscountWhereInput>;
+  NOT?: Maybe<DiscountWhereInput[] | DiscountWhereInput>;
+}
+
 export type InterestWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
@@ -1956,6 +2086,8 @@ export interface PrescriptionCreateWithoutUserInput {
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval: Int;
   amountDue: Int;
+  amountFirstDue: Int;
+  discountCode?: Maybe<String>;
   orders?: Maybe<OrderCreateManyWithoutPrescriptionInput>;
   messages?: Maybe<MessageCreateManyWithoutPrescriptionInput>;
 }
@@ -2402,6 +2534,8 @@ export interface PrescriptionUpdateWithoutUserDataInput {
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval?: Maybe<Int>;
   amountDue?: Maybe<Int>;
+  amountFirstDue?: Maybe<Int>;
+  discountCode?: Maybe<String>;
   orders?: Maybe<OrderUpdateManyWithoutPrescriptionInput>;
   messages?: Maybe<MessageUpdateManyWithoutPrescriptionInput>;
 }
@@ -3452,6 +3586,28 @@ export interface PrescriptionScalarWhereInput {
   amountDue_lte?: Maybe<Int>;
   amountDue_gt?: Maybe<Int>;
   amountDue_gte?: Maybe<Int>;
+  amountFirstDue?: Maybe<Int>;
+  amountFirstDue_not?: Maybe<Int>;
+  amountFirstDue_in?: Maybe<Int[] | Int>;
+  amountFirstDue_not_in?: Maybe<Int[] | Int>;
+  amountFirstDue_lt?: Maybe<Int>;
+  amountFirstDue_lte?: Maybe<Int>;
+  amountFirstDue_gt?: Maybe<Int>;
+  amountFirstDue_gte?: Maybe<Int>;
+  discountCode?: Maybe<String>;
+  discountCode_not?: Maybe<String>;
+  discountCode_in?: Maybe<String[] | String>;
+  discountCode_not_in?: Maybe<String[] | String>;
+  discountCode_lt?: Maybe<String>;
+  discountCode_lte?: Maybe<String>;
+  discountCode_gt?: Maybe<String>;
+  discountCode_gte?: Maybe<String>;
+  discountCode_contains?: Maybe<String>;
+  discountCode_not_contains?: Maybe<String>;
+  discountCode_starts_with?: Maybe<String>;
+  discountCode_not_starts_with?: Maybe<String>;
+  discountCode_ends_with?: Maybe<String>;
+  discountCode_not_ends_with?: Maybe<String>;
   AND?: Maybe<PrescriptionScalarWhereInput[] | PrescriptionScalarWhereInput>;
   OR?: Maybe<PrescriptionScalarWhereInput[] | PrescriptionScalarWhereInput>;
   NOT?: Maybe<PrescriptionScalarWhereInput[] | PrescriptionScalarWhereInput>;
@@ -3476,6 +3632,8 @@ export interface PrescriptionUpdateManyDataInput {
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval?: Maybe<Int>;
   amountDue?: Maybe<Int>;
+  amountFirstDue?: Maybe<Int>;
+  discountCode?: Maybe<String>;
 }
 
 export interface UserUpsertWithoutAddressesInput {
@@ -3510,6 +3668,25 @@ export interface CreditCardUpdateManyMutationInput {
   ccType?: Maybe<String>;
   ccNumber?: Maybe<String>;
   ccExpire?: Maybe<String>;
+}
+
+export interface DiscountCreateInput {
+  id?: Maybe<ID_Input>;
+  code: String;
+  amount: Int;
+  percent?: Maybe<Float>;
+}
+
+export interface DiscountUpdateInput {
+  code?: Maybe<String>;
+  amount?: Maybe<Int>;
+  percent?: Maybe<Float>;
+}
+
+export interface DiscountUpdateManyMutationInput {
+  code?: Maybe<String>;
+  amount?: Maybe<Int>;
+  percent?: Maybe<Float>;
 }
 
 export interface InterestCreateInput {
@@ -3567,6 +3744,8 @@ export interface PrescriptionCreateWithoutMessagesInput {
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval: Int;
   amountDue: Int;
+  amountFirstDue: Int;
+  discountCode?: Maybe<String>;
   orders?: Maybe<OrderCreateManyWithoutPrescriptionInput>;
 }
 
@@ -3630,6 +3809,8 @@ export interface PrescriptionUpdateWithoutMessagesDataInput {
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval?: Maybe<Int>;
   amountDue?: Maybe<Int>;
+  amountFirstDue?: Maybe<Int>;
+  discountCode?: Maybe<String>;
   orders?: Maybe<OrderUpdateManyWithoutPrescriptionInput>;
 }
 
@@ -3724,6 +3905,8 @@ export interface PrescriptionCreateWithoutOrdersInput {
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval: Int;
   amountDue: Int;
+  amountFirstDue: Int;
+  discountCode?: Maybe<String>;
   messages?: Maybe<MessageCreateManyWithoutPrescriptionInput>;
 }
 
@@ -3776,6 +3959,8 @@ export interface PrescriptionUpdateWithoutOrdersDataInput {
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval?: Maybe<Int>;
   amountDue?: Maybe<Int>;
+  amountFirstDue?: Maybe<Int>;
+  discountCode?: Maybe<String>;
   messages?: Maybe<MessageUpdateManyWithoutPrescriptionInput>;
 }
 
@@ -3824,6 +4009,8 @@ export interface PrescriptionCreateInput {
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval: Int;
   amountDue: Int;
+  amountFirstDue: Int;
+  discountCode?: Maybe<String>;
   orders?: Maybe<OrderCreateManyWithoutPrescriptionInput>;
   messages?: Maybe<MessageCreateManyWithoutPrescriptionInput>;
 }
@@ -3847,6 +4034,8 @@ export interface PrescriptionUpdateInput {
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval?: Maybe<Int>;
   amountDue?: Maybe<Int>;
+  amountFirstDue?: Maybe<Int>;
+  discountCode?: Maybe<String>;
   orders?: Maybe<OrderUpdateManyWithoutPrescriptionInput>;
   messages?: Maybe<MessageUpdateManyWithoutPrescriptionInput>;
 }
@@ -3865,6 +4054,8 @@ export interface PrescriptionUpdateManyMutationInput {
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval?: Maybe<Int>;
   amountDue?: Maybe<Int>;
+  amountFirstDue?: Maybe<Int>;
+  discountCode?: Maybe<String>;
 }
 
 export interface ProductUpdateInput {
@@ -3973,6 +4164,21 @@ export interface CreditCardSubscriptionWhereInput {
   >;
   NOT?: Maybe<
     CreditCardSubscriptionWhereInput[] | CreditCardSubscriptionWhereInput
+  >;
+}
+
+export interface DiscountSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<DiscountWhereInput>;
+  AND?: Maybe<
+    DiscountSubscriptionWhereInput[] | DiscountSubscriptionWhereInput
+  >;
+  OR?: Maybe<DiscountSubscriptionWhereInput[] | DiscountSubscriptionWhereInput>;
+  NOT?: Maybe<
+    DiscountSubscriptionWhereInput[] | DiscountSubscriptionWhereInput
   >;
 }
 
@@ -4386,6 +4592,8 @@ export interface Prescription {
   nextDelivery?: DateTimeOutput;
   shippingInterval: Int;
   amountDue: Int;
+  amountFirstDue: Int;
+  discountCode?: String;
 }
 
 export interface PrescriptionPromise
@@ -4412,6 +4620,8 @@ export interface PrescriptionPromise
   nextDelivery: () => Promise<DateTimeOutput>;
   shippingInterval: () => Promise<Int>;
   amountDue: () => Promise<Int>;
+  amountFirstDue: () => Promise<Int>;
+  discountCode: () => Promise<String>;
   orders: <T = FragmentableArray<Order>>(args?: {
     where?: OrderWhereInput;
     orderBy?: OrderOrderByInput;
@@ -4456,6 +4666,8 @@ export interface PrescriptionSubscription
   nextDelivery: () => Promise<AsyncIterator<DateTimeOutput>>;
   shippingInterval: () => Promise<AsyncIterator<Int>>;
   amountDue: () => Promise<AsyncIterator<Int>>;
+  amountFirstDue: () => Promise<AsyncIterator<Int>>;
+  discountCode: () => Promise<AsyncIterator<String>>;
   orders: <T = Promise<AsyncIterator<OrderSubscription>>>(args?: {
     where?: OrderWhereInput;
     orderBy?: OrderOrderByInput;
@@ -4500,6 +4712,8 @@ export interface PrescriptionNullablePromise
   nextDelivery: () => Promise<DateTimeOutput>;
   shippingInterval: () => Promise<Int>;
   amountDue: () => Promise<Int>;
+  amountFirstDue: () => Promise<Int>;
+  discountCode: () => Promise<String>;
   orders: <T = FragmentableArray<Order>>(args?: {
     where?: OrderWhereInput;
     orderBy?: OrderOrderByInput;
@@ -4926,6 +5140,94 @@ export interface AggregateCreditCardPromise
 
 export interface AggregateCreditCardSubscription
   extends Promise<AsyncIterator<AggregateCreditCard>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface Discount {
+  id: ID_Output;
+  code: String;
+  amount: Int;
+  percent: Float;
+}
+
+export interface DiscountPromise extends Promise<Discount>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  code: () => Promise<String>;
+  amount: () => Promise<Int>;
+  percent: () => Promise<Float>;
+}
+
+export interface DiscountSubscription
+  extends Promise<AsyncIterator<Discount>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  code: () => Promise<AsyncIterator<String>>;
+  amount: () => Promise<AsyncIterator<Int>>;
+  percent: () => Promise<AsyncIterator<Float>>;
+}
+
+export interface DiscountNullablePromise
+  extends Promise<Discount | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  code: () => Promise<String>;
+  amount: () => Promise<Int>;
+  percent: () => Promise<Float>;
+}
+
+export interface DiscountConnection {
+  pageInfo: PageInfo;
+  edges: DiscountEdge[];
+}
+
+export interface DiscountConnectionPromise
+  extends Promise<DiscountConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<DiscountEdge>>() => T;
+  aggregate: <T = AggregateDiscountPromise>() => T;
+}
+
+export interface DiscountConnectionSubscription
+  extends Promise<AsyncIterator<DiscountConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<DiscountEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateDiscountSubscription>() => T;
+}
+
+export interface DiscountEdge {
+  node: Discount;
+  cursor: String;
+}
+
+export interface DiscountEdgePromise
+  extends Promise<DiscountEdge>,
+    Fragmentable {
+  node: <T = DiscountPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface DiscountEdgeSubscription
+  extends Promise<AsyncIterator<DiscountEdge>>,
+    Fragmentable {
+  node: <T = DiscountSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateDiscount {
+  count: Int;
+}
+
+export interface AggregateDiscountPromise
+  extends Promise<AggregateDiscount>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateDiscountSubscription
+  extends Promise<AsyncIterator<AggregateDiscount>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -5504,6 +5806,56 @@ export interface CreditCardPreviousValuesSubscription
   ccExpire: () => Promise<AsyncIterator<String>>;
 }
 
+export interface DiscountSubscriptionPayload {
+  mutation: MutationType;
+  node: Discount;
+  updatedFields: String[];
+  previousValues: DiscountPreviousValues;
+}
+
+export interface DiscountSubscriptionPayloadPromise
+  extends Promise<DiscountSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = DiscountPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = DiscountPreviousValuesPromise>() => T;
+}
+
+export interface DiscountSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<DiscountSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = DiscountSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = DiscountPreviousValuesSubscription>() => T;
+}
+
+export interface DiscountPreviousValues {
+  id: ID_Output;
+  code: String;
+  amount: Int;
+  percent: Float;
+}
+
+export interface DiscountPreviousValuesPromise
+  extends Promise<DiscountPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  code: () => Promise<String>;
+  amount: () => Promise<Int>;
+  percent: () => Promise<Float>;
+}
+
+export interface DiscountPreviousValuesSubscription
+  extends Promise<AsyncIterator<DiscountPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  code: () => Promise<AsyncIterator<String>>;
+  amount: () => Promise<AsyncIterator<Int>>;
+  percent: () => Promise<AsyncIterator<Float>>;
+}
+
 export interface InterestSubscriptionPayload {
   mutation: MutationType;
   node: Interest;
@@ -5759,6 +6111,8 @@ export interface PrescriptionPreviousValues {
   nextDelivery?: DateTimeOutput;
   shippingInterval: Int;
   amountDue: Int;
+  amountFirstDue: Int;
+  discountCode?: String;
 }
 
 export interface PrescriptionPreviousValuesPromise
@@ -5780,6 +6134,8 @@ export interface PrescriptionPreviousValuesPromise
   nextDelivery: () => Promise<DateTimeOutput>;
   shippingInterval: () => Promise<Int>;
   amountDue: () => Promise<Int>;
+  amountFirstDue: () => Promise<Int>;
+  discountCode: () => Promise<String>;
 }
 
 export interface PrescriptionPreviousValuesSubscription
@@ -5801,6 +6157,8 @@ export interface PrescriptionPreviousValuesSubscription
   nextDelivery: () => Promise<AsyncIterator<DateTimeOutput>>;
   shippingInterval: () => Promise<AsyncIterator<Int>>;
   amountDue: () => Promise<AsyncIterator<Int>>;
+  amountFirstDue: () => Promise<AsyncIterator<Int>>;
+  discountCode: () => Promise<AsyncIterator<String>>;
 }
 
 export interface ProductSubscriptionPayload {
@@ -6124,6 +6482,10 @@ export const models: Model[] = [
   },
   {
     name: "Message",
+    embedded: false
+  },
+  {
+    name: "Discount",
     embedded: false
   }
 ];

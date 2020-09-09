@@ -59,12 +59,16 @@ var models = [
   {
     name: "Message",
     embedded: false
+  },
+  {
+    name: "Discount",
+    embedded: false
   }
 ];
 exports.Prisma = prisma_lib_1.makePrismaClientClass({
   typeDefs,
   models,
-  endpoint: `${process.env["PRISMA_ENDPOINT"]}`,
+  endpoint: `https://testserver-57c39de175.herokuapp.com/`,
   secret: `${process.env["PRISMA_SECRET"]}`
 });
 exports.prisma = new exports.Prisma();

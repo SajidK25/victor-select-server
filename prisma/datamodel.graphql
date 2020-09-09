@@ -133,6 +133,8 @@ type Prescription {
   nextDelivery: DateTime
   shippingInterval: Int!
   amountDue: Int!
+  amountFirstDue: Int!
+  discountCode: String
   orders: [Order]!
   messages: [Message]!
 }
@@ -186,4 +188,11 @@ type Message {
   physician: User @relation(name: "MessagePhysician")
   user: User! @relation(name: "MessageUser")
   text: String!
+}
+
+type Discount {
+  id: ID! @id
+  code: String! @unique
+  amount: Int! @detault(value: 0)
+  percent: Float! @default(value: 0)
 }
