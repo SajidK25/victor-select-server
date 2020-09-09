@@ -147,7 +147,6 @@ type Query {
   getPatientPrescriptions(userId: String): [Prescription]!
   getPatientChat(prescriptionId: String!): [Message]!
   getDiscount(code: String!): Discount
-  getAnalytics
 }
 
 type User {
