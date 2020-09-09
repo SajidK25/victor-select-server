@@ -1,4 +1,4 @@
-#endpoint: ${env:PRISMA_ENDPOINT}
+endpoint: ${env:PRISMA_ENDPOINT}
 #endpoint: https://victory-select-prod-450882f7ad.herokuapp.com/vs-prod/prod
 # endpoint: https://victory-select-prod-450882f7ad.herokuapp.com/vs-prod/dev
 datamodel: datamodel.graphql
@@ -8,8 +8,4 @@ generate:
   - generator: graphql-schema
     output: ../src/generated/prisma.graphql
 secret: ${env:PRISMA_SECRET}
-# endpoint: ${env:PRISMA_ENDPOINT}
-
 # endpoint: https://testserver-57c39de175.herokuapp.com/victoryselect-backend/dev
-
-endpoint: https://testserver-57c39de175.herokuapp.com/
