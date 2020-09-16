@@ -1,6 +1,7 @@
 const { hasPermission } = require("../utils");
 const { validateZipcode } = require("../helpers/validateZipcode");
 const { getAuthorizedUserId, validateUser } = require("../auth");
+const { getOrder } = require("../services/shippo");
 const { getCurrentCreditCard } = require("./Helpers");
 const moment = require("moment");
 
@@ -203,6 +204,11 @@ const Query = {
     return await prisma.product({
       productId: id,
     });
+  },
+
+  getShippoOrder: async (_, { orderId }) => {
+    console.log(orderId);
+    return await getOrder(orderId);
   },
 
   getUserCreditCard: async (_, __, { prisma, req }) => {

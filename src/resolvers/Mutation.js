@@ -23,7 +23,8 @@ const {
   setSupplementPricing,
 } = require("./Helpers");
 const { createRefreshToken, createAccessToken, validateUser } = require("../auth");
-const { validateAddress, createShipment, createBatch, createParcel } = require("../services/shippo");
+const { validateAddress, createShippoOrder, createBatch, createParcel } = require("../services/shippo");
+const { sendTextMessage } = require("../services/twilio");
 
 const Mutation = {
   logout: async (_, __, { res }) => {
@@ -384,6 +385,8 @@ const Mutation = {
       city: address.city,
       state: address.state,
       zipcode: address.zipcode,
+      telephone: address.telephone,
+      email: address.email,
       shippoAddressId: address.shippoId,
     });
 
@@ -431,8 +434,10 @@ const Mutation = {
 
     sendActivityCopy({
       email: "brian@bbaker.net",
-      text: `New visit saved for ${user.email}.`,
+      text: `New ${input.type} visit saved for ${user.email}.`,
     });
+
+    sendTextMessage(`New ${input.type} visit saved for ${user.email}.`);
 
     // First validate and add address
     addressInput = {
@@ -539,9 +544,12 @@ const Mutation = {
     await validateUser(req, true);
 
     await asyncForEach(idList, async (id) => {
+      //      let order = await prisma.order({ id: id });
+      //      let orderId = await createShippoOrder(order);
       await prisma.updateOrder({
         data: {
           status: "PROCESSING",
+          //          shippoShipmentId: orderId,
         },
         where: { id: id },
       });
@@ -562,6 +570,7 @@ const Mutation = {
       email: "brian@bbaker.net",
       text: `New supplement: ${input.subscription.drugId} saved for ${user.email}`,
     });
+
     // first validate and save credit card
     let newCC = null;
     if (input.control.savedCreditCard) {
@@ -579,8 +588,13 @@ const Mutation = {
       newCC = await updateCreditCard(userId, cardInput, prisma, true);
     }
 
-    if (!newCC) return { message: "CANT_SAVE_CARD" };
-
+    if (!newCC) {
+      sendActivityCopy({
+        email: "brian@bbaker.net",
+        text: `Unable to process credit card for saved for ${user.email}`,
+      });
+      return { message: "CANT_SAVE_CARD" };
+    }
     // Save Prescription Information
     const pInput = {};
     const s = input.subscription;
@@ -841,6 +855,11 @@ const Mutation = {
     };
 
     const savedCard = await saveCreditCard(cardInput);
+    return { message: "OK" };
+  },
+
+  sendMessage(_, { message, phoneNumber }) {
+    sendTextMessage(message, phoneNumber);
     return { message: "OK" };
   },
 };

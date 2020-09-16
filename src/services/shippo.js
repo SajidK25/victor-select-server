@@ -22,12 +22,9 @@ const createParcel = async (prescription) => {
 
   switch (prescription.type) {
     case "ED":
-      parcel.weight = !prescription.addon
-        ? ED_BASEWEIGHT
-        : EDWITHADDON_BASEWEIGHT;
+      parcel.weight = !prescription.addon ? ED_BASEWEIGHT : EDWITHADDON_BASEWEIGHT;
       parcel.weight +=
-        (!prescription.addon ? ED_EXTRAMONTH : EDWITHADDON_EXTRAMONTH) *
-        (prescription.shippingInterval - 1);
+        (!prescription.addon ? ED_EXTRAMONTH : EDWITHADDON_EXTRAMONTH) * (prescription.shippingInterval - 1);
       break;
 
     default:
@@ -101,6 +98,45 @@ const validateAddress = async (input) => {
   input.telephone = ret.phone;
 
   return { valid: true, shippoId: ret.object_id, errors: [], input };
+};
+
+const getOrder = async (orderId) => {
+  let ret = null;
+  console.log("ID", orderId);
+  try {
+    ret = await shippo.order.retrieve(orderId);
+    //    ret = await shippo.order.list();
+  } catch (err) {
+    console.log("retrieveOrder", err);
+    throw new Error(`Error retrieving order ${orderId}`);
+  }
+  console.log("return", ret);
+  if (!ret && !ret.data) {
+    throw new Error(`Couldn't find order ${orderId}`);
+  }
+
+  return ret;
+};
+
+const createShippoOrder = async (order) => {
+  try {
+    ret = await shippo.order.create({
+      to_address: order.shippoAddressId,
+      from_address: shippoAddressFrom,
+      placed_at: new Date(),
+      order_number: "#1068",
+      order_status: "PAID",
+      weight: "0.50",
+      weight_unit: "lb",
+    });
+  } catch (err) {
+    console.error("Couldn't create shippo order");
+    throw new Error("Unable to creare new shippo error");
+  }
+
+  console.log(ret);
+
+  return ret;
 };
 
 // function checkBatchStatus(object_id) {
@@ -351,4 +387,4 @@ function checkBatchStatus(object_id) {
   );
 }
 */
-module.exports = { validateAddress, createParcel, createBatch };
+module.exports = { validateAddress, createParcel, createShippoOrder, createBatch, getOrder };

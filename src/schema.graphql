@@ -117,6 +117,7 @@ type Mutation {
   validateUserAddress: SuccessMessage!
   validateAddresses: SuccessMessage!
   testLiveConnection: SuccessMessage!
+  sendMessage(message: String!, phoneNumber: String!): SuccessMessage!
 }
 
 type Query {
@@ -147,6 +148,7 @@ type Query {
   getPatientPrescriptions(userId: String): [Prescription]!
   getPatientChat(prescriptionId: String!): [Message]!
   getDiscount(code: String!): Discount
+  getShippoOrder(orderId: String!): Json
 }
 
 type User {

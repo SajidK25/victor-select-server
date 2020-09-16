@@ -151,6 +151,8 @@ type Order {
   city: String
   state: String
   zipcode: String
+  telephone: String
+  email: String
   shippoAddressId: String
   shippoShipmentId: String
   shippoBatchId: String

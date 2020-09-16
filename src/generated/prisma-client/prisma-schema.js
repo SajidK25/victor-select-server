@@ -1582,6 +1582,8 @@ type Order {
   city: String
   state: String
   zipcode: String
+  telephone: String
+  email: String
   shippoAddressId: String
   shippoShipmentId: String
   shippoBatchId: String
@@ -1612,6 +1614,8 @@ input OrderCreateInput {
   city: String
   state: String
   zipcode: String
+  telephone: String
+  email: String
   shippoAddressId: String
   shippoShipmentId: String
   shippoBatchId: String
@@ -1641,6 +1645,8 @@ input OrderCreateWithoutPrescriptionInput {
   city: String
   state: String
   zipcode: String
+  telephone: String
+  email: String
   shippoAddressId: String
   shippoShipmentId: String
   shippoBatchId: String
@@ -1680,6 +1686,10 @@ enum OrderOrderByInput {
   state_DESC
   zipcode_ASC
   zipcode_DESC
+  telephone_ASC
+  telephone_DESC
+  email_ASC
+  email_DESC
   shippoAddressId_ASC
   shippoAddressId_DESC
   shippoShipmentId_ASC
@@ -1713,6 +1723,8 @@ type OrderPreviousValues {
   city: String
   state: String
   zipcode: String
+  telephone: String
+  email: String
   shippoAddressId: String
   shippoShipmentId: String
   shippoBatchId: String
@@ -1844,6 +1856,34 @@ input OrderScalarWhereInput {
   zipcode_not_starts_with: String
   zipcode_ends_with: String
   zipcode_not_ends_with: String
+  telephone: String
+  telephone_not: String
+  telephone_in: [String!]
+  telephone_not_in: [String!]
+  telephone_lt: String
+  telephone_lte: String
+  telephone_gt: String
+  telephone_gte: String
+  telephone_contains: String
+  telephone_not_contains: String
+  telephone_starts_with: String
+  telephone_not_starts_with: String
+  telephone_ends_with: String
+  telephone_not_ends_with: String
+  email: String
+  email_not: String
+  email_in: [String!]
+  email_not_in: [String!]
+  email_lt: String
+  email_lte: String
+  email_gt: String
+  email_gte: String
+  email_contains: String
+  email_not_contains: String
+  email_starts_with: String
+  email_not_starts_with: String
+  email_ends_with: String
+  email_not_ends_with: String
   shippoAddressId: String
   shippoAddressId_not: String
   shippoAddressId_in: [String!]
@@ -1993,6 +2033,8 @@ input OrderUpdateInput {
   city: String
   state: String
   zipcode: String
+  telephone: String
+  email: String
   shippoAddressId: String
   shippoShipmentId: String
   shippoBatchId: String
@@ -2015,6 +2057,8 @@ input OrderUpdateManyDataInput {
   city: String
   state: String
   zipcode: String
+  telephone: String
+  email: String
   shippoAddressId: String
   shippoShipmentId: String
   shippoBatchId: String
@@ -2035,6 +2079,8 @@ input OrderUpdateManyMutationInput {
   city: String
   state: String
   zipcode: String
+  telephone: String
+  email: String
   shippoAddressId: String
   shippoShipmentId: String
   shippoBatchId: String
@@ -2073,6 +2119,8 @@ input OrderUpdateWithoutPrescriptionDataInput {
   city: String
   state: String
   zipcode: String
+  telephone: String
+  email: String
   shippoAddressId: String
   shippoShipmentId: String
   shippoBatchId: String
@@ -2217,6 +2265,34 @@ input OrderWhereInput {
   zipcode_not_starts_with: String
   zipcode_ends_with: String
   zipcode_not_ends_with: String
+  telephone: String
+  telephone_not: String
+  telephone_in: [String!]
+  telephone_not_in: [String!]
+  telephone_lt: String
+  telephone_lte: String
+  telephone_gt: String
+  telephone_gte: String
+  telephone_contains: String
+  telephone_not_contains: String
+  telephone_starts_with: String
+  telephone_not_starts_with: String
+  telephone_ends_with: String
+  telephone_not_ends_with: String
+  email: String
+  email_not: String
+  email_in: [String!]
+  email_not_in: [String!]
+  email_lt: String
+  email_lte: String
+  email_gt: String
+  email_gte: String
+  email_contains: String
+  email_not_contains: String
+  email_starts_with: String
+  email_not_starts_with: String
+  email_ends_with: String
+  email_not_ends_with: String
   shippoAddressId: String
   shippoAddressId_not: String
   shippoAddressId_in: [String!]
