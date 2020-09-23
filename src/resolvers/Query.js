@@ -34,6 +34,7 @@ const Query = {
   },
 
   messages: async (_, args, { prisma, req }) => {
+    await validateUser(req);
     return await prisma.messages();
   },
 
@@ -42,29 +43,38 @@ const Query = {
     return await prisma.users();
   },
 
-  user: async (_, args, { prisma }) => {
+  user: async (_, args, { prisma, req }) => {
+    await validateUser(req);
     return await prisma.user({ id: args.id });
   },
 
-  visit: async (_, { id }, { prisma }) => {
+  visit: async (_, { id }, { prisma, req }) => {
+    await validateUser(req);
     return await prisma.visit({ id: id });
   },
 
-  prescription: async (_, { id }, { prisma }) => {
+  prescription: async (_, { id }, { prisma, req }) => {
+    await validateUser(req);
     const prescription = await prisma.prescription({ id: id });
     return prescription;
   },
 
-  order: async (_, { id }, { prisma }) => {
+  order: async (_, { id }, { prisma, req }) => {
+    await validateUser(req);
     const order = await prisma.order({ id: id });
     return order;
   },
 
   orders: async (_, { status = "PENDING" }, { prisma, req }) => {
     await validateUser(req, true);
+    var statusList = ["PENDING", "PAYMENT_DECLINED"];
+    if (status === "PROCESSING") {
+      statusList = ["PROCESSING"];
+    }
+
     let variables = {
       orderBy: "createdAt_ASC",
-      where: { status: status },
+      where: { status_in: statusList },
     };
 
     return await prisma.orders(variables);
@@ -82,19 +92,21 @@ const Query = {
               { status_in: ["DENIED", "ACTIVE"] },
               {
                 approvedDate_gt: moment()
-                  .subtract(3, "days")
+                  .subtract(180, "days")
                   .format(),
               },
             ],
           },
         ],
       },
+      orderBy: "createdAt_DESC",
       //
     };
 
     return await prisma.prescriptions(variables);
   },
   getMessagesByPrescription: async (_, { prescriptionId }, { prisma, req }) => {
+    await validateUser(req);
     return await prisma.prescription({ id: prescriptionId }).messages();
   },
 
@@ -105,6 +117,7 @@ const Query = {
   },
 
   getPatientMessages: async (_, __, { prisma, req }) => {
+    await validateUser(req, false);
     return await prisma.messages({
       where: {
         fromPatient: true,
@@ -114,6 +127,9 @@ const Query = {
   },
 
   physicianListPrescriptions: async (_, __, { prisma, req }) => {
+    await validateUser(req, true);
+
+    console.log("Prescription List");
     const variables = {
       where: {
         OR: [
@@ -123,13 +139,14 @@ const Query = {
               { status_in: ["DENIED", "ACTIVE"] },
               {
                 approvedDate_gt: moment()
-                  .subtract(14, "days")
+                  .subtract(180, "days")
                   .format(),
               },
             ],
           },
         ],
       },
+      orderBy: "createdAt_ASC",
     };
 
     return await prisma.prescriptions(variables);
@@ -159,7 +176,8 @@ const Query = {
     return await prisma.visitsConnection(variables);
   },
 
-  usersConnection: async (_, args, { prisma }) => {
+  usersConnection: async (_, args, { prisma, req }) => {
+    await validateUser(req);
     return await prisma.usersConnection(args.input);
   },
 

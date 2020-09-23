@@ -432,12 +432,11 @@ const Mutation = {
 
     const { input } = args;
 
+    sendTextMessage(`New ${input.type} visit save started for ${user.email}`, "9494138239");
     sendActivityCopy({
       email: "brian@bbaker.net",
       text: `New ${input.type} visit saved for ${user.email}.`,
     });
-
-    sendTextMessage(`New ${input.type} visit saved for ${user.email}.`);
 
     // First validate and add address
     addressInput = {
@@ -468,6 +467,10 @@ const Mutation = {
     };
 
     const newCC = await updateCreditCard(userId, cardInput, prisma);
+    if (!newCC) {
+      sendTextMessage(`Unable to process credit card for saved for ${user.email}`, "9494138239");
+      return { message: "CANT_SAVE_CARD" };
+    }
 
     // Save new visit
     const birthDate = new Date(input.personal.birthDate);
@@ -536,6 +539,10 @@ const Mutation = {
       where: { id: userId },
     });
     sendWelcomeMail({ email: updateUser.email, name: updateUser.firstName });
+    sendTextMessage(
+      `A new ${prescription.type} visit has been saved.\nhttps://physician-select.herokuapp.com/`,
+      process.env.DOC_NOTIFY_NUMBER
+    );
 
     return { message: "OK" };
   },

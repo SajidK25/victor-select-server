@@ -5,6 +5,10 @@
 const client = require("twilio")(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 
 const sendTextMessage = (message, phoneNumber) => {
+  if (process.env.SERVER_MODE === "TESTING") {
+    message = "** TESTING **\n" + message;
+  }
+
   client.messages
     .create({
       body: message,

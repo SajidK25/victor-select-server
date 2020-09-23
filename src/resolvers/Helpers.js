@@ -1,25 +1,16 @@
-const {
-  saveCreditCard,
-  authorizeAndSaveCreditCard,
-} = require("../services/usaepay");
+const { saveCreditCard, authorizeAndSaveCreditCard } = require("../services/usaepay");
 const { validateAddress } = require("../services/shippo");
+const { sendTextMessage } = require("../services/twilio");
 
 const getCurrentCreditCard = async (userId, prisma) => {
-  const creditcards = await prisma
-    .user({ id: userId })
-    .creditCards({ where: { active: true } });
+  const creditcards = await prisma.user({ id: userId }).creditCards({ where: { active: true } });
 
   console.log("Credit Cards:", creditcards);
 
   return creditcards[0];
 };
 
-const updateCreditCard = async (
-  userId,
-  cardInput,
-  prisma,
-  saveOnly = false
-) => {
+const updateCreditCard = async (userId, cardInput, prisma, saveOnly = false) => {
   let response = null;
   if (saveOnly) {
     response = await saveCreditCard(cardInput);
@@ -29,6 +20,7 @@ const updateCreditCard = async (
   console.log("CC Response:", response);
 
   if (response.result_code !== "A") {
+    sendTextMessage(`Credit card wasn't verified.`, "9494138239");
     throw new Error("Unable to verify credit card.");
   }
 
@@ -60,9 +52,7 @@ const updateCreditCard = async (
 };
 
 const getCurrentAddress = async (userId, prisma) => {
-  const addresses = await prisma
-    .user({ id: userId })
-    .addresses({ where: { active: true } });
+  const addresses = await prisma.user({ id: userId }).addresses({ where: { active: true } });
 
   if (addresses.length) return addresses[0];
 
@@ -183,9 +173,7 @@ const setPricing = async (subscription, prisma) => {
 
   let shippingInterval = 0;
   let price = 0;
-  const dosesPerMonth = !subscription.dosesPerMonth
-    ? 1
-    : subscription.dosesPerMonth;
+  const dosesPerMonth = !subscription.dosesPerMonth ? 1 : subscription.dosesPerMonth;
 
   switch (subscription.shippingInterval) {
     case "everyThree":
