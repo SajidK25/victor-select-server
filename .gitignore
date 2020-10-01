@@ -30,3 +30,4 @@ yarn.lock
 .env.production
 .env.testing
 .env.prismaconfig
+yarn.lock

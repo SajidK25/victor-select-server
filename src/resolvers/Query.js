@@ -2,7 +2,7 @@ const { hasPermission } = require("../utils");
 const { validateZipcode } = require("../helpers/validateZipcode");
 const { getAuthorizedUserId, validateUser } = require("../auth");
 const { getOrder } = require("../services/shippo");
-const { getCurrentCreditCard } = require("./Helpers");
+const { getCurrentCreditCard, getCurrentAddress } = require("./Helpers");
 const moment = require("moment");
 
 const Query = {
@@ -243,6 +243,19 @@ const Query = {
     });
     console.log("User=", user);
     return user.length > 0;
+  },
+  getAccountInfo: async (_, __, { prisma, req }) => {
+    const { userId } = await validateUser(req);
+
+    const user = await prisma.user({ id: userId });
+    const creditCard = await getCurrentCreditCard(userId, prisma);
+    const address = await getCurrentAddress(userId, prisma);
+
+    return {
+      user: user,
+      address: address,
+      creditCard: creditCard,
+    };
   },
 };
 

@@ -23,6 +23,7 @@ const {
   setSupplementPricing,
 } = require("./Helpers");
 const { createRefreshToken, createAccessToken, validateUser } = require("../auth");
+const { validateZipcode } = require("../helpers/validateZipcode");
 const { validateAddress, createShippoOrder, createBatch, createParcel } = require("../services/shippo");
 const { sendTextMessage } = require("../services/twilio");
 
@@ -63,6 +64,55 @@ const Mutation = {
       accessToken: createAccessToken(newUser),
       user: newUser,
     };
+  },
+
+  updateEmail: async (_, { newEmail, password }, { req, prisma }) => {
+    const { userId } = await validateUser(req);
+
+    const email = newEmail.toLowerCase();
+    const testUser = await prisma.user({ email });
+    if (testUser) {
+      return { message: "THAT EMAIL ADDRESS IS IN USE" };
+    }
+
+    const user = await prisma.user({ id: userId });
+    if (!user) {
+      return { message: "ERROR ACCESSING RECORD, TRY AGAIN LATER" };
+    }
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) {
+      return { message: "INCORRECT PASSWORD" };
+    }
+
+    await prisma.updateUser({
+      where: { id: userId },
+      data: {
+        email,
+      },
+    });
+
+    return { message: "OK" };
+  },
+
+  updatePassword: async (_, { currentPassword, newPassword }, { req, prisma }) => {
+    const { userId } = await validateUser(req);
+
+    const user = await prisma.user({ id: userId });
+    if (!user) {
+      return { message: "ERROR ACCESSING RECORD, TRY AGAIN LATER" };
+    }
+    const valid = await bcrypt.compare(currentPassword, user.password);
+    if (!valid) {
+      return { message: "INCORRECT PASSWORD" };
+    }
+    newPassword = await bcrypt.hash(newPassword, 10);
+    await prisma.updateUser({
+      where: { id: userId },
+      data: {
+        password: newPassword,
+      },
+    });
+    return { message: "OK" };
   },
 
   login: async (_, { email, password }, { res, prisma }) => {
@@ -169,32 +219,24 @@ const Mutation = {
   },
 
   saveCard: async (_, args, { req, prisma }) => {
-    const payload = await validateUser(req);
-    const { userId } = payload;
-
+    const { userId } = await validateUser(req);
+    const user = await prisma.user({ id: userId });
+    const address = await getCurrentAddress(userId, prisma);
     const { input } = args;
 
-    const savedCard = await saveCreditCard(input);
-    if (savedCard) {
-      // Update all current user credit cards to inactive
-      await prisma.updateManyCreditCards({
-        where: { user: { id: userId }, active: true },
-        data: { active: false },
-      });
-      // Save new active card
-      const newCC = await prisma.createCreditCard({
-        ccType: savedCard.type,
-        ccToken: savedCard.key,
-        ccNumber: savedCard.cardnumber,
-        ccExpire: input.expiration,
-        active: true,
-        user: {
-          connect: {
-            id: userId,
-          },
-        },
-      });
+    const cardInput = {
+      cardNumber: input.cardNumber,
+      cardExpiry: input.expiration,
+      cardCVC: input.cardCVC,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      address: address.addressOne,
+      zipcode: address.zipcode,
+    };
 
+    const newCC = await updateCreditCard(userId, cardInput, prisma, true);
+
+    if (newCC) {
       return newCC;
     } else {
       throw new Error("Unable to process credit card");
@@ -261,7 +303,7 @@ const Mutation = {
     const user = await prisma.user({ id: userId });
 
     // No zipcode restrictions for supplements
-    if (!input.isSupplement && !validateZipcode(input.zipCode)) {
+    if (input.checkZipcode && !validateZipcode(input.zipCode)) {
       return { message: "INVALID_ZIPCODE" };
     }
 
