@@ -548,6 +548,8 @@ export type PrescriptionOrderByInput =
   | "totalRefills_DESC"
   | "refillsRemaining_ASC"
   | "refillsRemaining_DESC"
+  | "reminderSent_ASC"
+  | "reminderSent_DESC"
   | "nextDelivery_ASC"
   | "nextDelivery_DESC"
   | "shippingInterval_ASC"
@@ -1263,6 +1265,8 @@ export interface PrescriptionWhereInput {
   refillsRemaining_lte?: Maybe<Int>;
   refillsRemaining_gt?: Maybe<Int>;
   refillsRemaining_gte?: Maybe<Int>;
+  reminderSent?: Maybe<Boolean>;
+  reminderSent_not?: Maybe<Boolean>;
   nextDelivery?: Maybe<DateTimeInput>;
   nextDelivery_not?: Maybe<DateTimeInput>;
   nextDelivery_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -2115,6 +2119,7 @@ export interface PrescriptionCreateWithoutUserInput {
   expireDate?: Maybe<DateTimeInput>;
   totalRefills: Int;
   refillsRemaining: Int;
+  reminderSent?: Maybe<Boolean>;
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval: Int;
   amountDue: Int;
@@ -2565,6 +2570,7 @@ export interface PrescriptionUpdateWithoutUserDataInput {
   expireDate?: Maybe<DateTimeInput>;
   totalRefills?: Maybe<Int>;
   refillsRemaining?: Maybe<Int>;
+  reminderSent?: Maybe<Boolean>;
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval?: Maybe<Int>;
   amountDue?: Maybe<Int>;
@@ -3628,6 +3634,8 @@ export interface PrescriptionScalarWhereInput {
   refillsRemaining_lte?: Maybe<Int>;
   refillsRemaining_gt?: Maybe<Int>;
   refillsRemaining_gte?: Maybe<Int>;
+  reminderSent?: Maybe<Boolean>;
+  reminderSent_not?: Maybe<Boolean>;
   nextDelivery?: Maybe<DateTimeInput>;
   nextDelivery_not?: Maybe<DateTimeInput>;
   nextDelivery_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -3695,6 +3703,7 @@ export interface PrescriptionUpdateManyDataInput {
   expireDate?: Maybe<DateTimeInput>;
   totalRefills?: Maybe<Int>;
   refillsRemaining?: Maybe<Int>;
+  reminderSent?: Maybe<Boolean>;
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval?: Maybe<Int>;
   amountDue?: Maybe<Int>;
@@ -3807,6 +3816,7 @@ export interface PrescriptionCreateWithoutMessagesInput {
   expireDate?: Maybe<DateTimeInput>;
   totalRefills: Int;
   refillsRemaining: Int;
+  reminderSent?: Maybe<Boolean>;
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval: Int;
   amountDue: Int;
@@ -3872,6 +3882,7 @@ export interface PrescriptionUpdateWithoutMessagesDataInput {
   expireDate?: Maybe<DateTimeInput>;
   totalRefills?: Maybe<Int>;
   refillsRemaining?: Maybe<Int>;
+  reminderSent?: Maybe<Boolean>;
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval?: Maybe<Int>;
   amountDue?: Maybe<Int>;
@@ -3970,6 +3981,7 @@ export interface PrescriptionCreateWithoutOrdersInput {
   expireDate?: Maybe<DateTimeInput>;
   totalRefills: Int;
   refillsRemaining: Int;
+  reminderSent?: Maybe<Boolean>;
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval: Int;
   amountDue: Int;
@@ -4026,6 +4038,7 @@ export interface PrescriptionUpdateWithoutOrdersDataInput {
   expireDate?: Maybe<DateTimeInput>;
   totalRefills?: Maybe<Int>;
   refillsRemaining?: Maybe<Int>;
+  reminderSent?: Maybe<Boolean>;
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval?: Maybe<Int>;
   amountDue?: Maybe<Int>;
@@ -4078,6 +4091,7 @@ export interface PrescriptionCreateInput {
   expireDate?: Maybe<DateTimeInput>;
   totalRefills: Int;
   refillsRemaining: Int;
+  reminderSent?: Maybe<Boolean>;
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval: Int;
   amountDue: Int;
@@ -4103,6 +4117,7 @@ export interface PrescriptionUpdateInput {
   expireDate?: Maybe<DateTimeInput>;
   totalRefills?: Maybe<Int>;
   refillsRemaining?: Maybe<Int>;
+  reminderSent?: Maybe<Boolean>;
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval?: Maybe<Int>;
   amountDue?: Maybe<Int>;
@@ -4123,6 +4138,7 @@ export interface PrescriptionUpdateManyMutationInput {
   expireDate?: Maybe<DateTimeInput>;
   totalRefills?: Maybe<Int>;
   refillsRemaining?: Maybe<Int>;
+  reminderSent?: Maybe<Boolean>;
   nextDelivery?: Maybe<DateTimeInput>;
   shippingInterval?: Maybe<Int>;
   amountDue?: Maybe<Int>;
@@ -4661,6 +4677,7 @@ export interface Prescription {
   expireDate?: DateTimeOutput;
   totalRefills: Int;
   refillsRemaining: Int;
+  reminderSent: Boolean;
   nextDelivery?: DateTimeOutput;
   shippingInterval: Int;
   amountDue: Int;
@@ -4689,6 +4706,7 @@ export interface PrescriptionPromise
   expireDate: () => Promise<DateTimeOutput>;
   totalRefills: () => Promise<Int>;
   refillsRemaining: () => Promise<Int>;
+  reminderSent: () => Promise<Boolean>;
   nextDelivery: () => Promise<DateTimeOutput>;
   shippingInterval: () => Promise<Int>;
   amountDue: () => Promise<Int>;
@@ -4735,6 +4753,7 @@ export interface PrescriptionSubscription
   expireDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   totalRefills: () => Promise<AsyncIterator<Int>>;
   refillsRemaining: () => Promise<AsyncIterator<Int>>;
+  reminderSent: () => Promise<AsyncIterator<Boolean>>;
   nextDelivery: () => Promise<AsyncIterator<DateTimeOutput>>;
   shippingInterval: () => Promise<AsyncIterator<Int>>;
   amountDue: () => Promise<AsyncIterator<Int>>;
@@ -4781,6 +4800,7 @@ export interface PrescriptionNullablePromise
   expireDate: () => Promise<DateTimeOutput>;
   totalRefills: () => Promise<Int>;
   refillsRemaining: () => Promise<Int>;
+  reminderSent: () => Promise<Boolean>;
   nextDelivery: () => Promise<DateTimeOutput>;
   shippingInterval: () => Promise<Int>;
   amountDue: () => Promise<Int>;
@@ -6194,6 +6214,7 @@ export interface PrescriptionPreviousValues {
   expireDate?: DateTimeOutput;
   totalRefills: Int;
   refillsRemaining: Int;
+  reminderSent: Boolean;
   nextDelivery?: DateTimeOutput;
   shippingInterval: Int;
   amountDue: Int;
@@ -6217,6 +6238,7 @@ export interface PrescriptionPreviousValuesPromise
   expireDate: () => Promise<DateTimeOutput>;
   totalRefills: () => Promise<Int>;
   refillsRemaining: () => Promise<Int>;
+  reminderSent: () => Promise<Boolean>;
   nextDelivery: () => Promise<DateTimeOutput>;
   shippingInterval: () => Promise<Int>;
   amountDue: () => Promise<Int>;
@@ -6240,6 +6262,7 @@ export interface PrescriptionPreviousValuesSubscription
   expireDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   totalRefills: () => Promise<AsyncIterator<Int>>;
   refillsRemaining: () => Promise<AsyncIterator<Int>>;
+  reminderSent: () => Promise<AsyncIterator<Boolean>>;
   nextDelivery: () => Promise<AsyncIterator<DateTimeOutput>>;
   shippingInterval: () => Promise<AsyncIterator<Int>>;
   amountDue: () => Promise<AsyncIterator<Int>>;

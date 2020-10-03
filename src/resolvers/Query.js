@@ -197,7 +197,15 @@ const Query = {
     }
     console.log("userId", userId);
 
-    return await prisma.user({ id: userId }).prescriptions();
+    return await prisma.user({ id: userId }).prescriptions({ where: { status_in: ["PENDING", "ACTIVE"] } });
+  },
+
+  getTreatments: async (_, __, { prisma, req }) => {
+    const { userId } = await validateUser(req, false);
+
+    return await prisma
+      .user({ id: userId })
+      .prescriptions({ where: { status: "ACTIVE" }, orderBy: "nextDelivery_ASC" });
   },
 
   getRecentPrescriptionMessage: async (_, { prescriptionId }, { prisma, req }) => {
@@ -205,7 +213,8 @@ const Query = {
 
     const messages = await prisma.prescription({ id: prescriptionId }).messages({
       orderBy: "createdAt_DESC",
-      where: { fromPatient: false, private: false },
+      //      where: { fromPatient: false, private: false },
+      where: { fromPatient: false },
     });
     if (messages) {
       return messages[0];

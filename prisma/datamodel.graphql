@@ -130,6 +130,7 @@ type Prescription {
   expireDate: DateTime
   totalRefills: Int!
   refillsRemaining: Int!
+  reminderSent: Boolean! @default(value: false)
   nextDelivery: DateTime
   shippingInterval: Int!
   amountDue: Int!

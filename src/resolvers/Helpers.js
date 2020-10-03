@@ -4,9 +4,6 @@ const { sendTextMessage } = require("../services/twilio");
 
 const getCurrentCreditCard = async (userId, prisma) => {
   const creditcards = await prisma.user({ id: userId }).creditCards({ where: { active: true } });
-
-  console.log("Credit Cards:", creditcards);
-
   return creditcards[0];
 };
 
@@ -17,7 +14,6 @@ const updateCreditCard = async (userId, cardInput, prisma, saveOnly = false) => 
   } else {
     response = await authorizeAndSaveCreditCard(cardInput);
   }
-  console.log("CC Response:", response);
 
   if (response.result_code !== "A") {
     sendTextMessage(`Credit card wasn't verified.`, "9494138239");
@@ -49,6 +45,64 @@ const updateCreditCard = async (userId, cardInput, prisma, saveOnly = false) => 
   }
 
   return newCC;
+};
+
+function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
+  try {
+    decimalCount = Math.abs(decimalCount);
+    decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+
+    const negativeSign = amount < 0 ? "-" : "";
+
+    let i = parseInt((amount = Math.abs(Number(amount) || 0).toFixed(decimalCount))).toString();
+    let j = i.length > 3 ? i.length % 3 : 0;
+
+    return (
+      "$" +
+      negativeSign +
+      (j ? i.substr(0, j) + thousands : "") +
+      i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) +
+      (decimalCount
+        ? decimal +
+          Math.abs(amount - i)
+            .toFixed(decimalCount)
+            .slice(2)
+        : "")
+    );
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+const convertInterval = (interval) => {
+  switch (interval) {
+    case 1:
+      return "month";
+
+    case 2:
+      return "two months";
+
+    case 3:
+      return "three months";
+
+    default:
+      return "unknown";
+  }
+};
+
+const obscureAddress = (address) => {
+  const obscured = {
+    address_1: "",
+    address_2: "",
+  };
+  const placeHolder = "x";
+  obscured.address_1 =
+    address.addressOne.slice(0, 2) +
+    placeHolder.repeat(address.addressOne.length - 4) +
+    address.addressOne.slice(address.addressOne.length - 2, address.addressOne.length);
+
+  obscured.address_2 = "xxxxxxxxxx, " + address.state + " xxxxx";
+  return obscured;
 };
 
 const getCurrentAddress = async (userId, prisma) => {
@@ -101,8 +155,6 @@ const updateAddress = async ({ user, newAddress, prisma }) => {
   if (shippoRet) {
     shippoId = shippoRet.shippoId;
   }
-  console.log("addressInput", addressInput);
-
   delete addressInput.name;
   const upsertAddressInput = {
     ...addressInput,
@@ -207,4 +259,7 @@ module.exports = {
   getCurrentAddress,
   setPricing,
   setSupplementPricing,
+  obscureAddress,
+  formatMoney,
+  convertInterval,
 };

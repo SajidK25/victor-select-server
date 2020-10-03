@@ -126,6 +126,10 @@ type Mutation {
   sendMessage(message: String!, phoneNumber: String!): SuccessMessage!
   updateEmail(newEmail: String!, password: String!): SuccessMessage!
   updatePassword(currentPassword: String!, newPassword: String!): SuccessMessage!
+  processPlans: SuccessMessage!
+  setNextDeliveryDate: SuccessMessage!
+  sendReminders: Int!
+  updateNextDeliveryDate(id: String!, updateType: Int!): SuccessMessage!
 }
 
 type Query {
@@ -154,6 +158,7 @@ type Query {
   usersConnection(input: UserConnectionInput): UserConnection!
   getRecentPrescriptionMessage(prescriptionId: String!): Message
   getPatientPrescriptions(userId: String): [Prescription]!
+  getTreatments: [Prescription]!
   getPatientChat(prescriptionId: String!): [Message]!
   getDiscount(code: String!): Discount
   getShippoOrder(orderId: String!): Json
