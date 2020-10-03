@@ -244,7 +244,7 @@ const Mutation = {
       zipcode: address.zipcode,
     };
 
-    const newCC = await updateCreditCard(userId, cardInput, prisma, true);
+    const newCC = await updateCreditCard(userId, cardInput, prisma, false);
 
     if (newCC) {
       return newCC;
