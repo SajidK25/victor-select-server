@@ -14,6 +14,7 @@ const { resolvers } = require("./resolvers");
 const { directiveResolvers } = require("./directives");
 const { prisma } = require("./generated/prisma-client");
 const Sentry = require("@sentry/node");
+const cron = require("node-cron");
 
 Sentry.init({
   dsn: "https://595b407caeb64d4bb27945994a417a3e@sentry.io/5171137",
@@ -38,6 +39,7 @@ let corsOptions = {
 
 (async () => {
   const app = express();
+
   app.use(Sentry.Handlers.requestHandler());
   app.use(cors(corsOptions));
   app.use(CookieParser());
@@ -45,7 +47,14 @@ let corsOptions = {
     helmet({
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ["'self'", "data:", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net", "http://cdn.jsdelivr.net", "https://fonts.gstatic.com"],
+          defaultSrc: [
+            "'self'",
+            "data:",
+            "https://fonts.googleapis.com",
+            "https://cdn.jsdelivr.net",
+            "http://cdn.jsdelivr.net",
+            "https://fonts.gstatic.com",
+          ],
           styleSrc: ["'self'", `'unsafe-inline'`, "https://cdn.jsdelivr.net", "https://fonts.googleapis.com"],
           scriptSrc: ["'self'", `'unsafe-inline'`, "https://cdn.jsdelivr.net"],
           reportUri: "/report-violation",
@@ -111,6 +120,8 @@ let corsOptions = {
   apolloServer.applyMiddleware({ app, cors: false });
 
   app.use(Sentry.Handlers.errorHandler());
+
+  // cron.schedule();
 
   // Optional fallthrough error handler
   app.use(function onError(err, req, res, next) {

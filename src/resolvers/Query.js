@@ -2,7 +2,7 @@ const { hasPermission } = require("../utils");
 const { validateZipcode } = require("../helpers/validateZipcode");
 const { getAuthorizedUserId, validateUser } = require("../auth");
 const { getOrder } = require("../services/shippo");
-const { getCurrentCreditCard } = require("./Helpers");
+const { getCurrentCreditCard, getCurrentAddress } = require("./Helpers");
 const moment = require("moment");
 
 const Query = {
@@ -197,7 +197,15 @@ const Query = {
     }
     console.log("userId", userId);
 
-    return await prisma.user({ id: userId }).prescriptions();
+    return await prisma.user({ id: userId }).prescriptions({ where: { status_in: ["PENDING", "ACTIVE"] } });
+  },
+
+  getTreatments: async (_, __, { prisma, req }) => {
+    const { userId } = await validateUser(req, false);
+
+    return await prisma
+      .user({ id: userId })
+      .prescriptions({ where: { status: "ACTIVE" }, orderBy: "nextDelivery_ASC" });
   },
 
   getRecentPrescriptionMessage: async (_, { prescriptionId }, { prisma, req }) => {
@@ -205,7 +213,8 @@ const Query = {
 
     const messages = await prisma.prescription({ id: prescriptionId }).messages({
       orderBy: "createdAt_DESC",
-      where: { fromPatient: false, private: false },
+      //      where: { fromPatient: false, private: false },
+      where: { fromPatient: false },
     });
     if (messages) {
       return messages[0];
@@ -243,6 +252,19 @@ const Query = {
     });
     console.log("User=", user);
     return user.length > 0;
+  },
+  getAccountInfo: async (_, __, { prisma, req }) => {
+    const { userId } = await validateUser(req);
+
+    const user = await prisma.user({ id: userId });
+    const creditCard = await getCurrentCreditCard(userId, prisma);
+    const address = await getCurrentAddress(userId, prisma);
+
+    return {
+      user: user,
+      address: address,
+      creditCard: creditCard,
+    };
   },
 };
 
