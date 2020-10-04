@@ -913,7 +913,7 @@ const Mutation = {
   },
 
   setNextDeliveryDate: async (_, __, { req, prisma }) => {
-    //    await vailidateUser(req, true);
+    await vailidateUser(req, true);
 
     const prescriptions = await prisma.prescriptions({
       where: {
@@ -923,18 +923,19 @@ const Mutation = {
 
     if (prescriptions) {
       await asyncForEach(prescriptions, async (prescription) => {
-        //       if (!prescription.nextDelivery) {
-        if (prescription.startDate) {
-          const nextDelivery = addMonths(new Date(prescription.startDate), prescription.shippingInterval);
-          console.log("Update next", format(new Date(nextDelivery), "MMMM do"));
-          await prisma.updatePrescription({
-            data: {
-              nextDelivery: nextDelivery,
-            },
-            where: { id: prescription.id },
-          });
+        if (!prescription.nextDelivery) {
+          if (prescription.startDate) {
+            const nextDelivery = addMonths(new Date(prescription.startDate), prescription.shippingInterval);
+            console.log("Update next", format(new Date(nextDelivery), "MMMM do"));
+            await prisma.updatePrescription({
+              data: {
+                nextDelivery: nextDelivery,
+                reminderSent: false,
+              },
+              where: { id: prescription.id },
+            });
+          }
         }
-        //        }
         // Write new order
         // Charge Credit Card
         // Update Prescription
@@ -945,6 +946,7 @@ const Mutation = {
     return { message: "OK" };
   },
   updateNextDeliveryDate: async (_, { id, updateType }, { req, prisma }) => {
+    await validateUser(req);
     const prescription = await prisma.prescription({ id: id });
     const user = await prisma.prescription({ id: prescription.id }).user();
     if (!prescription) {
@@ -992,11 +994,15 @@ const Mutation = {
       prescription: { connect: { id: prescription.id } },
       text: messageText,
     });
+    sendTextMessage(`Next delivery date changed for ${user.email}`, "9494138239");
 
     return { message: "OK" };
   },
   sendReminders: async (_, __, { req, prisma }) => {
-    const checkDate = addDays(startOfToday(), 2);
+    await validateUser(req, true);
+
+    const checkDate = addDays(startOfToday(), 1);
+    console.log("CheckDate", checkDate);
     const endDate = endOfDay(checkDate);
 
     const prescriptions = await prisma.prescriptions({
