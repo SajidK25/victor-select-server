@@ -913,7 +913,7 @@ const Mutation = {
   },
 
   setNextDeliveryDate: async (_, __, { req, prisma }) => {
-    await vailidateUser(req, true);
+    await validateUser(req, true);
 
     const prescriptions = await prisma.prescriptions({
       where: {
