@@ -605,13 +605,52 @@ const Mutation = {
     await asyncForEach(idList, async (id) => {
       //      let order = await prisma.order({ id: id });
       //      let orderId = await createShippoOrder(order);
-      await prisma.updateOrder({
-        data: {
-          status: "PROCESSING",
-          //          shippoShipmentId: orderId,
-        },
-        where: { id: id },
-      });
+      const order = await prisma.order({ id: id });
+
+      if (order.status === "PAYMENT_DECLINED") {
+        const user = await prisma.order({ id: id }).user();
+        const creditCard = await getCurrentCreditCard(user.id, prisma);
+        const address = await getCurrentAddress(user.id, prisma);
+        var paymentResult = {};
+        try {
+          paymentResult = await makePayment({
+            ccToken: creditCard.ccToken,
+            amount: order.amount,
+            cardholder: user.firstName + " " + user.lastName,
+            email: user.email,
+            street: address.addressOne,
+            zipcode: address.zipcode,
+          });
+        } catch (err) {
+          paymentResult = { resultCode: "D", refnum: "" };
+          console.log(err);
+        }
+        if (paymentResult.resultCode === "A") {
+          await prisma.updateOrder({
+            data: {
+              status: "PROCESSING",
+              refnum: paymentResult.refnum,
+              creditCard: { connect: { id: creditCard.id } },
+              addressOne: address.addressOne,
+              addressTwo: address.addressTwo,
+              city: address.city,
+              state: address.state,
+              zipcode: address.zipcode,
+              telephone: address.telephone,
+              email: address.email,
+              shippoAddressId: address.shippoId,
+            },
+            where: { id: id },
+          });
+        }
+      } else {
+        await prisma.updateOrder({
+          data: {
+            status: "PROCESSING",
+          },
+          where: { id: id },
+        });
+      }
     });
 
     return { message: "OK" };
