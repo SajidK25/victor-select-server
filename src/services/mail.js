@@ -188,7 +188,6 @@ const sendActivityCopy = ({ email, text }) => {
   if (email) {
     if (Array.isArray(email)) {
       email.forEach((e) => {
-        console.log("emailAddress:", e);
         msg.personalizations[0].to.push({ email: e });
       });
     } else {

@@ -129,7 +129,6 @@ const Query = {
   physicianListPrescriptions: async (_, __, { prisma, req }) => {
     await validateUser(req, true);
 
-    console.log("Prescription List");
     const variables = {
       where: {
         OR: [

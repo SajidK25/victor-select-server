@@ -505,6 +505,7 @@ const Mutation = {
       user: user,
       newAddress: addressInput,
       prisma: prisma,
+      force: true,
     });
 
     // next validate and save credit card
@@ -1015,7 +1016,6 @@ const Mutation = {
       newInterval = 0;
       messageText = "Auto-delivery was canceled by user.";
     }
-    console.log("Next Delivery", newNextDelivery);
     await prisma.updatePrescription({
       data: {
         nextDelivery: newNextDelivery,
