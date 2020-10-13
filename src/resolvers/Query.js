@@ -3,7 +3,8 @@ const { validateZipcode } = require("../helpers/validateZipcode");
 const { getAuthorizedUserId, validateUser } = require("../auth");
 const { getOrder } = require("../services/shippo");
 const { getCurrentCreditCard, getCurrentAddress } = require("./Helpers");
-const moment = require("moment");
+const subDays = require("date-fns/subDays");
+const formatISO = require("date-fns/formatISO");
 
 const Query = {
   me: async (_, __, { req, prisma }) => {
@@ -67,9 +68,13 @@ const Query = {
 
   orders: async (_, { status = "PENDING" }, { prisma, req }) => {
     await validateUser(req, true);
-    var statusList = ["PENDING", "PAYMENT_DECLINED"];
-    if (status === "PROCESSING") {
-      statusList = ["PROCESSING"];
+    let statusList = [];
+
+    if (status === "PENDING") {
+      statusList.push("PENDING");
+      statusList.push("PAYMENT_DECLINED");
+    } else {
+      statusList.push(status);
     }
 
     let variables = {
@@ -91,9 +96,7 @@ const Query = {
             AND: [
               { status_in: ["DENIED", "ACTIVE"] },
               {
-                approvedDate_gt: moment()
-                  .subtract(180, "days")
-                  .format(),
+                approvedDate_gt: formatISO(subDays(new Date(), 180)),
               },
             ],
           },
@@ -137,9 +140,7 @@ const Query = {
             AND: [
               { status_in: ["DENIED", "ACTIVE"] },
               {
-                approvedDate_gt: moment()
-                  .subtract(180, "days")
-                  .format(),
+                approvedDate_gt: formatISO(subDays(new Date(), 180)),
               },
             ],
           },

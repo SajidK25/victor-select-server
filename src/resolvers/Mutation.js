@@ -12,7 +12,6 @@ const {
   sendCheckinMail,
 } = require("../services/mail");
 const { sendRefreshToken } = require("../sendRefreshToken");
-const moment = require("moment");
 const { makePayment, saveCreditCard } = require("../services/usaepay");
 const { asyncForEach } = require("../utils");
 const {
@@ -36,6 +35,8 @@ const startOfToday = require("date-fns/startOfToday");
 const endOfDay = require("date-fns/endOfDay");
 const addDays = require("date-fns/addDays");
 const addWeeks = require("date-fns/addWeeks");
+const addYears = require("date-fns/addYears");
+const formatISO = require("date-fns/formatISO");
 
 const Mutation = {
   logout: async (_, __, { res }) => {
@@ -379,7 +380,7 @@ const Mutation = {
     await prisma.updatePrescription({
       data: {
         status: "DENIED",
-        approvedDate: moment().format(),
+        approvedDate: new Date(),
       },
       where: { id: id },
     });
@@ -443,17 +444,15 @@ const Mutation = {
     });
 
     const refillsRemaining = prescription.refillsRemaining - prescription.shippingInterval;
-    const approvedDate = moment();
-    const expireDate = moment(approvedDate)
-      .add(1, "year")
-      .format();
+    const approvedDate = new Date();
+    const expireDate = addYears(approvedDate, 1);
 
     await prisma.updatePrescription({
       data: {
         refillsRemaining: refillsRemaining,
         status: "ACTIVE",
-        approvedDate: approvedDate.format(),
-        startDate: approvedDate.format(),
+        approvedDate: approvedDate,
+        startDate: approvedDate,
         expireDate: expireDate,
       },
       where: { id: id },
@@ -471,6 +470,16 @@ const Mutation = {
     });
 
     sendPrivateMessageMail({ email: user.email, name: user.firstName });
+    if (process.env.SERVER_MODE !== "TESTING") {
+      sendActivityCopy({
+        email: "info@thedailydoserx.com",
+        text: `A new ${prescription.type} prescription has been approved.\nhttps://physician-select.herokuapp.com/`,
+      });
+    }
+    sendTextMessage(
+      `A new ${prescription.type} prescription has been approved.\nhttps://physician-select.herokuapp.com/`,
+      "9494138239"
+    );
 
     return { message: "OK" };
   },
@@ -938,7 +947,7 @@ const Mutation = {
 
     const prescriptions = await prisma.prescriptions({
       where: {
-        AND: [{ status: "ACTIVE" }, { nextDelivery: moment().format() }],
+        AND: [{ status: "ACTIVE" }, { nextDelivery: formatISO(newDate()) }],
       },
     });
 
