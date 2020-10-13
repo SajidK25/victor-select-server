@@ -45,8 +45,6 @@ const createParcel = async (prescription) => {
 };
 
 const validateAddress = async (input) => {
-  console.log("ShippoInput:", input);
-
   validateArgument(input, "input");
   validateArgument(input.addressOne, "input.addressOne");
   validateArgument(input.addressTwo, "input.addressTwo");
@@ -102,7 +100,6 @@ const validateAddress = async (input) => {
 
 const getOrder = async (orderId) => {
   let ret = null;
-  console.log("ID", orderId);
   try {
     ret = await shippo.order.retrieve(orderId);
     //    ret = await shippo.order.list();

@@ -113,7 +113,7 @@ const getCurrentAddress = async (userId, prisma) => {
   return null;
 };
 
-const updateAddress = async ({ user, newAddress, prisma }) => {
+const updateAddress = async ({ user, newAddress, prisma, force = false }) => {
   // Get the current User's address
   let currentAddress = await getCurrentAddress(user.id, prisma);
   // There's nothing to do here
@@ -139,7 +139,7 @@ const updateAddress = async ({ user, newAddress, prisma }) => {
     addressInput.telephone = currentAddress.telephone;
   } else {
     addressInput.addressOne = newAddress.addressOne;
-    addressInput.addressTwo = newAddress.addressTwo;
+    addressInput.addressTwo = newAddress.addressTwo + "";
     addressInput.city = newAddress.city;
     addressInput.state = newAddress.state;
     addressInput.zipcode = newAddress.zipcode;
@@ -148,7 +148,7 @@ const updateAddress = async ({ user, newAddress, prisma }) => {
 
   let shippoId = "";
   const shippoRet = await validateAddress(addressInput);
-  if (!shippoRet.valid) {
+  if (!shippoRet.valid && !force) {
     return null;
   }
 

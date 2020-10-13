@@ -14,13 +14,14 @@ const { resolvers } = require("./resolvers");
 const { directiveResolvers } = require("./directives");
 const { prisma } = require("./generated/prisma-client");
 const Sentry = require("@sentry/node");
-const cron = require("node-cron");
 
 Sentry.init({
   dsn: "https://595b407caeb64d4bb27945994a417a3e@sentry.io/5171137",
 });
 
 var whitelist = process.env.WHITE_LIST.split(" ");
+
+console.log("whitelist", whitelist);
 
 let corsOptions = {
   origin: function(origin, callback) {
@@ -120,8 +121,6 @@ let corsOptions = {
   apolloServer.applyMiddleware({ app, cors: false });
 
   app.use(Sentry.Handlers.errorHandler());
-
-  // cron.schedule();
 
   // Optional fallthrough error handler
   app.use(function onError(err, req, res, next) {
