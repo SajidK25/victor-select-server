@@ -139,7 +139,7 @@ const updateAddress = async ({ user, newAddress, prisma, force = false }) => {
     addressInput.telephone = currentAddress.telephone;
   } else {
     addressInput.addressOne = newAddress.addressOne;
-    addressInput.addressTwo = newAddress.addressTwo ?? "";
+    addressInput.addressTwo = newAddress.addressTwo + "";
     addressInput.city = newAddress.city;
     addressInput.state = newAddress.state;
     addressInput.zipcode = newAddress.zipcode;
