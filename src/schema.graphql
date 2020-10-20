@@ -130,6 +130,7 @@ type Mutation {
   setNextDeliveryDate: SuccessMessage!
   sendReminders: Int!
   updateNextDeliveryDate(id: String!, updateType: Int!): SuccessMessage!
+  processRefills: Int!
 }
 
 type Query {
@@ -163,6 +164,8 @@ type Query {
   getDiscount(code: String!): Discount
   getShippoOrder(orderId: String!): Json
   getAccountInfo: AccountInfo!
+  remindersToGo: [Prescription]!
+  refillsToProcess: [Prescription]!
 }
 
 type User {

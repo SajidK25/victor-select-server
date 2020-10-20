@@ -4,6 +4,11 @@ const { getAuthorizedUserId, validateUser } = require("../auth");
 const { getOrder } = require("../services/shippo");
 const { getCurrentCreditCard, getCurrentAddress } = require("./Helpers");
 const subDays = require("date-fns/subDays");
+const addDays = require("date-fns/addDays");
+const format = require("date-fns/format");
+const startOfToday = require("date-fns/startOfToday");
+const endOfToday = require("date-fns/endOfToday");
+const endOfDay = require("date-fns/endOfDay");
 const formatISO = require("date-fns/formatISO");
 
 const Query = {
@@ -265,6 +270,37 @@ const Query = {
       address: address,
       creditCard: creditCard,
     };
+  },
+  remindersToGo: async (_, __, { prisma, req }) => {
+    await validateUser(req, true);
+
+    const checkDate = addDays(startOfToday(), process.env.DAYS_IN_ADVANCE);
+    console.log("CheckDate", checkDate);
+    const endDate = endOfDay(checkDate);
+
+    return await prisma.prescriptions({
+      where: {
+        status: "ACTIVE",
+        reminderSent: false,
+        nextDelivery_gte: checkDate,
+        nextDelivery_lte: endDate,
+      },
+    });
+  },
+  refillsToProcess: async (_, __, { prisma, req }) => {
+    await validateUser(req, true);
+
+    const checkDate = startOfToday();
+    const endDate = endOfToday();
+    console.log(checkDate, endDate);
+
+    return await prisma.prescriptions({
+      where: {
+        status: "ACTIVE",
+        nextDelivery_gte: checkDate,
+        nextDelivery_lte: endDate,
+      },
+    });
   },
 };
 
