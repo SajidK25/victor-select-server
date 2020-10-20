@@ -32,6 +32,7 @@ const { sendTextMessage } = require("../services/twilio");
 const addMonths = require("date-fns/addMonths");
 const format = require("date-fns/format");
 const startOfToday = require("date-fns/startOfToday");
+const endOfToday = require("date-fns/endOfToday");
 const endOfDay = require("date-fns/endOfDay");
 const addDays = require("date-fns/addDays");
 const addWeeks = require("date-fns/addWeeks");
@@ -666,6 +667,90 @@ const Mutation = {
     return { message: "OK" };
   },
 
+  processRefills: async (_, __, { req, prisma }) => {
+    await validateUser(req, true);
+
+    const checkDate = startOfToday();
+    const endDate = endOfToday();
+
+    const prescriptions = await prisma.prescriptions({
+      where: {
+        status: "ACTIVE",
+        nextDelivery_gte: checkDate,
+        nextDelivery_lte: endDate,
+      },
+    });
+
+    if (prescriptions) {
+      await asyncForEach(prescriptions, async (prescription) => {
+        const user = await prisma.prescription({ id: prescription.id }).user();
+        const creditcard = await getCurrentCreditCard(user.id, prisma);
+        const address = await getCurrentAddress(user.id, prisma);
+        let amountDue = prescription.amountDue;
+
+        var paymentResult = {};
+        try {
+          paymentResult = await makePayment({
+            ccToken: creditcard.ccToken,
+            amount: amountDue,
+            cardholder: user.firstName + " " + user.lastName,
+            email: user.email,
+            street: address.addressOne,
+            zipcode: address.zipcode,
+          });
+        } catch (err) {
+          paymentResult = { resultCode: "D", refnum: "" };
+          console.log(err);
+        }
+
+        // Create Order
+        const order = await prisma.createOrder({
+          amount: amountDue,
+          refnum: paymentResult.refnum,
+          status: paymentResult.resultCode === "A" ? "PENDING" : "PAYMENT_DECLINED",
+          new: false,
+          refills: prescription.shippingInterval,
+          user: { connect: { id: user.id } },
+          prescription: { connect: { id: prescription.id } },
+          creditCard: { connect: { id: creditcard.id } },
+          addressOne: address.addressOne,
+          addressTwo: address.addressTwo,
+          city: address.city,
+          state: address.state,
+          zipcode: address.zipcode,
+          telephone: address.telephone,
+          email: address.email,
+          shippoAddressId: address.shippoId,
+        });
+
+        const refillsRemaining = prescription.refillsRemaining - prescription.shippingInterval;
+        const nextDelivery = addMonths(new Date(), prescription.shippingInterval);
+
+        await prisma.updatePrescription({
+          data: {
+            refillsRemaining: refillsRemaining,
+            nextDelivery: nextDelivery,
+          },
+          where: { id: prescription.id },
+        });
+      });
+      if (process.env.SERVER_MODE !== "TESTING") {
+        sendActivityCopy({
+          email: "info@thedailydoserx.com",
+          text: `There were new refill prescriptions processed.\nhttps://physician-select.herokuapp.com/`,
+        });
+      }
+
+      sendTextMessage(
+        `There were refill prescriptions processed.\nhttps://physician-select.herokuapp.com/`,
+        "9494138239"
+      );
+      return prescriptions.length;
+    }
+
+    return 0;
+  },
+
   saveNewSupplement: async (_, args, { req, prisma }) => {
     const payload = await validateUser(req);
 
@@ -1049,7 +1134,7 @@ const Mutation = {
   sendReminders: async (_, __, { req, prisma }) => {
     await validateUser(req, true);
 
-    const checkDate = addDays(startOfToday(), 1);
+    const checkDate = addDays(startOfToday(), process.env.DAYS_IN_ADVANCE);
     console.log("CheckDate", checkDate);
     const endDate = endOfDay(checkDate);
 
@@ -1057,8 +1142,8 @@ const Mutation = {
       where: {
         status: "ACTIVE",
         reminderSent: false,
-        nextDelivery_gte: checkDate.toISOString(),
-        nextDelivery_lte: endDate.toISOString(),
+        nextDelivery_gte: checkDate,
+        nextDelivery_lte: endDate,
       },
     });
 
