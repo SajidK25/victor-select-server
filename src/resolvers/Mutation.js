@@ -1106,7 +1106,7 @@ const Mutation = {
     }
     if (updateType == 3) {
       // going to onDemand
-      newNextDelivery = new Date(prescription.expireDate);
+      newNextDelivery = prescription.expireDate;
       newInterval = 0;
       messageText = "Auto-delivery was canceled by user.";
     }
