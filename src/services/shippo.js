@@ -128,7 +128,7 @@ const createShippoOrder = async (order) => {
     });
   } catch (err) {
     console.error("Couldn't create shippo order");
-    throw new Error("Unable to creare new shippo error");
+    throw new Error("Unable to create new shippo error");
   }
 
   console.log(ret);

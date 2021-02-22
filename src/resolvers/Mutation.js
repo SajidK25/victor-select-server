@@ -25,6 +25,7 @@ const {
   formatMoney,
   convertInterval,
 } = require("./Helpers");
+const { validateZipcode } = require("../helpers/validateZipcode");
 const { createRefreshToken, createAccessToken, validateUser } = require("../auth");
 const { validateZipcode } = require("../helpers/validateZipcode");
 const { validateAddress, createShippoOrder, createBatch, createParcel } = require("../services/shippo");
@@ -314,6 +315,7 @@ const Mutation = {
     const { userId } = payload;
     const user = await prisma.user({ id: userId });
 
+    console.log("Input", input);
     // No zipcode restrictions for supplements
     if (input.checkZipcode && !validateZipcode(input.zipCode)) {
       return { message: "INVALID_ZIPCODE" };
@@ -766,20 +768,22 @@ const Mutation = {
 
     // first validate and save credit card
     let newCC = null;
-    if (input.control.savedCreditCard) {
-      newCC = await getCurrentCreditCard(user.id, prisma);
-    } else {
-      const cardInput = {
-        cardNumber: input.payment.cardNumber,
-        cardExpiry: input.payment.cardExpiry,
-        cardCVC: input.payment.cardCVC,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        zipCode: input.personal.zipCode,
-        address: input.personal.addressOne,
-      };
-      newCC = await updateCreditCard(userId, cardInput, prisma, true);
-    }
+    console.log("SaveInput", input);
+
+    // if (input.control.savedCreditCard) {
+    //   newCC = await getCurrentCreditCard(user.id, prisma);
+    // } else {
+    const cardInput = {
+      cardNumber: input.payment.cardNumber,
+      cardExpiry: input.payment.cardExpiry,
+      cardCVC: input.payment.cardCVC,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      zipCode: input.personal.zipCode,
+      address: input.personal.addressOne,
+    };
+    newCC = await updateCreditCard(userId, cardInput, prisma, true);
+    // }
 
     if (!newCC) {
       sendActivityCopy({
@@ -802,6 +806,10 @@ const Mutation = {
     pInput.refillsRemaining = 999;
     pInput.shippingInterval = pricing.shippingInterval;
     pInput.amountDue = pricing.amountDue;
+    const approvedDate = moment();
+    const expireDate = moment(approvedDate)
+      .add(1, "year")
+      .format();
 
     const visit = await prisma.createVisit({
       type: input.type,
@@ -815,7 +823,19 @@ const Mutation = {
 
     // Create Prescription
     const prescription = await prisma.createPrescription({
-      ...pInput,
+      status: "ACTIVE",
+      type: input.type,
+      timesPerMonth: 1,
+      addonTimesPerMonth: 0,
+      approvedDate: approvedDate,
+      startDate: approvedDate,
+      expireDate: expireDate,
+      totalRefills: 999,
+      refillsRemaining: 999,
+      shippingInterval: pricing.shippingInterval,
+      amountDue: pricing.amountDue,
+      amountFirstDue: pricing.amountDue,
+      discountCode: "",
       user: { connect: { id: userId } },
       visit: { connect: { id: visit.id } },
       product: { connect: { productId: productId } },
