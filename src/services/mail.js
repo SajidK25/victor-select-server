@@ -11,7 +11,7 @@ const sendMail = async (msg) => {
   }
 };
 
-const sendAnEmail = ({ email, name, templateId, templateData }) => {
+const sendAnEmail = async ({ email, name, templateId, templateData }) => {
   const msg = {
     from: {
       email: returnEmail,
@@ -31,7 +31,7 @@ const sendAnEmail = ({ email, name, templateId, templateData }) => {
     ],
     template_id: templateId,
   };
-  sendMail(msg);
+  await sendMail(msg);
 };
 
 const sendResetMail = ({ email, name, url }) => {
@@ -54,6 +54,25 @@ const sendPrivateMessageMail = ({ email, name }) => {
     templateData: {
       name: name,
       url: `${process.env.FRONTEND_URL}/account/chat`,
+    },
+  });
+};
+
+const sendCheckinMail = async ({ email, input }) => {
+  await sendAnEmail({
+    name: input.name,
+    email: email,
+    templateId: "d-146941194ee540cf965f5500f15ced3b",
+    templateData: {
+      name: input.name,
+      address_1: input.address_1,
+      address_2: input.address_2,
+      creditcard_1: input.creditcard_1,
+      creditcard_2: input.creditcard_2,
+      amount: input.amount,
+      interval: input.interval,
+      account_URL: `${process.env.FRONTEND_URL}/account/info`,
+      manage_URL: `${process.env.FRONTEND_URL}/account/home`,
     },
   });
 };
@@ -169,7 +188,6 @@ const sendActivityCopy = ({ email, text }) => {
   if (email) {
     if (Array.isArray(email)) {
       email.forEach((e) => {
-        console.log("emailAddress:", e);
         msg.personalizations[0].to.push({ email: e });
       });
     } else {
@@ -203,4 +221,5 @@ module.exports = {
   sendShippedMail,
   sendComingSoonMail,
   sendActivityCopy,
+  sendCheckinMail,
 };

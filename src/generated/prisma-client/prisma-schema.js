@@ -2440,6 +2440,7 @@ type Prescription {
   expireDate: DateTime
   totalRefills: Int!
   refillsRemaining: Int!
+  reminderSent: Boolean!
   nextDelivery: DateTime
   shippingInterval: Int!
   amountDue: Int!
@@ -2472,6 +2473,7 @@ input PrescriptionCreateInput {
   expireDate: DateTime
   totalRefills: Int!
   refillsRemaining: Int!
+  reminderSent: Boolean
   nextDelivery: DateTime
   shippingInterval: Int!
   amountDue: Int!
@@ -2513,6 +2515,7 @@ input PrescriptionCreateWithoutMessagesInput {
   expireDate: DateTime
   totalRefills: Int!
   refillsRemaining: Int!
+  reminderSent: Boolean
   nextDelivery: DateTime
   shippingInterval: Int!
   amountDue: Int!
@@ -2538,6 +2541,7 @@ input PrescriptionCreateWithoutOrdersInput {
   expireDate: DateTime
   totalRefills: Int!
   refillsRemaining: Int!
+  reminderSent: Boolean
   nextDelivery: DateTime
   shippingInterval: Int!
   amountDue: Int!
@@ -2562,6 +2566,7 @@ input PrescriptionCreateWithoutUserInput {
   expireDate: DateTime
   totalRefills: Int!
   refillsRemaining: Int!
+  reminderSent: Boolean
   nextDelivery: DateTime
   shippingInterval: Int!
   amountDue: Int!
@@ -2603,6 +2608,8 @@ enum PrescriptionOrderByInput {
   totalRefills_DESC
   refillsRemaining_ASC
   refillsRemaining_DESC
+  reminderSent_ASC
+  reminderSent_DESC
   nextDelivery_ASC
   nextDelivery_DESC
   shippingInterval_ASC
@@ -2629,6 +2636,7 @@ type PrescriptionPreviousValues {
   expireDate: DateTime
   totalRefills: Int!
   refillsRemaining: Int!
+  reminderSent: Boolean!
   nextDelivery: DateTime
   shippingInterval: Int!
   amountDue: Int!
@@ -2745,6 +2753,8 @@ input PrescriptionScalarWhereInput {
   refillsRemaining_lte: Int
   refillsRemaining_gt: Int
   refillsRemaining_gte: Int
+  reminderSent: Boolean
+  reminderSent_not: Boolean
   nextDelivery: DateTime
   nextDelivery_not: DateTime
   nextDelivery_in: [DateTime!]
@@ -2847,6 +2857,7 @@ input PrescriptionUpdateInput {
   expireDate: DateTime
   totalRefills: Int
   refillsRemaining: Int
+  reminderSent: Boolean
   nextDelivery: DateTime
   shippingInterval: Int
   amountDue: Int
@@ -2867,6 +2878,7 @@ input PrescriptionUpdateManyDataInput {
   expireDate: DateTime
   totalRefills: Int
   refillsRemaining: Int
+  reminderSent: Boolean
   nextDelivery: DateTime
   shippingInterval: Int
   amountDue: Int
@@ -2885,6 +2897,7 @@ input PrescriptionUpdateManyMutationInput {
   expireDate: DateTime
   totalRefills: Int
   refillsRemaining: Int
+  reminderSent: Boolean
   nextDelivery: DateTime
   shippingInterval: Int
   amountDue: Int
@@ -2939,6 +2952,7 @@ input PrescriptionUpdateWithoutMessagesDataInput {
   expireDate: DateTime
   totalRefills: Int
   refillsRemaining: Int
+  reminderSent: Boolean
   nextDelivery: DateTime
   shippingInterval: Int
   amountDue: Int
@@ -2963,6 +2977,7 @@ input PrescriptionUpdateWithoutOrdersDataInput {
   expireDate: DateTime
   totalRefills: Int
   refillsRemaining: Int
+  reminderSent: Boolean
   nextDelivery: DateTime
   shippingInterval: Int
   amountDue: Int
@@ -2986,6 +3001,7 @@ input PrescriptionUpdateWithoutUserDataInput {
   expireDate: DateTime
   totalRefills: Int
   refillsRemaining: Int
+  reminderSent: Boolean
   nextDelivery: DateTime
   shippingInterval: Int
   amountDue: Int
@@ -3130,6 +3146,8 @@ input PrescriptionWhereInput {
   refillsRemaining_lte: Int
   refillsRemaining_gt: Int
   refillsRemaining_gte: Int
+  reminderSent: Boolean
+  reminderSent_not: Boolean
   nextDelivery: DateTime
   nextDelivery_not: DateTime
   nextDelivery_in: [DateTime!]

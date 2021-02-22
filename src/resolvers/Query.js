@@ -2,8 +2,14 @@ const { hasPermission } = require("../utils");
 const { validateZipcode } = require("../helpers/validateZipcode");
 const { getAuthorizedUserId, validateUser } = require("../auth");
 const { getOrder } = require("../services/shippo");
-const { getCurrentCreditCard } = require("./Helpers");
-const moment = require("moment");
+const { getCurrentCreditCard, getCurrentAddress } = require("./Helpers");
+const subDays = require("date-fns/subDays");
+const addDays = require("date-fns/addDays");
+const format = require("date-fns/format");
+const startOfToday = require("date-fns/startOfToday");
+const endOfToday = require("date-fns/endOfToday");
+const endOfDay = require("date-fns/endOfDay");
+const formatISO = require("date-fns/formatISO");
 
 const Query = {
   me: async (_, __, { req, prisma }) => {
@@ -67,9 +73,13 @@ const Query = {
 
   orders: async (_, { status = "PENDING" }, { prisma, req }) => {
     await validateUser(req, true);
-    var statusList = ["PENDING", "PAYMENT_DECLINED"];
-    if (status === "PROCESSING") {
-      statusList = ["PROCESSING"];
+    let statusList = [];
+
+    if (status === "PENDING") {
+      statusList.push("PENDING");
+      statusList.push("PAYMENT_DECLINED");
+    } else {
+      statusList.push(status);
     }
 
     let variables = {
@@ -91,9 +101,7 @@ const Query = {
             AND: [
               { status_in: ["DENIED", "ACTIVE"] },
               {
-                approvedDate_gt: moment()
-                  .subtract(180, "days")
-                  .format(),
+                approvedDate_gt: formatISO(subDays(new Date(), 180)),
               },
             ],
           },
@@ -129,7 +137,6 @@ const Query = {
   physicianListPrescriptions: async (_, __, { prisma, req }) => {
     await validateUser(req, true);
 
-    console.log("Prescription List");
     const variables = {
       where: {
         OR: [
@@ -138,9 +145,7 @@ const Query = {
             AND: [
               { status_in: ["DENIED", "ACTIVE"] },
               {
-                approvedDate_gt: moment()
-                  .subtract(180, "days")
-                  .format(),
+                approvedDate_gt: formatISO(subDays(new Date(), 180)),
               },
             ],
           },
@@ -197,7 +202,15 @@ const Query = {
     }
     console.log("userId", userId);
 
-    return await prisma.user({ id: userId }).prescriptions();
+    return await prisma.user({ id: userId }).prescriptions({ where: { status_in: ["PENDING", "ACTIVE"] } });
+  },
+
+  getTreatments: async (_, __, { prisma, req }) => {
+    const { userId } = await validateUser(req, false);
+
+    return await prisma
+      .user({ id: userId })
+      .prescriptions({ where: { status: "ACTIVE" }, orderBy: "nextDelivery_ASC" });
   },
 
   getRecentPrescriptionMessage: async (_, { prescriptionId }, { prisma, req }) => {
@@ -205,7 +218,8 @@ const Query = {
 
     const messages = await prisma.prescription({ id: prescriptionId }).messages({
       orderBy: "createdAt_DESC",
-      where: { fromPatient: false, private: false },
+      //      where: { fromPatient: false, private: false },
+      where: { fromPatient: false },
     });
     if (messages) {
       return messages[0];
@@ -243,6 +257,50 @@ const Query = {
     });
     console.log("User=", user);
     return user.length > 0;
+  },
+  getAccountInfo: async (_, __, { prisma, req }) => {
+    const { userId } = await validateUser(req);
+
+    const user = await prisma.user({ id: userId });
+    const creditCard = await getCurrentCreditCard(userId, prisma);
+    const address = await getCurrentAddress(userId, prisma);
+
+    return {
+      user: user,
+      address: address,
+      creditCard: creditCard,
+    };
+  },
+  remindersToGo: async (_, __, { prisma, req }) => {
+    await validateUser(req, true);
+
+    const checkDate = addDays(startOfToday(), process.env.DAYS_IN_ADVANCE);
+    console.log("CheckDate", checkDate);
+    const endDate = endOfDay(checkDate);
+
+    return await prisma.prescriptions({
+      where: {
+        status: "ACTIVE",
+        reminderSent: false,
+        nextDelivery_gte: checkDate,
+        nextDelivery_lte: endDate,
+      },
+    });
+  },
+  refillsToProcess: async (_, __, { prisma, req }) => {
+    await validateUser(req, true);
+
+    const checkDate = startOfToday();
+    const endDate = endOfToday();
+    console.log(checkDate, endDate);
+
+    return await prisma.prescriptions({
+      where: {
+        status: "ACTIVE",
+        nextDelivery_gte: checkDate,
+        nextDelivery_lte: endDate,
+      },
+    });
   },
 };
 

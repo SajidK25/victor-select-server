@@ -21,6 +21,8 @@ Sentry.init({
 
 var whitelist = process.env.WHITE_LIST.split(" ");
 
+console.log("whitelist", whitelist);
+
 let corsOptions = {
   origin: function(origin, callback) {
     if (!origin) {
@@ -38,6 +40,7 @@ let corsOptions = {
 
 (async () => {
   const app = express();
+
   app.use(Sentry.Handlers.requestHandler());
   app.use(cors(corsOptions));
   app.use(CookieParser());
@@ -45,7 +48,14 @@ let corsOptions = {
     helmet({
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ["'self'", "data:", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net", "http://cdn.jsdelivr.net", "https://fonts.gstatic.com"],
+          defaultSrc: [
+            "'self'",
+            "data:",
+            "https://fonts.googleapis.com",
+            "https://cdn.jsdelivr.net",
+            "http://cdn.jsdelivr.net",
+            "https://fonts.gstatic.com",
+          ],
           styleSrc: ["'self'", `'unsafe-inline'`, "https://cdn.jsdelivr.net", "https://fonts.googleapis.com"],
           scriptSrc: ["'self'", `'unsafe-inline'`, "https://cdn.jsdelivr.net"],
           reportUri: "/report-violation",
