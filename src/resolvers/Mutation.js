@@ -27,7 +27,6 @@ const {
 } = require("./Helpers");
 const { validateZipcode } = require("../helpers/validateZipcode");
 const { createRefreshToken, createAccessToken, validateUser } = require("../auth");
-const { validateZipcode } = require("../helpers/validateZipcode");
 const { validateAddress, createShippoOrder, createBatch, createParcel } = require("../services/shippo");
 const { sendTextMessage } = require("../services/twilio");
 const addMonths = require("date-fns/addMonths");
@@ -806,10 +805,8 @@ const Mutation = {
     pInput.refillsRemaining = 999;
     pInput.shippingInterval = pricing.shippingInterval;
     pInput.amountDue = pricing.amountDue;
-    const approvedDate = moment();
-    const expireDate = moment(approvedDate)
-      .add(1, "year")
-      .format();
+    const approvedDate = new Date();
+    const expireDate = addYears(approvedDate, 1);
 
     const visit = await prisma.createVisit({
       type: input.type,
@@ -883,170 +880,7 @@ const Mutation = {
     }
     return { message: "OK" };
   },
-  /*  processOrder: async (_, {id}, {req, prisma }) => {
-    const {userId} = await validateUser(req, true);
 
-    // Get Prescription
-    const prescription = await prisma.prescription({ id: id });
-    const user = await prisma.prescription({ id: id }).user();
-    const creditcard = await getCurrentCreditCard(user.id, prisma);
-    const address = await getCurrentAddress(user.id, prisma);
-
-    let amountDue = prescription.amountDue;
-    
-    var paymentResult = {};
-    try {
-      paymentResult = await makePayment({
-        ccToken: creditcard.ccToken,
-        amount: amountDue,
-        cardholder: user.firstName + " " + user.lastName,
-        email: user.email,
-        street: address.addressOne,
-        zipcode: address.zipcode,
-      });
-    } catch (err) {
-      paymentResult = { resultCode: "D", refnum: "" };
-      console.log(err);
-    }
-
-    if (paymentResult.resultCode !== "A") {
-      return {message: "PAYMENT_DECLINED"};
-    }
-
-    // Create Order
-    const order = await prisma.createOrder({
-      amount: amountDue,
-      refnum: paymentResult.refnum,
-      status: "PENDING",
-      new: false,
-      refills: prescription.shippingInterval,
-      user: { connect: { id: user.id } },
-      prescription: { connect: { id: prescription.id } },
-      creditCard: { connect: { id: creditcard.id } },
-      addressOne: address.addressOne,
-      addressTwo: address.addressTwo,
-      city: address.city,
-      state: address.state,
-      zipcode: address.zipcode,
-      telephone: address.telephone,
-      email: address.email,
-      shippoAddressId: address.shippoId,
-    });
-
-    const refillsRemaining = prescription.refillsRemaining - prescription.shippingInterval;
-    const nextDelivery = addMonths(newDate(prescription.nextDelivery))
-
-    await prisma.updatePrescription({
-      data: {
-        refillsRemaining: refillsRemaining,
-        status: "ACTIVE",
-        approvedDate: approvedDate.format(),
-        startDate: approvedDate.format(),
-        expireDate: expireDate,
-      },
-      where: { id: id },
-    });
-
-    // Create message
-    const message = await prisma.createMessage({
-      private: false,
-      read: false,
-      fromPatient: false,
-      physician: { connect: { id: physicianId } },
-      user: { connect: { id: user.id } },
-      prescription: { connect: { id: prescription.id } },
-      text: `[${prescription.type}_WELCOME]`,
-    });
-
-    sendPrivateMessageMail({ email: user.email, name: user.firstName });
-
-    return { message: "OK" };const payload = await validateUser(req, true);
-    const physicianId = payload.userId;
-
-    const { id } = args;
-
-    // Get Prescription
-    const prescription = await prisma.prescription({ id: id });
-    const user = await prisma.prescription({ id: id }).user();
-    const creditcard = await getCurrentCreditCard(user.id, prisma);
-    const address = await getCurrentAddress(user.id, prisma);
-
-    let amountDue = prescription.amountDue;
-    if (prescription.amountFirstDue) {
-      amountDue = prescription.amountFirstDue;
-    }
-
-    var paymentResult = {};
-    try {
-      paymentResult = await makePayment({
-        ccToken: creditcard.ccToken,
-        amount: amountDue,
-        cardholder: user.firstName + " " + user.lastName,
-        email: user.email,
-        street: address.addressOne,
-        zipcode: address.zipcode,
-      });
-    } catch (err) {
-      paymentResult = { resultCode: "D", refnum: "" };
-      console.log(err);
-    }
-    // Make payment...
-
-    // Create Order
-    const order = await prisma.createOrder({
-      amount: amountDue,
-      refnum: paymentResult.refnum,
-      status: paymentResult.resultCode === "A" ? "PENDING" : "PAYMENT_DECLINED",
-      new: true,
-      refills: prescription.shippingInterval - 1,
-      user: { connect: { id: user.id } },
-      prescription: { connect: { id: prescription.id } },
-      creditCard: { connect: { id: creditcard.id } },
-      addressOne: address.addressOne,
-      addressTwo: address.addressTwo,
-      city: address.city,
-      state: address.state,
-      zipcode: address.zipcode,
-      telephone: address.telephone,
-      email: address.email,
-      shippoAddressId: address.shippoId,
-    });
-
-    const refillsRemaining = prescription.refillsRemaining - prescription.shippingInterval;
-    const approvedDate = moment();
-    const expireDate = moment(approvedDate)
-      .add(1, "year")
-      .format();
-
-    await prisma.updatePrescription({
-      data: {
-        refillsRemaining: refillsRemaining,
-        status: "ACTIVE",
-        approvedDate: approvedDate.format(),
-        startDate: approvedDate.format(),
-        expireDate: expireDate,
-      },
-      where: { id: id },
-    });
-
-    // Create message
-    const message = await prisma.createMessage({
-      private: false,
-      read: false,
-      fromPatient: false,
-      physician: { connect: { id: physicianId } },
-      user: { connect: { id: user.id } },
-      prescription: { connect: { id: prescription.id } },
-      text: `[${prescription.type}_WELCOME]`,
-    });
-
-    sendPrivateMessageMail({ email: user.email, name: user.firstName });
-
-    return { message: "OK" };
-
-
-  },
-  */
   processPlans: async (_, __, { req, prisma }) => {
     await vailidateUser(req, true);
 
