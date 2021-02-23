@@ -166,12 +166,15 @@ type Query {
   getAccountInfo: AccountInfo!
   remindersToGo: [Prescription]!
   refillsToProcess: [Prescription]!
+  abandonCarts(daysBack: Int!): [User]!
 }
 
 type User {
   id: ID!
   firstName: String!
   lastName: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   email: String!
   tokenVersion: Int
   role: Role

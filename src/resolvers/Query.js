@@ -7,6 +7,7 @@ const subDays = require("date-fns/subDays");
 const addDays = require("date-fns/addDays");
 const format = require("date-fns/format");
 const startOfToday = require("date-fns/startOfToday");
+const startOfDay = require("date-fns/startOfDay");
 const endOfToday = require("date-fns/endOfToday");
 const endOfDay = require("date-fns/endOfDay");
 const formatISO = require("date-fns/formatISO");
@@ -299,6 +300,17 @@ const Query = {
         status: "ACTIVE",
         nextDelivery_gte: checkDate,
         nextDelivery_lte: endDate,
+      },
+    });
+  },
+  abandonCarts: async (_, { daysBack }, { prisma, req }) => {
+    const endDate = endOfToday();
+    const startDate = startOfDay(addDays(endDate, -daysBack));
+
+    return await prisma.users({
+      where: {
+        updatedAt_gte: startDate,
+        updatedAt_lte: endDate,
       },
     });
   },
