@@ -301,7 +301,7 @@ const Mutation = {
       }
     } else {
       sendActivityCopy({
-        email: "brian@bbaker.net",
+        email: "info@thedailydoserx.com",
         text: `Secure message sent from ${prescriptionUser.email}.`,
       });
     }
@@ -370,7 +370,7 @@ const Mutation = {
     const result = await makePayment({
       ccToken: token,
       amount: amount,
-      email: "bakerman59@gmail.com",
+      email: "info@thedailydoserx.com",
       cardholder: "Brian Baker",
     });
 
@@ -480,7 +480,7 @@ const Mutation = {
     }
     sendTextMessage(
       `A new ${prescription.type} prescription has been approved.\nhttps://physician-select.herokuapp.com/`,
-      "9494138239"
+      "5126596941"
     );
 
     return { message: "OK" };
@@ -495,9 +495,9 @@ const Mutation = {
 
     const { input } = args;
 
-    sendTextMessage(`New ${input.type} visit save started for ${user.email}`, "9494138239");
+    sendTextMessage(`New ${input.type} visit save started for ${user.email}`, "5126596941");
     sendActivityCopy({
-      email: "brian@bbaker.net",
+      email: "info@thedailydoserx.com",
       text: `New ${input.type} visit saved for ${user.email}.`,
     });
 
@@ -532,7 +532,7 @@ const Mutation = {
 
     const newCC = await updateCreditCard(userId, cardInput, prisma);
     if (!newCC) {
-      sendTextMessage(`Unable to process credit card for saved for ${user.email}`, "9494138239");
+      sendTextMessage(`Unable to process credit card for saved for ${user.email}`, "5126596941");
       return { message: "CANT_SAVE_CARD" };
     }
 
@@ -744,7 +744,7 @@ const Mutation = {
 
       sendTextMessage(
         `There were refill prescriptions processed.\nhttps://physician-select.herokuapp.com/`,
-        "9494138239"
+        "5126596941"
       );
       return prescriptions.length;
     }
@@ -761,7 +761,7 @@ const Mutation = {
     const { input } = args;
 
     sendActivityCopy({
-      email: "brian@bbaker.net",
+      email: "info@thedailydoserx.com",
       text: `New supplement: ${input.subscription.drugId} saved for ${user.email}`,
     });
 
@@ -786,7 +786,7 @@ const Mutation = {
 
     if (!newCC) {
       sendActivityCopy({
-        email: "brian@bbaker.net",
+        email: "info@thedailydoserx.com",
         text: `Unable to process credit card for saved for ${user.email}`,
       });
       return { message: "CANT_SAVE_CARD" };
@@ -981,7 +981,7 @@ const Mutation = {
       prescription: { connect: { id: prescription.id } },
       text: messageText,
     });
-    sendTextMessage(`Next delivery date changed for ${user.email}`, "9494138239");
+    sendTextMessage(`Next delivery date changed for ${user.email}`, "5126596941");
 
     return { message: "OK" };
   },
@@ -1185,8 +1185,8 @@ const Mutation = {
       city: "Newport Coast",
       state: "CA",
       zipcode: "92657",
-      telephone: "9494138239",
-      email: "brianbbaker.net",
+      telephone: "5126596941",
+      email: "info@thedailydoserx.com",
     };
 
     const ret = await validateAddress(input);
@@ -1198,7 +1198,7 @@ const Mutation = {
     await prisma.createInterest({ ...input });
     sendComingSoonMail({ email: input.email });
     sendActivityCopy({
-      email: ["brian@bbaker.net", "careteam@victoryselect.com"],
+      email: ["info@thedailydoserx.com", "careteam@victoryselect.com"],
       text: `Someone (${input.email}) added interest for ${input.category}.`,
     });
     return { message: "OK" };
