@@ -16,7 +16,7 @@ if (process.env.PAYMENT_MODE === "TEST") {
 }
 
 const prehash = paymentAPI + process.env.USAEPAY_SEED + paymentPin;
-
+console.log(prehash)
 const apihash = "s2/" + process.env.USAEPAY_SEED + "/" + sha256(prehash);
 
 const authKey = new Buffer.from(paymentAPI + ":" + apihash).toString("base64");
