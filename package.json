@@ -1,6 +1,6 @@
 {
   "name": "victory-select-backend",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "the backend from victory select",
   "scripts": {
     "start": "nodemon -e js,graphql -x node src/index.js",
