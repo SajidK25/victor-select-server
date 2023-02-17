@@ -480,7 +480,7 @@ const Mutation = {
     }
     sendTextMessage(
       `A new ${prescription.type} prescription has been approved.\nhttps://physician-select.herokuapp.com/`,
-      "5126596941"
+      "5128451335"
     );
 
     return { message: "OK" };
@@ -532,7 +532,7 @@ const Mutation = {
 
     const newCC = await updateCreditCard(userId, cardInput, prisma);
     if (!newCC) {
-      sendTextMessage(`Unable to process credit card for saved for ${user.email}`, "5126596941");
+      sendTextMessage(`Unable to process credit card for saved for ${user.email}`, "5128451335");
       return { message: "CANT_SAVE_CARD" };
     }
 
@@ -744,7 +744,7 @@ const Mutation = {
 
       sendTextMessage(
         `There were refill prescriptions processed.\nhttps://physician-select.herokuapp.com/`,
-        "5126596941"
+        "5128451335"
       );
       return prescriptions.length;
     }
@@ -981,7 +981,7 @@ const Mutation = {
       prescription: { connect: { id: prescription.id } },
       text: messageText,
     });
-    sendTextMessage(`Next delivery date changed for ${user.email}`, "5126596941");
+    sendTextMessage(`Next delivery date changed for ${user.email}`, "5128451335");
 
     return { message: "OK" };
   },
