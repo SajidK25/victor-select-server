@@ -1,6 +1,8 @@
 const sgMail = require("@sendgrid/mail");
 
-const returnEmail = "careteam@victoryselect.com";
+// const returnEmail = "careteam@victoryselect.com";
+const returnEmail = "dr.williamfranklin@gmail.com";
+
 
 const sendMail = async (msg) => {
   try {
