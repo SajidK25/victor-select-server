@@ -1198,7 +1198,7 @@ const Mutation = {
     await prisma.createInterest({ ...input });
     sendComingSoonMail({ email: input.email });
     sendActivityCopy({
-      email: ["info@thedailydoserx.com", "careteam@victoryselect.com"],
+      email: ["info@thedailydoserx.com", "drfranklin@victorymed.com","dr.williamfranklin@gmail.com"],
       text: `Someone (${input.email}) added interest for ${input.category}.`,
     });
     return { message: "OK" };
