@@ -101,7 +101,11 @@ type Mutation {
   login(email: String!, password: String!): RegisterMessage!
   register(input: RegisterInput!): RegisterMessage!
   requestReset(email: String!): SuccessMessage!
-  resetPassword(resetToken: String!, password: String!, confirmPassword: String!): SuccessMessage!
+  resetPassword(
+    resetToken: String!
+    password: String!
+    confirmPassword: String!
+  ): SuccessMessage!
   logout: Boolean!
   newMessage(input: CreateMessageInput!): SuccessMessage!
   revokeRefreshTokensForUser(userId: String!): Boolean!
@@ -125,7 +129,10 @@ type Mutation {
   testLiveConnection: SuccessMessage!
   sendMessage(message: String!, phoneNumber: String!): SuccessMessage!
   updateEmail(newEmail: String!, password: String!): SuccessMessage!
-  updatePassword(currentPassword: String!, newPassword: String!): SuccessMessage!
+  updatePassword(
+    currentPassword: String!
+    newPassword: String!
+  ): SuccessMessage!
   processPlans: SuccessMessage!
   setNextDeliveryDate: SuccessMessage!
   sendReminders: Int!
@@ -145,12 +152,17 @@ type Query {
   prescription(id: String!): Prescription
   pendingPrescriptions: [Prescription]!
   physicianListPrescriptions: [Prescription]!
-  prescriptions(pageSize: Int, after: String, status: String): PrescriptionConnection!
+  prescriptions(
+    pageSize: Int
+    after: String
+    status: String
+  ): PrescriptionConnection!
   messages: [Message]!
   getMessagesByPrescription(prescriptionId: String!): [Message]!
   getPatientMessages: [Message]!
   getProduct(id: String!): Product
   order(id: String!): Order
+  orderHistoryById(email: String!): [Order]!
   orders(status: String): [Order]!
   validZipCode(zipcode: String!): Boolean!
   visit(id: String!): Visit
