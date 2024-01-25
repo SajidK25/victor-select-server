@@ -72,6 +72,17 @@ const Query = {
     return order;
   },
 
+  orderHistoryById: async (_, { email }, { prisma, req }) => {
+    const userPayload = await getAuthorizedUserId(req);
+    let variables = {
+      orderBy: "createdAt_ASC",
+      where: { user: { id: userPayload.userId } }, // dont use email instead use userId {user:{id: userPayload.userId}} "ckez0oehe00100700wy83kf2n"
+    };
+
+    const orders = await prisma.orders(variables);
+    return orders;
+  },
+
   orders: async (_, { status = "PENDING" }, { prisma, req }) => {
     await validateUser(req, true);
     let statusList = [];
@@ -122,7 +133,9 @@ const Query = {
   getPatientChat: async (_, { prescriptionId }, { prisma, req }) => {
     await validateUser(req);
 
-    return await prisma.prescription({ id: prescriptionId }).messages({ where: { private: false } });
+    return await prisma
+      .prescription({ id: prescriptionId })
+      .messages({ where: { private: false } });
   },
 
   getPatientMessages: async (_, __, { prisma, req }) => {
@@ -158,7 +171,11 @@ const Query = {
     return await prisma.prescriptions(variables);
   },
 
-  prescriptions: async (_, { pageSize = 20, after, status = "PENDING" }, { prisma, req }) => {
+  prescriptions: async (
+    _,
+    { pageSize = 20, after, status = "PENDING" },
+    { prisma, req }
+  ) => {
     await validateUser(req, true);
     let variables = {
       orderBy: "createdAt_ASC",
@@ -170,7 +187,12 @@ const Query = {
     return await prisma.prescriptionsConnection(variables);
   },
 
-  visits: async (_, { pageSize = 20, after, status = "PENDING" }, { prisma, req }, info) => {
+  visits: async (
+    _,
+    { pageSize = 20, after, status = "PENDING" },
+    { prisma, req },
+    info
+  ) => {
     await validateUser(req, true);
     let variables = {
       orderBy: "createdAt_ASC",
@@ -203,25 +225,34 @@ const Query = {
     }
     console.log("userId", userId);
 
-    return await prisma.user({ id: userId }).prescriptions({ where: { status_in: ["PENDING", "ACTIVE"] } });
+    return await prisma
+      .user({ id: userId })
+      .prescriptions({ where: { status_in: ["PENDING", "ACTIVE"] } });
   },
 
   getTreatments: async (_, __, { prisma, req }) => {
     const { userId } = await validateUser(req, false);
 
-    return await prisma
-      .user({ id: userId })
-      .prescriptions({ where: { status: "ACTIVE" }, orderBy: "nextDelivery_ASC" });
+    return await prisma.user({ id: userId }).prescriptions({
+      where: { status: "ACTIVE" },
+      orderBy: "nextDelivery_ASC",
+    });
   },
 
-  getRecentPrescriptionMessage: async (_, { prescriptionId }, { prisma, req }) => {
+  getRecentPrescriptionMessage: async (
+    _,
+    { prescriptionId },
+    { prisma, req }
+  ) => {
     await validateUser(req);
 
-    const messages = await prisma.prescription({ id: prescriptionId }).messages({
-      orderBy: "createdAt_DESC",
-      //      where: { fromPatient: false, private: false },
-      where: { fromPatient: false },
-    });
+    const messages = await prisma
+      .prescription({ id: prescriptionId })
+      .messages({
+        orderBy: "createdAt_DESC",
+        //      where: { fromPatient: false, private: false },
+        where: { fromPatient: false },
+      });
     if (messages) {
       return messages[0];
     }
